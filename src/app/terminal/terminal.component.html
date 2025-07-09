@@ -1,0 +1,9 @@
+<div class="terminal">
+    <div class="terminal-lines">
+        <div *ngFor="let line of lines">{{ line }}</div>
+    </div>
+    <div class="terminal-input">
+        <span>&gt;</span>
+        <input [(ngModel)]="input" (keydown)="handleInput($event)" autofocus autocomplete="off" spellcheck="false" />
+    </div>
+</div>

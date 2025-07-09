@@ -1,0 +1,36 @@
+.terminal {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-family);
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+    min-height: 300px;
+    box-shadow: 0 0 10px #000;
+}
+
+.terminal-lines {
+    min-height: 220px;
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+}
+
+.terminal-input {
+    display: flex;
+    align-items: center;
+}
+
+.terminal-input span {
+    margin-right: 0.5rem;
+}
+
+.terminal-input input {
+    background: transparent;
+    border: none;
+    color: var(--foreground);
+    outline: none;
+    font-family: inherit;
+    font-size: 1rem;
+    width: 100%;
+}
