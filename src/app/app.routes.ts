@@ -4,6 +4,8 @@ import { AboutComponent } from './about/about.component';
 import { ContactComponent } from './contact/contact.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { CalculatorComponent } from './projects/calculator/calculator.component';
+import { ClockComponent } from './projects/clock/clock.component';
+
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -12,7 +14,10 @@ export const routes: Routes = [
     { path: 'contact', component: ContactComponent },
     {
         path: 'projects', component: ProjectsComponent, children: [
-            { path: 'calculator', component: CalculatorComponent }]
+            { path: 'calculator', component: CalculatorComponent },
+            { path: 'clock', component: ClockComponent },
+            // Add more project routes here as needed
+        ]
     },
     { path: '**', redirectTo: '' } // Redirect any unknown paths to home
 ];

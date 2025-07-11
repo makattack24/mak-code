@@ -39,6 +39,53 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   private shouldAutoScroll = true;
   private scrollListener: (() => void) | null = null;
 
+  private commandHandlers: { [key: string]: () => void } = {
+    'kill clock': () => {
+      this.lines.push('Killing clock project...');
+      this.router.navigate(['/projects']);
+    },
+    'kill calc': () => {
+      this.lines.push('Killing calculator project...');
+      this.router.navigate(['/projects']);
+    },
+    'run calc': () => {
+      this.lines.push('Launching calculator project...');
+      this.router.navigate(['/projects/calculator']);
+    },
+    'run clock': () => {
+      this.lines.push('Launching clock project...');
+      this.router.navigate(['/projects/clock']);
+    },
+    'help': () => {
+      this.lines.push('Available commands: about, contact, projects, help, home');
+    },
+    'home': () => {
+      this.lines.push('Navigating to home page.');
+      this.router.navigate(['/home']);
+    },
+    'about': () => {
+      this.lines.push('Navigating to about page.');
+      this.router.navigate(['/about']);
+    },
+    'contact': () => {
+      this.lines.push('Navigating to contact page.');
+      this.router.navigate(['/contact']);
+    },
+    'projects': () => {
+      this.lines.push('Navigating to projects page.');
+      this.router.navigate(['/projects']);
+    },
+    'cls': () => {
+      this.lines = [];
+    },
+    'clear': () => {
+      this.lines = [];
+    },
+    'ls': () => {
+      this.lines.push('Available directories: /home, /about, /contact, /projects');
+    }
+  };
+
   constructor(private renderer: Renderer2, private el: ElementRef, private router: Router) { }
 
   ngAfterViewInit() {
@@ -119,43 +166,12 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   processCommand(cmd: string) {
     if (!cmd) return;
     this.lines.push(`> ${cmd}`);
-    switch (cmd.toLowerCase()) {
-      case 'kill calc':
-        this.lines.push('Killing calculator project...');
-        this.router.navigate(['/projects']);
-        break;
-      case 'run calc':
-        this.lines.push('Launching calculator project...');
-        this.router.navigate(['/projects/calculator']);
-        break;
-      case 'help':
-        this.lines.push('Available commands: about, contact, projects, help, home');
-        break;
-      case 'home':
-        this.lines.push('Navigating to home page.');
-        this.router.navigate(['/home']);
-        break;
-      case 'about':
-        this.lines.push('Navigating to about page.');
-        this.router.navigate(['/about']);
-        break;
-      case 'contact':
-        this.lines.push('Navigating to contact page.');
-        this.router.navigate(['/contact']);
-        break;
-      case 'projects':
-        this.lines.push('Navigating to projects page.');
-        this.router.navigate(['/projects']);
-        break;
-      case 'cls':
-      case 'clear':
-        this.lines = [];
-        break;
-      case 'ls':
-        this.lines.push('Available directories: /home, /about, /contact, /projects');
-        break;
-      default:
-        this.lines.push(`Unknown command: ${cmd}`);
+    const command = cmd.toLowerCase();
+    const handler = this.commandHandlers[command];
+    if (handler) {
+      handler();
+    } else {
+      this.lines.push(`Unknown command: ${cmd}`);
     }
     this.scrollToBottom();
   }
