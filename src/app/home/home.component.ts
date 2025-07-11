@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { TerminalComponent } from '../terminal/terminal.component';
+import { TerminalComponent } from "../terminal/terminal.component";
+//import { TerminalComponent } from '../terminal/terminal.component';
 
 @Component({
   selector: 'app-home',

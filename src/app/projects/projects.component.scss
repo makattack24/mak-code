@@ -1,0 +1,86 @@
+.projects-center {
+    min-height: 80vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-bottom: 17rem;
+    margin-top: 4rem;
+}
+
+.projects-flex {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+    max-width: 900px;
+}
+
+.projects-content {
+    min-width: 260px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.projects-content h2 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.projects-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.projects-list li {
+    background: var(--surface, #23272e);
+    margin-bottom: 1rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+    font-size: 1.08rem;
+    text-align: left;
+    display: block;
+}
+
+.project-title {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-right: 0.5em;
+}
+
+.project-command {
+    font-family: 'Fira Mono', 'Consolas', monospace;
+    font-size: 1em;
+    color: #ffd700;
+    background: #181c22;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 0.5em;
+}
+
+.projects-side {
+    flex: 0 1 260px;
+    min-width: 240px;
+    max-width: 340px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+}
+
+@media (max-width: 900px) {
+    .projects-flex {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: center;
+        max-width: 100%;
+    }
+
+    .projects-side {
+        margin-top: 1rem;
+        justify-content: center;
+    }
+}
