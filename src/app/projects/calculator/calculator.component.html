@@ -1,11 +1,15 @@
-<div class="calculator-draggable" [ngStyle]="{ top: position.y + 'px', left: position.x + 'px' }"
-    (mousedown)="startDrag($event)" tabindex="0" (keydown)="onKey($event)">
-    <div class="calculator">
-        <input type="text" [value]="display" readonly class="calc-display" />
-        <div class="calc-buttons">
-            <button *ngFor="let key of keys" (click)="press(key)">{{ key }}</button>
-            <button (click)="clear()">C</button>
-            <button (click)="calculate()">=</button>
-        </div>
+<div class="calculator-container" tabindex="0" (keydown)="onKey($event)">
+    <div class="calculator-display">
+        <span>{{ display || '0' }}</span>
+        <button class="clear-btn" (click)="clear()" title="Clear">C</button>
+    </div>
+    <div class="calculator-keys">
+        <ng-container *ngFor="let row of keys">
+            <div class="calculator-row">
+                <button *ngFor="let key of row" (click)="press(key)" [class.equals]="key === '='">
+                    {{ key }}
+                </button>
+            </div>
+        </ng-container>
     </div>
 </div>
