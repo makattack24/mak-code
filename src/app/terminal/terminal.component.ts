@@ -24,7 +24,7 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   lines: string[] = [
     'Welcome to MyWeb Terminal! Type "help" for commands.',
     'This terminal lets you navigate and interact with the site using commands, just like a real terminal.',
-    'You can use commands like "about", "contact", "projects", and "help".',
+    'You can use commands like "help, "/projects", "/contact", "/about".',
     'Type "cls" or "clear" to clear the terminal output.',
   ];
   input = '';
@@ -57,21 +57,21 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
       this.router.navigate(['/projects/clock']);
     },
     'help': () => {
-      this.lines.push('Available commands: about, contact, projects, help, home');
+      this.lines.push('Available commands: help, /about, /contact, /projects, /home');
     },
-    'home': () => {
+    '/home': () => {
       this.lines.push('Navigating to home page.');
       this.router.navigate(['/home']);
     },
-    'about': () => {
+    '/about': () => {
       this.lines.push('Navigating to about page.');
       this.router.navigate(['/about']);
     },
-    'contact': () => {
+    '/contact': () => {
       this.lines.push('Navigating to contact page.');
       this.router.navigate(['/contact']);
     },
-    'projects': () => {
+    '/projects': () => {
       this.lines.push('Navigating to projects page.');
       this.router.navigate(['/projects']);
     },
@@ -164,6 +164,7 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   }
 
   processCommand(cmd: string) {
+    console.log('Processing command:', cmd);
     if (!cmd) return;
     this.lines.push(`> ${cmd}`);
     const command = cmd.toLowerCase();
