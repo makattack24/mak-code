@@ -1,1 +1,8 @@
-<router-outlet></router-outlet>
+<div class="main-layout" [ngClass]="terminalPosition">
+    <app-terminal [pinPosition]="terminalPosition" (pinPositionChange)="onTerminalPositionChange($event)"
+        (resize)="onTerminalResize($event)">
+    </app-terminal>
+    <div class="main-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

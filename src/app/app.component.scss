@@ -17,3 +17,53 @@ button {
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     }
 }
+
+.main-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+
+    &.bottom {
+        flex-direction: column;
+
+        .main-content {
+            flex: 1 1 auto;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        app-terminal {
+            flex: 0 0 auto;
+        }
+    }
+
+    &.left {
+        flex-direction: row;
+
+        .main-content {
+            flex: 1 1 auto;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        app-terminal {
+            flex: 0 0 auto;
+        }
+    }
+
+    &.right {
+        flex-direction: row-reverse;
+
+        .main-content {
+            flex: 1 1 auto;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        app-terminal {
+            flex: 0 0 auto;
+        }
+    }
+}

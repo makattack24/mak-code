@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, AfterViewInit, AfterViewChecked, ElementRef, Renderer2, ViewChild, OnDestroy } from '@angular/core';
+import { Output, EventEmitter, Input, Component, AfterViewInit, AfterViewChecked, ElementRef, Renderer2, ViewChild, OnDestroy, PipeTransform } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
@@ -14,6 +14,9 @@ type PinPosition = 'center' | 'bottom' | 'left' | 'right';
   styleUrl: './terminal.component.scss'
 })
 export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
+  @Input() pinPosition: PinPosition = 'bottom';
+  @Output() pinPositionChange = new EventEmitter<PinPosition>();
+  @Output() resize = new EventEmitter<{ width?: number, height?: number }>();
   @ViewChild('terminalInput', { static: false }) terminalInput?: ElementRef<HTMLInputElement>;
   @ViewChild('linesContainer', { static: false }) linesContainer?: ElementRef<HTMLDivElement>;
   private resizing = false;
@@ -28,8 +31,6 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     'Type "cls" or "clear" to clear the terminal output.',
   ];
   input = '';
-  pinPosition: PinPosition = 'bottom';
-
   history: string[] = [];
   historyIndex = -1;
   autocompleteList: string[] = ['about', 'contact', 'projects', 'help', 'cls', 'clear', 'home'];
@@ -146,10 +147,6 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   }
 
   toggleMinimize() {
-    // If currently centered, move to bottom before minimizing
-    if (this.pinPosition === 'center') {
-      this.pinPosition = 'bottom';
-    }
     this.isMinimized = !this.isMinimized;
     if (this.isMinimized) {
       this.lines.push('Terminal minimized. Click to restore.');
@@ -178,7 +175,7 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   }
 
   setPinPosition(pos: PinPosition) {
-    this.pinPosition = pos;
+    this.pinPositionChange.emit(pos);
   }
 
   startResize(event: MouseEvent | TouchEvent, position: PinPosition) {
@@ -216,9 +213,11 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     if (this.pinPosition === 'bottom') {
       const newHeight = Math.max(120, container.offsetHeight - deltaY);
       container.style.height = newHeight + 'px';
+      this.resize.emit({ height: newHeight });
     } else if (this.pinPosition === 'left' || this.pinPosition === 'right') {
       const newWidth = Math.max(180, container.offsetWidth + (this.pinPosition === 'left' ? deltaX : -deltaX));
       container.style.width = newWidth + 'px';
+      this.resize.emit({ width: newWidth });
     }
   };
 

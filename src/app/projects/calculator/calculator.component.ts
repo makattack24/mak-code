@@ -46,8 +46,13 @@ export class CalculatorComponent implements OnInit {
 
   calculate() {
     try {
-      // eslint-disable-next-line no-eval
-      this.display = eval(this.display).toString();
+      // Only allow numbers, operators, parentheses, and decimal points
+      if (/^[\d+\-*/().\s]+$/.test(this.display)) {
+        // eslint-disable-next-line no-new-func
+        this.display = Function('"use strict";return (' + this.display + ')')().toString();
+      } else {
+        this.display = 'Error';
+      }
     } catch {
       this.display = 'Error';
     }

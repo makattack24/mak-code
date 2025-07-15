@@ -1,37 +1,3 @@
-// :root {
-//     --background: #ffffff;
-//     --foreground: #181818;
-//     --primary: #39ff14;
-//     --font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
-// }
-
-// [data-theme='dark'] {
-//     --background: #181818;
-//     --foreground: #e0e0e0;
-//     --primary: #39ff14;
-// }
-
-// [data-theme='light'] {
-//     --background: #ffffff;
-//     --foreground: #181818;
-//     --primary: #0078d4;
-// }
-
-// body {
-//     background: var(--background);
-//     color: var(--foreground);
-//     font-family: var(--font-family);
-//     transition: background 0.3s, color 0.3s;
-// }
-
-// *,
-// *::before,
-// *::after {
-//     color: inherit;
-//     font-family: inherit;
-//     box-sizing: border-box;
-// }
-
 :root {
     /* Light Theme Colors */
     --background: #f7f9fa;
@@ -57,7 +23,7 @@
     --foreground: #e0e0e0;
     --muted: #a1a1aa;
     --primary: #60a5fa;
-    --primary-hover: #3b82f6;
+    --primary-hover: #3b82fa;
     --secondary: #23272f;
     --secondary-hover: #2d323c;
     --border: #374151;
@@ -69,11 +35,23 @@
     --font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
 }
 
-[data-theme='light'] {
-    /* Optional: explicitly set light theme, but :root covers it */
+// [data-theme='light'] {
+//     /* Optional: explicitly set light theme, but :root covers it */
+// }
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; // Prevent scrollbars
 }
 
 body {
+    min-height: 100vh;
+    min-width: 100vw;
+    overflow: hidden; // Prevent scrollbars
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-family);

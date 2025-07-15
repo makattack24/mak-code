@@ -1,28 +1,29 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TerminalComponent } from './terminal/terminal.component';
+import { CommonModule } from '@angular/common';
+
+type PinPosition = 'center' | 'bottom' | 'left' | 'right';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, TerminalComponent, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'myweb';
 
-  // theme: 'light' | 'dark' = 'dark';
+  terminalPosition: PinPosition = 'bottom';
+  terminalSize: { width?: number; height?: number } = {};
 
-  // constructor() {
-  //   this.setTheme(this.theme);
-  // }
+  onTerminalPositionChange(pos: PinPosition) {
+    this.terminalPosition = pos;
+  }
 
-  // toggleTheme() {
-  //   this.theme = this.theme === 'dark' ? 'light' : 'dark';
-  //   this.setTheme(this.theme);
-  // }
-
-  // setTheme(theme: 'light' | 'dark') {
-  //   document.documentElement.setAttribute('data-theme', theme);
-  // }
-
+  onTerminalResize(size: { width?: number; height?: number }) {
+    this.terminalSize = size;
+    // Optionally, you can trigger change detection or update layout here
+  }
 }
