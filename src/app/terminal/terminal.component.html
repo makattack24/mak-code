@@ -1,8 +1,12 @@
 <div class="terminal-container" [ngClass]="pinPosition" [class.minimized]="isMinimized" [style.min-height]="minHeight">
+    <div class="terminal-toolbar">
+        <app-themetoggle></app-themetoggle>
+        <button class="terminal-min-btn" (click)="toggleMinimize()"
+            [attr.aria-label]="isMinimized ? 'Restore terminal' : 'Minimize terminal'">
+            {{ isMinimized ? '▣' : '—' }}
+        </button>
+    </div>
     <div class="terminal" *ngIf="!isMinimized" (click)="focusInput()">
-        <div class="terminal-toolbar">
-            <app-themetoggle></app-themetoggle>
-        </div>
         <div class="terminal-lines" #linesContainer>
             <div *ngFor="let line of lines" [innerHTML]="line">{{ line }}</div>
         </div>

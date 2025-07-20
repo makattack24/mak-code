@@ -3,12 +3,29 @@
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
+    padding-bottom: 120px;
+}
+
+.fixed-terminal {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    min-height: 100px;
+    max-height: 45vh;
+    background: #181818;
+    border-top: 1px solid #222;
+    box-shadow: 0 -2px 16px #000a;
+    display: flex;
+    flex-direction: column;
 }
 
 .content-row {
     display: flex;
     flex: 1 1 auto;
     min-height: 0;
+    padding-bottom: 0;
 
     .projects-main {
         flex: 0 0 320px;
@@ -29,8 +46,6 @@
         background: #1e1e1e;
         color: #ccc;
         min-height: 0;
-        display: flex;
-        flex-direction: column;
         overflow: hidden;
         z-index: 1;
 
@@ -50,15 +65,15 @@
 }
 
 // Terminal at the bottom
-.projects-layout>div:last-child {
-    flex: 0 1 32vh;
-    min-height: 100px;
-    max-height: 50vh;
-    background: #181818;
-    border-top: 1px solid #222;
-    display: flex;
-    flex-direction: column;
-}
+// .projects-layout>div:last-child {
+//     flex: 0 1 32vh;
+//     min-height: 100px;
+//     max-height: 50vh;
+//     background: #181818;
+//     border-top: 1px solid #222;
+//     display: flex;
+//     flex-direction: column;
+// }
 
 .projects-list {
     list-style: none;

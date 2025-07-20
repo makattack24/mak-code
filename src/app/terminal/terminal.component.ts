@@ -41,12 +41,8 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   private scrollListener: (() => void) | null = null;
 
   private commandHandlers: { [key: string]: () => void } = {
-    'kill clock': () => {
-      this.lines.push('Killing clock project...');
-      this.router.navigate(['/projects']);
-    },
-    'kill calc': () => {
-      this.lines.push('Killing calculator project...');
+    'kill': () => {
+      this.lines.push('Terminating application...');
       this.router.navigate(['/projects']);
     },
     'run calc': () => {
@@ -166,5 +162,9 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 
   setPinPosition(pos: PinPosition) {
     this.pinPositionChange.emit(pos);
+  }
+
+  toggleMinimize() {
+    this.isMinimized = !this.isMinimized;
   }
 }
