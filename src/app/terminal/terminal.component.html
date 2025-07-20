@@ -1,22 +1,16 @@
-<div class="terminal-container" [ngClass]="pinPosition" [class.minimized]="isMinimized">
+<div class="terminal-container" [ngClass]="pinPosition" [class.minimized]="isMinimized" [style.min-height]="minHeight">
     <div class="terminal-toolbar">
-        <!-- <button (click)="setPinPosition('center')" [class.active]="pinPosition === 'center'" title="Center">🗔</button> -->
+        <!-- <button (click)="setPinPosition('center')" [class.active]="pinPosition === 'center'" title="Center">🗔</button>
         <button (click)="setPinPosition('bottom')" [class.active]="pinPosition === 'bottom'"
             title="Pin Bottom">⬇️</button>
         <button (click)="setPinPosition('left')" [class.active]="pinPosition === 'left'" title="Pin Left">⬅️</button>
         <button (click)="setPinPosition('right')" [class.active]="pinPosition === 'right'" title="Pin Right">➡️</button>
-        <button (click)="goHome()" title="Go Home">🏠</button>
+        <button (click)="goHome()" title="Go Home">🏠</button> -->
         <app-themetoggle></app-themetoggle>
-        <button class="minimize-btn" (click)="toggleMinimize()" title="Minimize">
-            {{ isMinimized ? '🗖' : '🗕' }}
-        </button>
-    </div>
-    <div *ngIf="pinPosition !== 'center' && !isMinimized" class="resize-handle" [ngClass]="pinPosition"
-        (mousedown)="startResize($event, pinPosition)" (touchstart)="startResize($event, pinPosition)">
     </div>
     <div class="terminal" *ngIf="!isMinimized" (click)="focusInput()">
         <div class="terminal-lines" #linesContainer>
-            <div *ngFor="let line of lines">{{ line }}</div>
+            <div *ngFor="let line of lines" [innerHTML]="line">{{ line }}</div>
         </div>
         <div class="terminal-input">
             <span>&gt;</span>

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TerminalComponent } from './terminal/terminal.component';
 import { CommonModule } from '@angular/common';
 
 type PinPosition = 'center' | 'bottom' | 'left' | 'right';
@@ -8,7 +7,7 @@ type PinPosition = 'center' | 'bottom' | 'left' | 'right';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, TerminalComponent, CommonModule],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -24,6 +23,5 @@ export class AppComponent {
 
   onTerminalResize(size: { width?: number; height?: number }) {
     this.terminalSize = size;
-    // Optionally, you can trigger change detection or update layout here
   }
 }

@@ -19,17 +19,17 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   @Output() resize = new EventEmitter<{ width?: number, height?: number }>();
   @ViewChild('terminalInput', { static: false }) terminalInput?: ElementRef<HTMLInputElement>;
   @ViewChild('linesContainer', { static: false }) linesContainer?: ElementRef<HTMLDivElement>;
-  private resizing = false;
-  private lastPageX = 0;
-  private lastPageY = 0;
-  isMinimized = false;
 
+
+  isMinimized = false;
+  minHeight = '40vh'; // Default minimum height
   lines: string[] = [
-    'Welcome to MyWeb Terminal! Type "help" for commands.',
-    'This terminal lets you navigate and interact with the site using commands, just like a real terminal.',
     'You can use commands like "help, "/projects", "/contact", "/about".',
-    'Type "cls" or "clear" to clear the terminal output.',
+    '---Version 0.0.1 alpha---',
+    'Want to know more about this project? Visit this <a href="https://github.com/makattack24?tab=repositories" target="_blank">github</a> page.',
+    '------------------------------------------------------------------------------------------',
   ];
+
   input = '';
   history: string[] = [];
   historyIndex = -1;
@@ -146,16 +146,6 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     }
   }
 
-  toggleMinimize() {
-    this.isMinimized = !this.isMinimized;
-    if (this.isMinimized) {
-      this.lines.push('Terminal minimized. Click to restore.');
-    } else {
-      this.lines.push('Terminal restored.');
-    }
-    this.scrollToBottom(true);
-  }
-
   goHome() {
     this.router.navigate(['/']);
   }
@@ -177,55 +167,4 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   setPinPosition(pos: PinPosition) {
     this.pinPositionChange.emit(pos);
   }
-
-  startResize(event: MouseEvent | TouchEvent, position: PinPosition) {
-    event.preventDefault();
-    this.resizing = true;
-    if (event instanceof MouseEvent) {
-      this.lastPageX = event.pageX;
-      this.lastPageY = event.pageY;
-      window.addEventListener('mousemove', this.onResize);
-      window.addEventListener('mouseup', this.stopResize);
-    } else if (event instanceof TouchEvent) {
-      this.lastPageX = event.touches[0].pageX;
-      this.lastPageY = event.touches[0].pageY;
-      window.addEventListener('touchmove', this.onResize);
-      window.addEventListener('touchend', this.stopResize);
-    }
-  }
-
-  onResize = (event: MouseEvent | TouchEvent) => {
-    if (!this.resizing) return;
-    let deltaX = 0, deltaY = 0;
-    if (event instanceof MouseEvent) {
-      deltaX = event.pageX - this.lastPageX;
-      deltaY = event.pageY - this.lastPageY;
-      this.lastPageX = event.pageX;
-      this.lastPageY = event.pageY;
-    } else if (event instanceof TouchEvent) {
-      deltaX = event.touches[0].pageX - this.lastPageX;
-      deltaY = event.touches[0].pageY - this.lastPageY;
-      this.lastPageX = event.touches[0].pageX;
-      this.lastPageY = event.touches[0].pageY;
-    }
-    const container = document.querySelector('.terminal-container.' + this.pinPosition) as HTMLElement;
-    if (!container) return;
-    if (this.pinPosition === 'bottom') {
-      const newHeight = Math.max(120, container.offsetHeight - deltaY);
-      container.style.height = newHeight + 'px';
-      this.resize.emit({ height: newHeight });
-    } else if (this.pinPosition === 'left' || this.pinPosition === 'right') {
-      const newWidth = Math.max(180, container.offsetWidth + (this.pinPosition === 'left' ? deltaX : -deltaX));
-      container.style.width = newWidth + 'px';
-      this.resize.emit({ width: newWidth });
-    }
-  };
-
-  stopResize = () => {
-    this.resizing = false;
-    window.removeEventListener('mousemove', this.onResize);
-    window.removeEventListener('mouseup', this.stopResize);
-    window.removeEventListener('touchmove', this.onResize);
-    window.removeEventListener('touchend', this.stopResize);
-  };
 }

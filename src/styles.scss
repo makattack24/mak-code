@@ -35,6 +35,25 @@
     --font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
 }
 
+[data-theme='purple'] {
+    /* Dark Theme: Teal & Purple Modern */
+    --background: #181825;
+    --surface: #232038;
+    --foreground: #f3f4fa;
+    --muted: #a3a3b2;
+    --primary: #b8b5ff; // Soft purple
+    --primary-hover: #7c7bff; // Brighter purple
+    --secondary: #22323f; // Deep teal
+    --secondary-hover: #2d4857; // Lighter teal
+    --border: #36374a;
+    --accent: #00bfae; // Bright teal
+    --error: #ff6f91; // Soft coral
+    --success: #43aa8b; // Emerald green
+    --link: #b8b5ff;
+    --link-hover: #7c7bff;
+    --font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+}
+
 // [data-theme='light'] {
 //     /* Optional: explicitly set light theme, but :root covers it */
 // }
