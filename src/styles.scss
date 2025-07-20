@@ -93,7 +93,6 @@ h4,
 h5,
 h6 {
     color: var(--foreground);
-    margin-top: 1.5em;
     margin-bottom: 0.5em;
     font-weight: 700;
 }
@@ -248,7 +247,9 @@ hr {
 app-projects,
 app-home,
 app-about,
-app-contact {
+app-contact,
+app-graphicsgame,
+app-calculator {
     display: flex;
     flex: 1 1 auto;
     min-height: 0;
