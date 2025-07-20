@@ -4,12 +4,16 @@
     align-items: center;
     padding: 20px;
     border-radius: 8px;
+    max-width: 100%;
+    width: 42.5%;
+    margin: 2rem auto;
 }
 
 .calculator-keys {
     display: flex;
     flex-direction: column;
     gap: 0.5rem; // space between rows
+    width: 100%;
 }
 
 .calculator-row {
