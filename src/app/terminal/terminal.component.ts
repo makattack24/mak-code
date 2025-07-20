@@ -24,7 +24,7 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   isMinimized = false;
   minHeight = '40vh'; // Default minimum height
   lines: string[] = [
-    'You can use commands like "help, "/projects", "/contact", "/about".',
+    'You can use commands like "help, /projects, /contact, /about, visit "site name".',
     '---Version 0.0.1 alpha---',
     'Want to know more about this project? Visit this <a href="https://github.com/makattack24?tab=repositories" target="_blank">github</a> page.',
     '------------------------------------------------------------------------------------------',
@@ -63,6 +63,10 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     },
     'help': () => {
       this.lines.push('Available commands: help, /about, /contact, /projects, /home');
+    },
+    '/': () => {
+      this.lines.push('Navigating to home page.');
+      this.router.navigate(['/home']);
     },
     '/home': () => {
       this.lines.push('Navigating to home page.');
