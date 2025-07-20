@@ -1,0 +1,73 @@
+.game-card {
+    background: var(--surface, #23272e);
+    color: var(--foreground, #fff);
+    border-radius: 10px;
+    box-shadow: 0 2px 16px #0003;
+    padding: 2rem 1.5rem;
+    max-width: 350px;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    border: 1px solid var(--border, #333);
+
+    h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    p {
+        margin: 0 0 1rem 0;
+        font-size: 1.1rem;
+        text-align: center;
+    }
+
+    form {
+        display: flex;
+        gap: 0.7rem;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+    }
+
+    input[type="number"] {
+        width: 80px;
+        padding: 0.4rem 0.6rem;
+        font-size: 1.1rem;
+        border-radius: 4px;
+        border: 1px solid var(--border, #444);
+        background: var(--secondary, #181a20);
+        color: var(--foreground, #fff);
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    input[type="number"]:focus {
+        border-color: var(--primary, #2563eb);
+    }
+
+    button {
+        padding: 0.4rem 1.2rem;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        background: var(--primary, #2563eb);
+        color: var(--surface, #fff);
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    button:disabled {
+        background: var(--muted, #888);
+        cursor: not-allowed;
+    }
+
+    .attempts {
+        margin-top: 0.5rem;
+        font-size: 0.98rem;
+        color: var(--muted, #aaa);
+    }
+}

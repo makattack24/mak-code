@@ -5,7 +5,8 @@ import { ContactComponent } from './contact/contact.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { CalculatorComponent } from './projects/calculator/calculator.component';
 import { ClockComponent } from './projects/clock/clock.component';
-
+import { GameComponent } from './projects/game/game.component';
+import { GraphicsgameComponent } from './projects/graphicsgame/graphicsgame.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -16,6 +17,8 @@ export const routes: Routes = [
         path: 'projects', component: ProjectsComponent, children: [
             { path: 'calculator', component: CalculatorComponent },
             { path: 'clock', component: ClockComponent },
+            { path: 'game', component: GameComponent },
+            { path: 'sim', component: GraphicsgameComponent }
             // Add more project routes here as needed
         ]
     },

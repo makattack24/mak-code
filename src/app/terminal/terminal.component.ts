@@ -53,6 +53,14 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
       this.lines.push('Launching clock project...');
       this.router.navigate(['/projects/clock']);
     },
+    'run game': () => {
+      this.lines.push('Launching game project...');
+      this.router.navigate(['/projects/game']);
+    },
+    'run sim': () => {
+      this.lines.push('Launching sim project...');
+      this.router.navigate(['/projects/sim']);
+    },
     'help': () => {
       this.lines.push('Available commands: help, /about, /contact, /projects, /home');
     },
@@ -142,15 +150,55 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     }
   }
 
-  goHome() {
-    this.router.navigate(['/']);
-  }
-
   processCommand(cmd: string) {
     console.log('Processing command:', cmd);
     if (!cmd) return;
     this.lines.push(`> ${cmd}`);
     const command = cmd.toLowerCase();
+
+    // Enhanced "visit" command: supports many sites and common shortcuts
+    if (command.startsWith('visit ')) {
+      const site = cmd.substring(6).trim().toLowerCase();
+      let url = '';
+
+      // Common shortcuts
+      const shortcuts: { [key: string]: string } = {
+        'github': 'https://github.com/',
+        'google': 'https://www.google.com/',
+        'youtube': 'https://www.youtube.com/',
+        'twitter': 'https://twitter.com/',
+        'reddit': 'https://www.reddit.com/',
+        'facebook': 'https://www.facebook.com/',
+        'linkedin': 'https://www.linkedin.com/',
+        'stackoverflow': 'https://stackoverflow.com/',
+        'npm': 'https://www.npmjs.com/',
+        'angular': 'https://angular.io/',
+        'docs': 'https://angular.dev/docs',
+        'wikipedia': 'https://en.wikipedia.org/',
+        'bing': 'https://www.bing.com/',
+        'amazon': 'https://www.amazon.com/',
+        'netflix': 'https://www.netflix.com/',
+        'makattack24': 'https://github.com/makattack24?tab=repositories'
+      };
+
+      if (shortcuts[site]) {
+        url = shortcuts[site];
+      } else if (site.match(/^https?:\/\//)) {
+        url = site;
+      } else if (site.match(/\./)) {
+        url = 'https://' + site;
+      }
+
+      if (url) {
+        this.lines.push(`Opening ${url} in a new tab...`);
+        window.open(url, '_blank');
+      } else {
+        this.lines.push(`Unknown site: ${site}`);
+      }
+      this.scrollToBottom();
+      return;
+    }
+
     const handler = this.commandHandlers[command];
     if (handler) {
       handler();
@@ -158,13 +206,5 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
       this.lines.push(`Unknown command: ${cmd}`);
     }
     this.scrollToBottom();
-  }
-
-  setPinPosition(pos: PinPosition) {
-    this.pinPositionChange.emit(pos);
-  }
-
-  toggleMinimize() {
-    this.isMinimized = !this.isMinimized;
   }
 }
