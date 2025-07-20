@@ -21,7 +21,6 @@ import { Component, Input } from '@angular/core';
       border-radius: 4px;
       display: flex;
       align-items: center;
-      height: 100%;
     }
     button:hover, button:focus {
       color: var(--accent);

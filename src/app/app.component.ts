@@ -1,27 +1,23 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { TerminalComponent } from './terminal/terminal.component';
 
 type PinPosition = 'center' | 'bottom' | 'left' | 'right';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, TerminalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'myweb';
 
-  terminalPosition: PinPosition = 'bottom';
-  terminalSize: { width?: number; height?: number } = {};
+  terminalHeight = 240; // CHANGED: Default height in px
 
-  onTerminalPositionChange(pos: PinPosition) {
-    this.terminalPosition = pos;
-  }
-
-  onTerminalResize(size: { width?: number; height?: number }) {
-    this.terminalSize = size;
+  onTerminalHeightChange(newHeight: number) { // CHANGED
+    this.terminalHeight = newHeight;
   }
 }

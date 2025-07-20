@@ -19,10 +19,14 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   @Output() resize = new EventEmitter<{ width?: number, height?: number }>();
   @ViewChild('terminalInput', { static: false }) terminalInput?: ElementRef<HTMLInputElement>;
   @ViewChild('linesContainer', { static: false }) linesContainer?: ElementRef<HTMLDivElement>;
+  @Input() height: number | undefined; // CHANGED: Height in px
+  @Output() heightChange = new EventEmitter<number>(); // CHANGED
+  @ViewChild('resizeHandle', { static: false }) resizeHandle?: ElementRef<HTMLDivElement>;
 
 
   isMinimized = false;
-  minHeight = '40vh'; // Default minimum height
+  minHeight = 80; // CHANGED: px
+  maxHeight = 500;
   lines: string[] = [
     'You can use commands like "help, /projects, /contact, /about, visit "site name".',
     '---Version 0.0.1 alpha---',
@@ -95,6 +99,9 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     }
   };
 
+  private resizing = false; // CHANGED
+  private startY = 0; // CHANGED
+  private startHeight = 0; // CHANGED
   constructor(private renderer: Renderer2, private el: ElementRef, private router: Router) { }
 
   ngAfterViewInit() {
@@ -111,14 +118,19 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
         }
       );
     }
+
+    // CHANGED: Add mouse listeners for resizing
+    if (this.resizeHandle?.nativeElement) {
+      this.renderer.listen(this.resizeHandle.nativeElement, 'mousedown', (event: MouseEvent) => this.onResizeStart(event));
+    }
   }
 
   ngOnDestroy() {
-    // Clean up scroll listener
     if (this.scrollListener) {
       this.scrollListener();
       this.scrollListener = null;
     }
+    this.removeResizeListeners(); // CHANGED
   }
 
   ngAfterViewChecked() {
@@ -210,5 +222,38 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
       this.lines.push(`Unknown command: ${cmd}`);
     }
     this.scrollToBottom();
+  }
+
+  onResizeStart(event: MouseEvent) {
+    event.preventDefault();
+    this.resizing = true;
+    this.startY = event.clientY;
+    this.startHeight = this.height ?? this.minHeight;
+    this.renderer.addClass(document.body, 'resizing-terminal');
+    window.addEventListener('mousemove', this.onResizing);
+    window.addEventListener('mouseup', this.onResizeEnd);
+  }
+
+  onResizing = (event: MouseEvent) => {
+    if (!this.resizing) return;
+    const delta = this.startY - event.clientY;
+    let newHeight = this.startHeight + delta;
+    newHeight = Math.max(this.minHeight, Math.min(this.maxHeight, newHeight));
+    this.height = newHeight;
+    this.heightChange.emit(this.height);
+    this.resize.emit({ height: this.height });
+  };
+
+  onResizeEnd = () => {
+    if (!this.resizing) return;
+    this.resizing = false;
+    this.renderer.removeClass(document.body, 'resizing-terminal');
+    window.removeEventListener('mousemove', this.onResizing);
+    window.removeEventListener('mouseup', this.onResizeEnd);
+  };
+
+  private removeResizeListeners() {
+    window.removeEventListener('mousemove', this.onResizing);
+    window.removeEventListener('mouseup', this.onResizeEnd);
   }
 }

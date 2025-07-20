@@ -1,15 +1,33 @@
 .terminal-container {
     background: #1e1e1e;
     color: #d4d4d4;
-    border-radius: 6px 6px 0 0;
-    border: 1px solid #333;
-    box-shadow: 0 2px 16px #000a;
+    border-radius: 0; // Remove rounding
+    border: none; // Remove border
+    box-shadow: none; // Remove shadow
     min-height: 0;
-    min-width: 60vw;
+    min-width: 0; // CHANGED: allow to shrink to parent
+    width: 100%; // CHANGED: fill parent width
     font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 0 0 auto; // CHANGED: do not grow/shrink, just use height
+    transition: box-shadow 0.2s;
+    user-select: none;
+    margin: 0; // CHANGED: remove any margin
+    padding: 0; // CHANGED: remove any padding
+}
+
+.terminal-resize-handle {
+    // CHANGED: resize handle style
+    height: 8px;
+    cursor: ns-resize;
+    background: linear-gradient(to bottom, #232323 60%, #333 100%);
+    border-radius: 6px 6px 0 0;
+    border-bottom: 1px solid #222;
+    width: 100%;
+    position: relative;
+    z-index: 20;
+    user-select: none;
 }
 
 .terminal {
@@ -92,4 +110,9 @@ a {
 ::-webkit-scrollbar-thumb {
     background: #333;
     border-radius: 4px;
+}
+
+body.resizing-terminal {
+    cursor: ns-resize !important;
+    user-select: none !important;
 }

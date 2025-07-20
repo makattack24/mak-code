@@ -2,7 +2,7 @@
     <div class="app-content">
         <router-outlet></router-outlet>
     </div>
-    <!-- <app-terminal [pinPosition]="terminalPosition" (pinPositionChange)="onTerminalPositionChange($event)"
-        (resize)="onTerminalResize($event)">
-    </app-terminal> -->
+    <app-terminal [style.height.px]="terminalHeight" [height]="terminalHeight"
+        (heightChange)="onTerminalHeightChange($event)">
+    </app-terminal>
 </div>
