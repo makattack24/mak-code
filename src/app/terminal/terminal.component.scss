@@ -1,40 +1,50 @@
 .terminal-container {
     background: #1e1e1e;
     color: #d4d4d4;
-    border-radius: 6px;
+    border-radius: 6px 6px 0 0;
     border: 1px solid #333;
     box-shadow: 0 2px 16px #000a;
-    min-height: var(--terminal-min-height, 200px);
+    min-height: 0;
     min-width: 60vw;
     font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-}
-
-.terminal-toolbar {
-    background: #2c2c32;
-    padding: 0.25rem 0.75rem;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #222;
-    min-height: 32px;
+    height: 100%;
 }
 
 .terminal {
-    flex: 1;
+    flex: 1 1 0;
     display: flex;
     flex-direction: column;
-    padding: 0.5rem 1rem;
     overflow-y: auto;
+    min-height: 0;
+    position: relative;
+    padding: 0;
+}
+
+.terminal-toolbar {
+    background: #232323;
+    padding: 0 0.9rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #222;
+    height: 28px;
+    min-height: 28px;
+    max-height: 28px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-shrink: 0;
 }
 
 .terminal-lines {
-    flex: 1;
-    overflow-y: auto;
+    flex: 1 1 0;
+    overflow-y: auto; // <-- THIS IS CRITICAL
     white-space: pre-wrap;
     font-size: 1rem;
-    margin-bottom: 0.5rem;
+    padding: 0.5rem 1rem 0 1rem;
+    min-height: 0;
+    max-height: 100%; // <-- ENSURE IT CAN GROW
 }
 
 .terminal-input {
@@ -45,6 +55,8 @@
     padding: 0.25rem 0.5rem;
     font-size: 1rem;
     border: 1px solid #222;
+    margin: 0.5rem 1rem 0.5rem 1rem;
+    flex-shrink: 0;
 }
 
 .terminal-input span {

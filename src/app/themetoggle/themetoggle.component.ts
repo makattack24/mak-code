@@ -12,10 +12,16 @@ import { Component, Input } from '@angular/core';
     button {
       background: transparent;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       cursor: pointer;
       color: var(--primary);
-      transition: color 0.2s;
+      transition: color 0.2s, background 0.2s;
+      padding: 0.15rem 0.5rem;
+      margin: 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      height: 100%;
     }
     button:hover, button:focus {
       color: var(--accent);

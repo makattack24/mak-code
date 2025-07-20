@@ -64,13 +64,11 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; // Prevent scrollbars
 }
 
 body {
     min-height: 100vh;
     min-width: 100vw;
-    overflow: hidden; // Prevent scrollbars
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-family);
