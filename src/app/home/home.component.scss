@@ -1,7 +1,11 @@
 .home-layout {
+    height: 100%;
+    width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
     flex-direction: column;
+    justify-content: center; // optional, for vertical centering
+    align-items: center; // or center, as you wish
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
 }
