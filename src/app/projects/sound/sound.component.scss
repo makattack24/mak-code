@@ -1,0 +1,14 @@
+.sound-card {
+    padding: 2rem;
+    background: #23272e;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px #0002;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+audio {
+    width: 100%;
+    max-width: 600px;
+}

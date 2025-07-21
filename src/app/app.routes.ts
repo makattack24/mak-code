@@ -7,6 +7,7 @@ import { CalculatorComponent } from './projects/calculator/calculator.component'
 import { ClockComponent } from './projects/clock/clock.component';
 import { GameComponent } from './projects/game/game.component';
 import { GraphicsgameComponent } from './projects/graphicsgame/graphicsgame.component';
+import { SoundComponent } from './projects/sound/sound.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -18,7 +19,8 @@ export const routes: Routes = [
             { path: 'calculator', component: CalculatorComponent },
             { path: 'clock', component: ClockComponent },
             { path: 'game', component: GameComponent },
-            { path: 'sim', component: GraphicsgameComponent }
+            { path: 'sim', component: GraphicsgameComponent },
+            { path: 'sound', component: SoundComponent }
             // Add more project routes here as needed
         ]
     },

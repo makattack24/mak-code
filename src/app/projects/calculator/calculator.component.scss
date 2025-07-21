@@ -1,11 +1,10 @@
 .calculator-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     padding: 20px;
     border-radius: 8px;
-    max-width: 100%;
-    width: 35%;
+    width: 25%;
     margin: 2rem auto;
     border: 1px solid var(--border, #333);
 }
@@ -15,15 +14,18 @@
     flex-direction: column;
     gap: 0.5rem; // space between rows
     width: 100%;
+    flex: 1 1 0;
 }
 
 .calculator-row {
     display: flex;
     gap: 0.3rem; // space between buttons in a row
+    width: 100%;
 }
 
 .calculator-row button {
     flex: 1 1 0;
+    min-width: 0;
 }
 
 .calculator-display {

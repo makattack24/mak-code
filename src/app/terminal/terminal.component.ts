@@ -57,6 +57,10 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
       this.lines.push('Launching clock project...');
       this.router.navigate(['/projects/clock']);
     },
+    'run sound': () => {
+      this.lines.push('Launching sound project...');
+      this.router.navigate(['/projects/sound']);
+    },
     'run game': () => {
       this.lines.push('Launching game project...');
       this.router.navigate(['/projects/game']);
