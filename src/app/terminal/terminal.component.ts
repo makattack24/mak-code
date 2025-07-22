@@ -223,7 +223,23 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     if (handler) {
       handler();
     } else {
-      this.lines.push(`Unknown command: ${cmd}`);
+      // Try to evaluate as a math expression
+      try {
+        // Only allow numbers, operators, parentheses, decimal points, and spaces
+        if (/^[\d+\-*/().\s%]+$/.test(cmd)) {
+          // eslint-disable-next-line no-new-func
+          const result = Function(`"use strict";return (${cmd})`)();
+          if (typeof result === 'number' && isFinite(result)) {
+            this.lines.push(result.toString());
+          } else {
+            this.lines.push('Invalid expression.');
+          }
+        } else {
+          this.lines.push(`Unknown command: ${cmd}`);
+        }
+      } catch {
+        this.lines.push('Invalid expression.');
+      }
     }
     this.scrollToBottom();
   }

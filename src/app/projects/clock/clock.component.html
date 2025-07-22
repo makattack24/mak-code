@@ -1,4 +1,22 @@
 <div class="clock-card">
-    <div class="clock-label">Current Time</div>
-    <div class="clock-time">{{ time }}</div>
+    <ng-container *ngIf="times && times.length">
+        <div class="clock-label">
+            <span class="clock-main-label">{{ times[0].label }}</span>
+            <span class="clock-zone">({{ times[0].zone }})</span>
+        </div>
+        <div class="clock-time">{{ times[0].time }}</div>
+        <button (click)="toggleOtherTimes()" class="clock-toggle-btn">
+            {{ showOtherTimes ? 'Hide Other Timezones' : 'Show Other Timezones' }}
+        </button>
+        <div class="clock-other-times" *ngIf="showOtherTimes">
+            <div *ngFor="let t of times.slice(1)" class="clock-other-row">
+                <span class="clock-tz-label">{{ t.label }}</span>
+                <span class="clock-zone">({{ t.zone }})</span>
+                <span class="clock-tz-time">{{ t.time }}</span>
+            </div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!times || !times.length">
+        <div class="clock-label">Loading...</div>
+    </ng-container>
 </div>
