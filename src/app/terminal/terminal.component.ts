@@ -259,10 +259,48 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     const delta = this.startY - event.clientY;
     let newHeight = this.startHeight + delta;
     newHeight = Math.max(this.minHeight, Math.min(this.maxHeight, newHeight));
+
+    const snapThreshold = 40;
+    const windowHeight = window.innerHeight;
+    const mouseY = event.clientY;
+
+    // Minimize if dragged to bottom
+    if (windowHeight - mouseY < snapThreshold) {
+      this.isMinimized = true;
+      this.height = this.minHeight;
+      this.heightChange.emit(this.height);
+      this.resize.emit({ height: this.height });
+      this.resizing = false;
+      this.renderer.removeClass(document.body, 'resizing-terminal');
+      window.removeEventListener('mousemove', this.onResizing);
+      window.removeEventListener('mouseup', this.onResizeEnd);
+      return;
+    }
+
+    // Restore if dragging up while minimized
+    if (this.isMinimized && newHeight > this.minHeight + 30) {
+      this.restoreTerminal();
+    }
+
     this.height = newHeight;
     this.heightChange.emit(this.height);
     this.resize.emit({ height: this.height });
   };
+
+  minimizeTerminal() {
+    this.isMinimized = true;
+    this.height = this.minHeight;
+    this.heightChange.emit(this.height);
+    this.resize.emit({ height: this.height });
+  }
+
+  restoreTerminal() {
+    this.isMinimized = false;
+    this.height = 300; // Or your preferred default height
+    this.heightChange.emit(this.height);
+    this.resize.emit({ height: this.height });
+    setTimeout(() => this.focusInput(), 0);
+  }
 
   onResizeEnd = () => {
     if (!this.resizing) return;

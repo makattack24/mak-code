@@ -2,6 +2,18 @@
     <div #resizeHandle class="terminal-resize-handle"></div>
     <div class="terminal-toolbar">
         <app-themetoggle></app-themetoggle>
+        <button *ngIf="!isMinimized" class="toolbar-btn" title="Minimize" (click)="minimizeTerminal()">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+                <polyline points="4,6 8,10 12,6" fill="none" stroke="#00e676" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+        <button *ngIf="isMinimized" class="toolbar-btn" title="Restore" (click)="restoreTerminal()">
+            <svg width="16" height="16" viewBox="0 0 16 16">
+                <polyline points="4,10 8,6 12,10" fill="none" stroke="#00e676" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
     </div>
     <div class="terminal" *ngIf="!isMinimized" (click)="focusInput()">
         <div class="terminal-lines" #linesContainer>

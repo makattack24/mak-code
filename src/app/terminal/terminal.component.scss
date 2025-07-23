@@ -8,6 +8,67 @@
     font-weight: bold;
 }
 
+.toolbar-btn {
+    background: none;
+    border: none;
+    color: #00e676;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 0.15rem;
+    padding: 0;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    height: 22px;
+    width: 22px;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.toolbar-btn:hover {
+    background: rgba(0, 230, 118, 0.08);
+}
+
+.icon-chevron-down,
+.icon-chevron-up {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-chevron-down::before,
+.icon-chevron-up::before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-style: solid;
+    border-color: #00e676;
+}
+
+.icon-chevron-down::before {
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.icon-chevron-up::before {
+    border-width: 0 2px 0 2px;
+    transform: rotate(-45deg);
+}
+
+.restore-btn {
+    margin-left: auto;
+    background: #232323;
+    color: #00e676;
+    border: none;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
 .terminal-container {
     background: #1e1e1e;
     color: #d4d4d4;
