@@ -3,9 +3,14 @@ import { Output, EventEmitter, Input, Component, AfterViewInit, AfterViewChecked
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
+import { TerminalCommandsService } from '../services/commands.service';
+
 
 type PinPosition = 'center' | 'bottom' | 'left' | 'right';
-
+interface TerminalLine {
+  type: 'command' | 'output';
+  text: string;
+}
 @Component({
   selector: 'app-terminal',
   standalone: true,
@@ -25,10 +30,10 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 
 
   isMinimized = false;
-  minHeight = 80; // CHANGED: px
+  minHeight = 80;
   maxHeight = 500;
   lines: string[] = [
-    'You can use commands like "help, /projects, /contact, /about, visit "site name".',
+    'You can use commands like "help, /projects, /contact, /about, or visit "site name".',
     '---Version 0.0.1 alpha---',
     'Want to know more about this project? Visit this <a href="https://github.com/makattack24?tab=repositories" target="_blank">github</a> page.',
     '------------------------------------------------------------------------------------------',
@@ -40,73 +45,25 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   autocompleteList: string[] = ['about', 'contact', 'projects', 'help', 'cls', 'clear', 'home'];
   isInputFocused = false;
 
-  // Track if user is at the bottom
   private shouldAutoScroll = true;
   private scrollListener: (() => void) | null = null;
+  private commandHandlers: { [key: string]: () => void };
+  private resizing = false;
+  private startY = 0;
+  private startHeight = 0;
+  private navigationHistory: string[] = [];
 
-  private commandHandlers: { [key: string]: () => void } = {
-    'kill': () => {
-      this.lines.push('Terminating application...');
-      this.router.navigate(['/projects']);
-    },
-    'run calc': () => {
-      this.lines.push('Launching calculator project...');
-      this.router.navigate(['/projects/calculator']);
-    },
-    'run clock': () => {
-      this.lines.push('Launching clock project...');
-      this.router.navigate(['/projects/clock']);
-    },
-    'run sound': () => {
-      this.lines.push('Launching sound project...');
-      this.router.navigate(['/projects/sound']);
-    },
-    'run game': () => {
-      this.lines.push('Launching game project...');
-      this.router.navigate(['/projects/game']);
-    },
-    'run sim': () => {
-      this.lines.push('Launching sim project...');
-      this.router.navigate(['/projects/sim']);
-    },
-    'help': () => {
-      this.lines.push('Available commands: help, /about, /contact, /projects, /home');
-    },
-    '/': () => {
-      this.lines.push('Navigating to home page.');
-      this.router.navigate(['/home']);
-    },
-    '/home': () => {
-      this.lines.push('Navigating to home page.');
-      this.router.navigate(['/home']);
-    },
-    '/about': () => {
-      this.lines.push('Navigating to about page.');
-      this.router.navigate(['/about']);
-    },
-    '/contact': () => {
-      this.lines.push('Navigating to contact page.');
-      this.router.navigate(['/contact']);
-    },
-    '/projects': () => {
-      this.lines.push('Navigating to projects page.');
-      this.router.navigate(['/projects']);
-    },
-    'cls': () => {
-      this.lines = [];
-    },
-    'clear': () => {
-      this.lines = [];
-    },
-    'ls': () => {
-      this.lines.push('Available directories: /home, /about, /contact, /projects');
-    }
-  };
-
-  private resizing = false; // CHANGED
-  private startY = 0; // CHANGED
-  private startHeight = 0; // CHANGED
-  constructor(private renderer: Renderer2, private el: ElementRef, private router: Router) { }
+  constructor(private renderer: Renderer2, private el: ElementRef, private router: Router, private commandsService: TerminalCommandsService) {
+    this.commandHandlers = this.commandsService.getHandlers(this.lines, this.navigationHistory);    // Listen to route changes and store history
+    this.router.events.subscribe(event => {
+      if ((event as any).url) {
+        this.navigationHistory.push((event as any).url);
+        if (this.navigationHistory.length > 50) {
+          this.navigationHistory.shift();
+        }
+      }
+    });
+  }
 
   ngAfterViewInit() {
     this.focusInput();
@@ -165,8 +122,33 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 
   handleInput(event: KeyboardEvent) {
     if (event.key === 'Enter') {
-      this.processCommand(this.input.trim());
-      this.input = '';
+      if (this.input.trim()) {
+        this.processCommand(this.input.trim());
+        this.history.push(this.input.trim());
+        this.historyIndex = this.history.length;
+        this.input = '';
+      }
+    } else if (event.key === 'ArrowUp') {
+      if (this.history.length > 0) {
+        if (this.historyIndex > 0) {
+          this.historyIndex--;
+        } else {
+          this.historyIndex = 0;
+        }
+        this.input = this.history[this.historyIndex];
+        setTimeout(() => this.terminalInput?.nativeElement.select(), 0);
+      }
+    } else if (event.key === 'ArrowDown') {
+      if (this.history.length > 0) {
+        if (this.historyIndex < this.history.length - 1) {
+          this.historyIndex++;
+          this.input = this.history[this.historyIndex];
+        } else {
+          this.historyIndex = this.history.length;
+          this.input = '';
+        }
+        setTimeout(() => this.terminalInput?.nativeElement.select(), 0);
+      }
     }
   }
 
