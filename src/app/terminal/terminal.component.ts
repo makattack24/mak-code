@@ -61,8 +61,9 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   ) {
     this.commandHandlers = this.commandsService.getHandlers(this.lines, this.navigationHistory);
     this.router.events.subscribe(event => {
-      if ((event as any).url) {
-        this.navigationHistory.push((event as any).url);
+      const url = (event as any).url;
+      if (url && url !== this.navigationHistory[this.navigationHistory.length - 1]) {
+        this.navigationHistory.push(url);
         if (this.navigationHistory.length > 50) {
           this.navigationHistory.shift();
         }

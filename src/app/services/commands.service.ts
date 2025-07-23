@@ -41,8 +41,10 @@ export class TerminalCommandsService {
       },
       'back': () => {
         if (navigationHistory.length > 1) {
+          // Remove current URL
           navigationHistory.pop();
-          const previousUrl = navigationHistory.pop();
+          // Get previous URL
+          const previousUrl = navigationHistory[navigationHistory.length - 1];
           if (previousUrl) {
             lines.push({ type: 'output', text: `Navigating to previous page: ${previousUrl}` });
             this.router.navigateByUrl(previousUrl);
