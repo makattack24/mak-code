@@ -5,7 +5,10 @@
     </div>
     <div class="terminal" *ngIf="!isMinimized" (click)="focusInput()">
         <div class="terminal-lines" #linesContainer>
-            <div *ngFor="let line of lines" [innerHTML]="line">{{ line }}</div>
+            <div *ngFor="let line of lines">
+                <span *ngIf="line.type === 'command'" class="terminal-command">{{ line.text }}</span>
+                <span *ngIf="line.type === 'output'" class="terminal-output" [innerHTML]="line.text"></span>
+            </div>
         </div>
         <div class="terminal-input">
             <span>&gt;</span>

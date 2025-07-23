@@ -1,25 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
+interface TerminalLine {
+  type: 'command' | 'output';
+  text: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TerminalCommandsService {
   constructor(private router: Router) { }
 
-  getHandlers(lines: string[], navigationHistory: string[]): { [key: string]: () => void } {
+  getHandlers(lines: TerminalLine[], navigationHistory: string[]): { [key: string]: () => void } {
     const goAbout = () => {
-      lines.push('Navigating to about page.');
+      lines.push({ type: 'output', text: 'Navigating to about page.' });
       this.router.navigate(['/about']);
     };
     const goContact = () => {
-      lines.push('Navigating to contact page.');
+      lines.push({ type: 'output', text: 'Navigating to contact page.' });
       this.router.navigate(['/contact']);
     };
     const goProjects = () => {
-      lines.push('Navigating to projects page.');
+      lines.push({ type: 'output', text: 'Navigating to projects page.' });
       this.router.navigate(['/projects']);
     };
     const goHome = () => {
-      lines.push('Navigating to home page.');
+      lines.push({ type: 'output', text: 'Navigating to home page.' });
       this.router.navigate(['/home']);
     };
     return {
@@ -32,25 +37,38 @@ export class TerminalCommandsService {
       'home': goHome,
       '/home': goHome,
       'help': () => {
-        lines.push('Available commands: /about, /contact, /projects, /home, back');
+        lines.push({ type: 'output', text: 'Available commands: /about, /contact, /projects, /home, back' });
       },
       'back': () => {
         if (navigationHistory.length > 1) {
           navigationHistory.pop();
           const previousUrl = navigationHistory.pop();
           if (previousUrl) {
-            lines.push(`Navigating to previous page: ${previousUrl}`);
+            lines.push({ type: 'output', text: `Navigating to previous page: ${previousUrl}` });
             this.router.navigateByUrl(previousUrl);
           } else {
-            lines.push('No previous page in history.');
+            lines.push({ type: 'output', text: 'No previous page in history.' });
           }
         } else {
-          lines.push('No previous page in history.');
+          lines.push({ type: 'output', text: 'No previous page in history.' });
         }
       },
       'cls': () => { lines.length = 0; },
       'clear': () => { lines.length = 0; },
-      'ls': () => { lines.push('Available directories: /home, /about, /contact, /projects'); }
+      'ls': () => { lines.push({ type: 'output', text: 'Available directories: /home, /about, /contact, /projects' }); },
+      'kill': () => {
+        const match = this.router.url.match(/^\/projects\/[^\/]+$/);
+        if (match) {
+          this.router.navigate(['/projects']);
+          lines.push({ type: 'output', text: 'Closing the application.' });
+        } else {
+          lines.push({ type: 'output', text: 'No app is currently running.' });
+        }
+      },
+      // 'end': () => {
+      //   this.router.navigate(['/projects']);
+      //   lines.push({ type: 'output', text: 'Closing the application...' });
+      // }
     };
   }
 }

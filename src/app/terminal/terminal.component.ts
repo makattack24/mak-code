@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Output, EventEmitter, Input, Component, AfterViewInit, AfterViewChecked, ElementRef, Renderer2, ViewChild, OnDestroy, PipeTransform } from '@angular/core';
+import { Output, EventEmitter, Input, Component, AfterViewInit, AfterViewChecked, ElementRef, Renderer2, ViewChild, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
 import { TerminalCommandsService } from '../services/commands.service';
 
-
 type PinPosition = 'center' | 'bottom' | 'left' | 'right';
+
 interface TerminalLine {
   type: 'command' | 'output';
   text: string;
 }
+
 @Component({
   selector: 'app-terminal',
   standalone: true,
@@ -24,19 +25,18 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   @Output() resize = new EventEmitter<{ width?: number, height?: number }>();
   @ViewChild('terminalInput', { static: false }) terminalInput?: ElementRef<HTMLInputElement>;
   @ViewChild('linesContainer', { static: false }) linesContainer?: ElementRef<HTMLDivElement>;
-  @Input() height: number | undefined; // CHANGED: Height in px
-  @Output() heightChange = new EventEmitter<number>(); // CHANGED
+  @Input() height: number | undefined;
+  @Output() heightChange = new EventEmitter<number>();
   @ViewChild('resizeHandle', { static: false }) resizeHandle?: ElementRef<HTMLDivElement>;
-
 
   isMinimized = false;
   minHeight = 80;
   maxHeight = 500;
-  lines: string[] = [
-    'You can use commands like "help, /projects, /contact, /about, or visit "site name".',
-    '---Version 0.0.1 alpha---',
-    'Want to know more about this project? Visit this <a href="https://github.com/makattack24?tab=repositories" target="_blank">github</a> page.',
-    '------------------------------------------------------------------------------------------',
+  lines: TerminalLine[] = [
+    { type: 'output', text: 'You can use commands like "help, /projects, /contact, /about, or visit "site name".' },
+    { type: 'output', text: '---Version 0.0.1 alpha---' },
+    { type: 'output', text: 'Want to know more about this project? Visit this <a href="https://github.com/makattack24?tab=repositories" target="_blank">github</a> page.' },
+    { type: 'output', text: '------------------------------------------------------------------------------------------' },
   ];
 
   input = '';
@@ -53,8 +53,13 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   private startHeight = 0;
   private navigationHistory: string[] = [];
 
-  constructor(private renderer: Renderer2, private el: ElementRef, private router: Router, private commandsService: TerminalCommandsService) {
-    this.commandHandlers = this.commandsService.getHandlers(this.lines, this.navigationHistory);    // Listen to route changes and store history
+  constructor(
+    private renderer: Renderer2,
+    private el: ElementRef,
+    private router: Router,
+    private commandsService: TerminalCommandsService
+  ) {
+    this.commandHandlers = this.commandsService.getHandlers(this.lines, this.navigationHistory);
     this.router.events.subscribe(event => {
       if ((event as any).url) {
         this.navigationHistory.push((event as any).url);
@@ -69,7 +74,6 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     this.focusInput();
     this.scrollToBottom(true);
 
-    // Attach scroll event listener
     if (this.linesContainer?.nativeElement) {
       this.scrollListener = this.renderer.listen(
         this.linesContainer.nativeElement,
@@ -80,7 +84,6 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
       );
     }
 
-    // CHANGED: Add mouse listeners for resizing
     if (this.resizeHandle?.nativeElement) {
       this.renderer.listen(this.resizeHandle.nativeElement, 'mousedown', (event: MouseEvent) => this.onResizeStart(event));
     }
@@ -91,7 +94,7 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
       this.scrollListener();
       this.scrollListener = null;
     }
-    this.removeResizeListeners(); // CHANGED
+    this.removeResizeListeners();
   }
 
   ngAfterViewChecked() {
@@ -101,7 +104,6 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   private isUserAtBottom(): boolean {
     const el = this.linesContainer?.nativeElement;
     if (!el) return true;
-    // Allow a small threshold for "almost at bottom"
     return el.scrollHeight - el.scrollTop - el.clientHeight < 5;
   }
 
@@ -153,17 +155,35 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
   }
 
   processCommand(cmd: string) {
-    console.log('Processing command:', cmd);
     if (!cmd) return;
-    this.lines.push(`> ${cmd}`);
+    this.lines.push({ type: 'command', text: `> ${cmd}` });
     const command = cmd.toLowerCase();
 
-    // Enhanced "visit" command: supports many sites and common shortcuts
+    if (command.startsWith('run ')) {
+      const project = command.substring(4).trim();
+      const projectRoutes: { [key: string]: string } = {
+        'calc': '/projects/calculator',
+        'calculator': '/projects/calculator',
+        'clock': '/projects/clock',
+        'game': '/projects/game',
+        'sim': '/projects/sim',
+        'sound': '/projects/sound'
+      };
+      const route = projectRoutes[project];
+      if (route) {
+        this.lines.push({ type: 'output', text: `Running ${project}...` });
+        this.router.navigate([route]);
+      } else {
+        this.lines.push({ type: 'output', text: `Unknown project: ${project}` });
+      }
+      this.scrollToBottom();
+      return;
+    }
+
     if (command.startsWith('visit ')) {
       const site = cmd.substring(6).trim().toLowerCase();
       let url = '';
 
-      // Common shortcuts
       const shortcuts: { [key: string]: string } = {
         'github': 'https://github.com/',
         'google': 'https://www.google.com/',
@@ -192,10 +212,10 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
       }
 
       if (url) {
-        this.lines.push(`Opening ${url} in a new tab...`);
+        this.lines.push({ type: 'output', text: `Opening ${url} in a new tab...` });
         window.open(url, '_blank');
       } else {
-        this.lines.push(`Unknown site: ${site}`);
+        this.lines.push({ type: 'output', text: `Unknown site: ${site}` });
       }
       this.scrollToBottom();
       return;
@@ -205,22 +225,20 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
     if (handler) {
       handler();
     } else {
-      // Try to evaluate as a math expression
       try {
-        // Only allow numbers, operators, parentheses, decimal points, and spaces
         if (/^[\d+\-*/().\s%]+$/.test(cmd)) {
           // eslint-disable-next-line no-new-func
           const result = Function(`"use strict";return (${cmd})`)();
           if (typeof result === 'number' && isFinite(result)) {
-            this.lines.push(result.toString());
+            this.lines.push({ type: 'output', text: result.toString() });
           } else {
-            this.lines.push('Invalid expression.');
+            this.lines.push({ type: 'output', text: 'Invalid expression.' });
           }
         } else {
-          this.lines.push(`Unknown command: ${cmd}`);
+          this.lines.push({ type: 'output', text: `Unknown command: ${cmd}` });
         }
       } catch {
-        this.lines.push('Invalid expression.');
+        this.lines.push({ type: 'output', text: 'Invalid expression.' });
       }
     }
     this.scrollToBottom();
