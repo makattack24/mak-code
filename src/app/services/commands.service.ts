@@ -67,10 +67,10 @@ export class TerminalCommandsService {
           lines.push({ type: 'output', text: 'No app is currently running.' });
         }
       },
-      // 'end': () => {
-      //   this.router.navigate(['/projects']);
-      //   lines.push({ type: 'output', text: 'Closing the application...' });
-      // }
+      '/': () => {
+        lines.push({ type: 'output', text: 'Navigating to home page.' });
+        this.router.navigate(['/home']);
+      },
     };
   }
 }
