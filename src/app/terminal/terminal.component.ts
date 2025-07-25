@@ -201,7 +201,9 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
         'bing': 'https://www.bing.com/',
         'amazon': 'https://www.amazon.com/',
         'netflix': 'https://www.netflix.com/',
-        'makattack24': 'https://github.com/makattack24?tab=repositories'
+        'makattack24': 'https://github.com/makattack24?tab=repositories',
+        'trezyn': 'https://soundcloud.com/trezyn',
+        'soundcloud': 'https://soundcloud.com/',
       };
 
       if (shortcuts[site]) {
