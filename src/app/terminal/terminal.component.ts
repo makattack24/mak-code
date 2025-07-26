@@ -168,7 +168,8 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 				'clock': '/projects/clock',
 				'game': '/projects/game',
 				'sim': '/projects/sim',
-				'sound': '/projects/sound'
+				'sound': '/projects/sound',
+				'editor': '/projects/editor',
 			};
 			const route = projectRoutes[project];
 			if (route) {

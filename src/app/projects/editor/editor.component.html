@@ -1,0 +1,22 @@
+<div class="editor-ide">
+    <div class="editor-toolbar">
+        <button (click)="runCode()">Run</button>
+    </div>
+    <div class="editor-main">
+        <div class="editor-lines">
+            <span *ngFor="let line of lineNumbers">{{ line }}</span>
+        </div>
+        <div class="editor-textarea-wrapper">
+            <pre class="editor-pre">{{ code || ' ' }}</pre>
+            <textarea #editorTextarea [(ngModel)]="code" (input)="onInput()" spellcheck="false"></textarea>
+        </div>
+    </div>
+    <div class="editor-output">
+        <div *ngIf="output"><strong>Output:</strong>
+            <pre>{{ output }}</pre>
+        </div>
+        <div *ngIf="error" class="editor-error"><strong>Error:</strong>
+            <pre>{{ error }}</pre>
+        </div>
+    </div>
+</div>

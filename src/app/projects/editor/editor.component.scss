@@ -1,0 +1,68 @@
+.editor-main {
+    display: flex;
+    background: #181a1b;
+    border-radius: 4px;
+    overflow: hidden;
+    align-items: flex-start;
+}
+
+.editor-lines {
+    background: #23272e;
+    color: #888;
+    text-align: right;
+    user-select: none;
+    font-family: 'Fira Mono', 'Consolas', monospace;
+    font-size: 1em;
+    line-height: 1.5em;
+    padding: 8px 8px 8px 0;
+    border: none;
+}
+
+.editor-lines span {
+    display: block;
+    height: 1.5em;
+    line-height: 1.5em;
+}
+
+.editor-textarea-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+.editor-pre,
+textarea {
+    font-family: 'Fira Mono', 'Consolas', monospace;
+    font-size: 1em;
+    line-height: 1.5em;
+    padding: 8px;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: #eee;
+    width: 100%;
+    min-height: 22.5em;
+    box-sizing: border-box;
+    resize: none;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.editor-pre {
+    pointer-events: none;
+    color: transparent;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+textarea {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    color: #eee;
+    outline: none;
+    overflow: hidden;
+}
