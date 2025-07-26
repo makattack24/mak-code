@@ -165,7 +165,7 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 			const projectRoutes: { [key: string]: string } = {
 				'calc': '/projects/calculator',
 				'calculator': '/projects/calculator',
-				'clock': '/projects/clock',
+				'time': '/projects/clock',
 				'game': '/projects/game',
 				'sim': '/projects/sim',
 				'song': '/projects/sound',

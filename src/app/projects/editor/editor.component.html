@@ -4,7 +4,8 @@
     </div>
     <div class="editor-main">
         <div class="editor-lines">
-            <span *ngFor="let line of lineNumbers">{{ line }}</span>
+            <span *ngFor="let line of lineNumbers; let i = index" (click)="highlightLine(i)"
+                class="editor-line-number">{{ line }}</span>
         </div>
         <div class="editor-textarea-wrapper">
             <pre class="editor-pre">{{ code || ' ' }}</pre>

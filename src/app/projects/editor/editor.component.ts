@@ -42,6 +42,21 @@ export class EditorComponent implements AfterViewInit {
 		this.runInSandbox(this.code);
 	}
 
+	highlightLine(lineIndex: number) {
+		const lines = this.code.split('\n');
+		let start = 0;
+		for (let i = 0; i < lineIndex; i++) {
+			start += lines[i].length + 1; // +1 for the newline
+		}
+		const end = start + lines[lineIndex].length;
+		const textarea = this.textarea?.nativeElement;
+		if (textarea) {
+			textarea.focus();
+			textarea.setSelectionRange(start, end);
+		}
+	}
+
+
 	private runInSandbox(code: string) {
 		const iframe = document.createElement('iframe');
 		iframe.style.display = 'none';

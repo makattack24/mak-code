@@ -6,7 +6,7 @@
     align-items: flex-start;
     padding-top: 25px;
     padding-right: 35px !important;
-    ;
+    padding-left: 25px !important;
 }
 
 .editor-lines {
@@ -25,6 +25,16 @@
     display: block;
     height: 1.5em;
     line-height: 1.5em;
+    padding-left: 5px;
+}
+
+.editor-line-number {
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.editor-line-number:hover {
+    background: #444;
 }
 
 .editor-textarea-wrapper {
