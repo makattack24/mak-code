@@ -1,5 +1,20 @@
 <div class="sound-card">
-    <audio #audioRef controls src="assets/test.mp3"></audio>
-    <canvas #waveCanvas width="600" height="120"
-        style="width:100%;background:#181a20;border-radius:8px;margin-top:1rem;"></canvas>
+    <canvas #waveCanvas width="600" height="120"></canvas>
+
+    <div class="audio-player">
+        <button class="audio-btn" (click)="togglePlay()">
+            <span *ngIf="!isPlaying">&#9654;</span>
+            <span *ngIf="isPlaying">&#10073;&#10073;</span>
+        </button>
+        <span class="audio-time">{{ currentTime | date:'mm:ss' }} / {{ duration | date:'mm:ss' }}</span>
+        <input type="range" min="0" [max]="duration" step="0.01" [(ngModel)]="currentTime" (input)="seekAudio($event)"
+            class="audio-slider" />
+        <button class="audio-btn" (click)="toggleMute()">
+            <span class="material-icons">{{ isMuted ? 'volume_off' : 'volume_up' }}</span>
+        </button>
+        <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volume" (input)="changeVolume($event)"
+            class="audio-volume" [style.--val]="volume" />
+    </div>
+    <!-- Hidden native audio element -->
+    <audio #audioRef src="assets/test.mp3"></audio>
 </div>

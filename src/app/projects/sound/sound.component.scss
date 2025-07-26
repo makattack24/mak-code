@@ -6,9 +6,173 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    max-width: 700px;
+    margin: 2rem auto;
+    height: 350px;
+    justify-content: space-between;
+    position: relative;
 }
 
-audio {
+canvas {
+    display: block;
+    background: #181a20;
+    border-radius: 8px;
     width: 100%;
     max-width: 600px;
+    margin: 0 auto;
+}
+
+.audio-player {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--surface, #23272e);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0002;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+
+.audio-btn {
+    background: none;
+    border: none;
+    color: var(--text, #fff);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    border-radius: 50%;
+    transition: background 0.2s;
+    outline: none;
+
+    &:hover,
+    &:focus {
+        background: rgba(37, 99, 235, 0.1);
+    }
+}
+
+.audio-slider,
+.audio-volume {
+    flex: 1 1 auto;
+    accent-color: #2563eb;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface, #23272e);
+}
+
+.audio-time {
+    font-family: monospace;
+    font-size: 0.95rem;
+    color: var(--text, #fff);
+    min-width: 70px;
+    text-align: center;
+}
+
+/* Hide the native audio element */
+audio {
+    display: none;
+}
+
+/* Dark theme support */
+[data-theme='dark'] .audio-player {
+    background: #23272e;
+    color: #fff;
+}
+
+[data-theme='dark'] .audio-btn {
+    color: #fff;
+}
+
+[data-theme='dark'] .audio-time {
+    color: #fff;
+}
+
+[data-theme='dark'] .audio-slider,
+[data-theme='dark'] .audio-volume {
+    background: #181a20;
+    accent-color: #2563eb;
+}
+
+/* Custom volume bar with filled and unfilled track */
+.audio-volume {
+    width: 100px;
+    accent-color: #2563eb;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    height: 4px;
+    border-radius: 2px;
+    appearance: none;
+
+    // Chrome/Safari
+    &::-webkit-slider-runnable-track {
+        height: 4px;
+        border-radius: 2px;
+        background: linear-gradient(to right,
+                #2563eb 0%,
+                #2563eb calc(var(--val, 1) * 100%),
+                #444 calc(var(--val, 1) * 100%),
+                #444 100%);
+    }
+
+    &::-webkit-slider-thumb {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #2563eb;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        margin-top: -6px;
+        box-shadow: 0 2px 6px #0002;
+        cursor: pointer;
+    }
+
+    // Firefox
+    &::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: #2563eb;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        cursor: pointer;
+    }
+
+    &::-moz-range-track {
+        height: 4px;
+        border-radius: 2px;
+        background: linear-gradient(to right,
+                #2563eb 0%,
+                #2563eb calc(var(--val, 1) * 100%),
+                #444 calc(var(--val, 1) * 100%),
+                #444 100%);
+    }
+
+    // IE/Edge
+    &::-ms-fill-lower {
+        background: #2563eb;
+    }
+
+    &::-ms-fill-upper {
+        background: #444;
+    }
+
+    &::-ms-thumb {
+        width: 16px;
+        height: 16px;
+        background: #2563eb;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        cursor: pointer;
+    }
+
+    &::-ms-tooltip {
+        display: none;
+    }
+
+    &:focus {
+        outline: none;
+    }
 }
