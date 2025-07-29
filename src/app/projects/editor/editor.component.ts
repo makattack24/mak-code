@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, HostListener} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -20,6 +20,26 @@ export class EditorComponent implements AfterViewInit {
 		return Array(this.code.split('\n').length).fill(0).map((_, i) => i + 1);
 	}
 
+	// Add keyboard shortcut listeners
+    @HostListener('document:keydown', ['$event'])
+    handleKeyboardShortcut(event: KeyboardEvent) {
+        // F5 to run code
+        if (event.key === 'F5') {
+            event.preventDefault();
+            this.runCode();
+        }
+        // Ctrl+Enter to run code
+        else if (event.ctrlKey && event.key === 'Enter') {
+            event.preventDefault();
+            this.runCode();
+        }
+        // Ctrl+Shift+R to run code
+        else if (event.ctrlKey && event.shiftKey && event.key === 'R') {
+            event.preventDefault();
+            this.runCode();
+        }
+    }
+	
 	ngAfterViewInit() {
 		this.autoResize();
 	}
