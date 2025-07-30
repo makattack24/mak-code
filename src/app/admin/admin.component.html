@@ -66,45 +66,39 @@
     <div *ngIf="loading" class="loading">Loading users...</div>
     <div *ngIf="error" class="error">{{ error }}</div>
 
-    <!-- Search Section (only show when not loading and have users) -->
-    <div *ngIf="!loading && users.length > 0" class="search-section">
-        <div class="search-container">
-            <input 
-                type="text" 
-                class="search-input" 
-                placeholder="Search users by name, email, role, or ID..."
-                [(ngModel)]="searchTerm"
-                (input)="onSearch()"
-            >
-            <button 
-                *ngIf="searchTerm" 
-                class="btn-clear" 
-                (click)="clearSearch()"
-                title="Clear search"
-            >
-                ×
-            </button>
-        </div>
-        <div *ngIf="searchTerm && filteredUsers.length === 0" class="search-no-results">
-            No users found matching "{{ searchTerm }}"
-        </div>
-    </div>
-
     <!-- Users Table Section -->
-    <div *ngIf="!loading && filteredUsers.length > 0" class="table-section" [class.no-search]="users.length === 0">
-        <!-- Table Controls -->
-        <div class="table-controls">
+    <div *ngIf="!loading && users.length > 0" class="table-section">
+        <!-- Integrated Table Header with Search and Controls -->
+        <div class="table-header">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    placeholder="Search users..."
+                    [(ngModel)]="searchTerm"
+                    (input)="onSearch()"
+                >
+                <button 
+                    *ngIf="searchTerm" 
+                    class="btn-clear" 
+                    (click)="clearSearch()"
+                    title="Clear search"
+                >
+                    ×
+                </button>
+            </div>
+            
             <div class="table-info">
                 Showing {{ startIndex }} to {{ endIndex }} of {{ filteredUsers.length }} users
                 <span *ngIf="searchTerm">(filtered from {{ users.length }} total)</span>
             </div>
+            
             <div class="per-page-selector">
                 <label for="itemsPerPage">Show:</label>
                 <select 
                     id="itemsPerPage" 
                     [(ngModel)]="itemsPerPage" 
                     (change)="onItemsPerPageChange()"
-                    class="form-control"
                 >
                     <option *ngFor="let option of itemsPerPageOptions" [value]="option">
                         {{ option }}
@@ -112,6 +106,11 @@
                 </select>
                 <span>per page</span>
             </div>
+        </div>
+
+        <!-- Search No Results -->
+        <div *ngIf="searchTerm && filteredUsers.length === 0" class="search-no-results">
+            No users found matching "{{ searchTerm }}"
         </div>
 
         <!-- Scrollable Table Container -->
@@ -158,7 +157,7 @@
                     (click)="previousPage()" 
                     [disabled]="currentPage === 1"
                 >
-                    ← Previous
+                    ← Prev
                 </button>
                 
                 <button 
