@@ -1,1 +1,106 @@
-<p>admin works!</p>
+<div class="admin-container">
+    <div class="header">
+        <h2>Users</h2>
+        <button class="btn btn-primary" (click)="toggleAddForm()">
+            {{ showAddForm ? 'Cancel' : '+ Add User' }}
+        </button>
+    </div>
+
+    <!-- Add User Form -->
+    <div *ngIf="showAddForm" class="add-user-form">
+        <h3>Add New User</h3>
+        <form (ngSubmit)="addUser()" #userForm="ngForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name"
+                    [(ngModel)]="newUser.name" 
+                    required 
+                    class="form-control"
+                    placeholder="Full name"
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email"
+                    [(ngModel)]="newUser.email" 
+                    required 
+                    class="form-control"
+                    placeholder="user@example.com"
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select 
+                    id="role" 
+                    name="role"
+                    [(ngModel)]="newUser.role" 
+                    class="form-control"
+                >
+                    <option value="user">User</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button 
+                    type="submit" 
+                    class="btn btn-success"
+                    [disabled]="!userForm.form.valid || addingUser"
+                >
+                    {{ addingUser ? 'Adding...' : 'Add User' }}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading and Error States -->
+    <div *ngIf="loading" class="loading">Loading users...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <!-- Users Table -->
+    <table *ngIf="!loading && users.length > 0" class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <span class="role-badge" [ngClass]="user.role">
+                        {{ user.role }}
+                    </span>
+                </td>
+                <td>
+                    <button 
+                        class="btn btn-danger btn-sm" 
+                        (click)="deleteUser(user.id)"
+                        title="Delete user"
+                    >
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="!loading && users.length === 0" class="no-users">
+        No users found.
+    </div>
+</div>
