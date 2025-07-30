@@ -66,39 +66,120 @@
     <div *ngIf="loading" class="loading">Loading users...</div>
     <div *ngIf="error" class="error">{{ error }}</div>
 
-    <!-- Users Table -->
-    <table *ngIf="!loading && users.length > 0" class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let user of users">
-                <td>{{ user.id }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                    <span class="role-badge" [ngClass]="user.role">
-                        {{ user.role }}
-                    </span>
-                </td>
-                <td>
-                    <button 
-                        class="btn btn-danger btn-sm" 
-                        (click)="deleteUser(user.id)"
-                        title="Delete user"
-                    >
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Search Section (only show when not loading and have users) -->
+    <div *ngIf="!loading && users.length > 0" class="search-section">
+        <div class="search-container">
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search users by name, email, role, or ID..."
+                [(ngModel)]="searchTerm"
+                (input)="onSearch()"
+            >
+            <button 
+                *ngIf="searchTerm" 
+                class="btn-clear" 
+                (click)="clearSearch()"
+                title="Clear search"
+            >
+                ×
+            </button>
+        </div>
+        <div *ngIf="searchTerm && filteredUsers.length === 0" class="search-no-results">
+            No users found matching "{{ searchTerm }}"
+        </div>
+    </div>
+
+    <!-- Users Table Section -->
+    <div *ngIf="!loading && filteredUsers.length > 0" class="table-section" [class.no-search]="users.length === 0">
+        <!-- Table Controls -->
+        <div class="table-controls">
+            <div class="table-info">
+                Showing {{ startIndex }} to {{ endIndex }} of {{ filteredUsers.length }} users
+                <span *ngIf="searchTerm">(filtered from {{ users.length }} total)</span>
+            </div>
+            <div class="per-page-selector">
+                <label for="itemsPerPage">Show:</label>
+                <select 
+                    id="itemsPerPage" 
+                    [(ngModel)]="itemsPerPage" 
+                    (change)="onItemsPerPageChange()"
+                    class="form-control"
+                >
+                    <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+                        {{ option }}
+                    </option>
+                </select>
+                <span>per page</span>
+            </div>
+        </div>
+
+        <!-- Scrollable Table Container -->
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of paginatedUsers">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="role-badge" [ngClass]="user.role">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td>
+                            <button 
+                                class="btn btn-danger btn-sm" 
+                                (click)="deleteUser(user.id)"
+                                title="Delete user"
+                            >
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-container" *ngIf="totalPages > 1">
+            <div class="pagination">
+                <button 
+                    class="btn btn-pagination" 
+                    (click)="previousPage()" 
+                    [disabled]="currentPage === 1"
+                >
+                    ← Previous
+                </button>
+                
+                <button 
+                    *ngFor="let page of totalPagesArray" 
+                    class="btn btn-pagination" 
+                    [class.active]="page === currentPage"
+                    (click)="goToPage(page)"
+                >
+                    {{ page }}
+                </button>
+                
+                <button 
+                    class="btn btn-pagination" 
+                    (click)="nextPage()" 
+                    [disabled]="currentPage === totalPages"
+                >
+                    Next →
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div *ngIf="!loading && users.length === 0" class="no-users">
         No users found.

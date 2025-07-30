@@ -25,8 +25,12 @@ interface NewUser {
 })
 export class AdminComponent implements OnInit {
     users: User[] = [];
+    filteredUsers: User[] = [];
     loading = true;
     error: string | null = null;
+    
+    // Search property
+    searchTerm = '';
     
     // Form properties
     showAddForm = false;
@@ -37,6 +41,12 @@ export class AdminComponent implements OnInit {
         role: 'user'
     };
 
+    // Pagination properties
+    currentPage = 1;
+    itemsPerPage = 10;
+    itemsPerPageOptions = [10, 20, 30];
+    totalPages = 0;
+
     private apiUrl = '/.netlify/functions/users';
 
     constructor(private http: HttpClient) { }
@@ -45,13 +55,92 @@ export class AdminComponent implements OnInit {
         this.loadUsers();
     }
 
+    get paginatedUsers(): User[] {
+        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        return this.filteredUsers.slice(startIndex, endIndex);
+    }
+
+    get totalPagesArray(): number[] {
+        return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    }
+
+    get startIndex(): number {
+        if (this.filteredUsers.length === 0) return 0;
+        return (this.currentPage - 1) * this.itemsPerPage + 1;
+    }
+
+    get endIndex(): number {
+        const end = this.currentPage * this.itemsPerPage;
+        return Math.min(end, this.filteredUsers.length);
+    }
+
+    onSearch(): void {
+        this.filterUsers();
+        this.currentPage = 1;
+        this.updatePagination();
+    }
+
+    clearSearch(): void {
+        this.searchTerm = '';
+        this.filterUsers();
+        this.currentPage = 1;
+        this.updatePagination();
+    }
+
+    private filterUsers(): void {
+        if (!this.searchTerm.trim()) {
+            this.filteredUsers = [...this.users];
+        } else {
+            const searchLower = this.searchTerm.toLowerCase();
+            this.filteredUsers = this.users.filter(user =>
+                user.name.toLowerCase().includes(searchLower) ||
+                user.email.toLowerCase().includes(searchLower) ||
+                user.role.toLowerCase().includes(searchLower) ||
+                user.id.toString().includes(searchLower)
+            );
+        }
+    }
+
+    updatePagination(): void {
+        this.totalPages = Math.ceil(this.filteredUsers.length / this.itemsPerPage);
+        if (this.currentPage > this.totalPages) {
+            this.currentPage = Math.max(1, this.totalPages);
+        }
+    }
+
+    onItemsPerPageChange(): void {
+        this.currentPage = 1;
+        this.updatePagination();
+    }
+
+    goToPage(page: number): void {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+        }
+    }
+
+    previousPage(): void {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+        }
+    }
+
+    nextPage(): void {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+        }
+    }
+
     loadUsers(): void {
         this.loading = true;
         this.error = null;
         this.http.get<User[]>(this.apiUrl).subscribe({
             next: (data) => {
                 this.users = data;
+                this.filterUsers();
                 this.loading = false;
+                this.updatePagination();
             },
             error: (err) => {
                 console.error(err);
@@ -88,6 +177,8 @@ export class AdminComponent implements OnInit {
                 this.addingUser = false;
                 this.showAddForm = false;
                 this.resetForm();
+                this.filterUsers();
+                this.updatePagination();
             },
             error: (err) => {
                 console.error(err);
@@ -105,6 +196,8 @@ export class AdminComponent implements OnInit {
         this.http.delete(`${this.apiUrl}?id=${userId}`).subscribe({
             next: () => {
                 this.users = this.users.filter(user => user.id !== userId);
+                this.filterUsers();
+                this.updatePagination();
             },
             error: (err) => {
                 console.error(err);
