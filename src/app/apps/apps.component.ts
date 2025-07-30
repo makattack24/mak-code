@@ -3,11 +3,11 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-  selector: 'app-projects',
+  selector: 'app-apps',
   imports: [RouterOutlet, CommonModule],
-  templateUrl: './projects.component.html',
-  styleUrl: './projects.component.scss'
+  templateUrl: './apps.component.html',
+  styleUrl: './apps.component.scss'
 })
-export class ProjectsComponent {
+export class AppsComponent {
 
 }

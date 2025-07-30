@@ -19,25 +19,31 @@ export class TerminalCommandsService {
       lines.push({ type: 'output', text: 'Navigating to contact page.' });
       this.router.navigate(['/contact']);
     };
-    const goProjects = () => {
-      lines.push({ type: 'output', text: 'Navigating to projects page.' });
-      this.router.navigate(['/projects']);
+    const goApps = () => {
+      lines.push({ type: 'output', text: 'Navigating to apps page.' });
+      this.router.navigate(['/apps']);
     };
     const goHome = () => {
       lines.push({ type: 'output', text: 'Navigating to home page.' });
       this.router.navigate(['/home']);
+    };
+    const goAdmin = () => {
+      lines.push({ type: 'output', text: 'Navigating to admin page.' });
+      this.router.navigate(['/admin']);
     };
     return {
       'about': goAbout,
       '/about': goAbout,
       'contact': goContact,
       '/contact': goContact,
-      'projects': goProjects,
-      '/projects': goProjects,
+      'apps': goApps,
+      '/apps': goApps,
       'home': goHome,
       '/home': goHome,
+      'admin': goAdmin,
+      '/admin': goAdmin,
       'help': () => {
-        lines.push({ type: 'output', text: 'Available commands: /about, /contact, /projects, /home, back' });
+        lines.push({ type: 'output', text: 'Available commands: /about, /contact, /apps, /home, /admin, back' });
       },
       'back': () => {
         if (navigationHistory.length > 1) {
@@ -57,11 +63,11 @@ export class TerminalCommandsService {
       },
       'cls': () => { lines.length = 0; },
       'clear': () => { lines.length = 0; },
-      'ls': () => { lines.push({ type: 'output', text: 'Available directories: /home, /about, /contact, /projects' }); },
+      'ls': () => { lines.push({ type: 'output', text: 'Available directories: /home, /about, /contact, /apps' }); },
       'kill': () => {
-        const match = this.router.url.match(/^\/projects\/[^\/]+$/);
+        const match = this.router.url.match(/^\/apps\/[^\/]+$/);
         if (match) {
-          this.router.navigate(['/projects']);
+          this.router.navigate(['/apps']);
           lines.push({ type: 'output', text: 'Closing the application.' });
         } else {
           lines.push({ type: 'output', text: 'No app is currently running.' });

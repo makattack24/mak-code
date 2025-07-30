@@ -33,7 +33,7 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 	minHeight = 80;
 	maxHeight = 500;
 	lines: TerminalLine[] = [
-		{ type: 'output', text: 'You can use commands like "help, /projects, /contact, /about, or visit "site name".' },
+		{ type: 'output', text: 'You can use commands like "help, /apps, /contact, /about, or visit "site name".' },
 		{ type: 'output', text: '---Version 0.0.1 alpha---' },
 		{ type: 'output', text: 'Want to know more about this project? Visit this <a href="https://github.com/makattack24?tab=repositories" target="_blank">github</a> page.' },
 		{ type: 'output', text: '------------------------------------------------------------------------------------------' },
@@ -42,7 +42,7 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 	input = '';
 	history: string[] = [];
 	historyIndex = -1;
-	autocompleteList: string[] = ['about', 'contact', 'projects', 'help', 'cls', 'clear', 'home'];
+	autocompleteList: string[] = ['about', 'contact', 'apps', 'help', 'cls', 'clear', 'home'];
 	isInputFocused = false;
 
 	private shouldAutoScroll = true;
@@ -163,13 +163,13 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 		if (command.startsWith('run ')) {
 			const project = command.substring(4).trim();
 			const projectRoutes: { [key: string]: string } = {
-				'calc': '/projects/calculator',
-				'calculator': '/projects/calculator',
-				'time': '/projects/clock',
-				'game': '/projects/game',
-				'sim': '/projects/sim',
-				'song': '/projects/sound',
-				'text': '/projects/editor',
+				'calc': '/apps/calculator',
+				'calculator': '/apps/calculator',
+				'time': '/apps/clock',
+				'game': '/apps/game',
+				'sim': '/apps/sim',
+				'song': '/apps/sound',
+				'text': '/apps/editor',
 			};
 			const route = projectRoutes[project];
 			if (route) {
