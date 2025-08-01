@@ -88,13 +88,14 @@
                 <input type="text" class="search-input" placeholder="Search users..." [(ngModel)]="searchTerm"
                     (input)="onSearch()">
                 <button *ngIf="searchTerm" class="btn-clear" (click)="clearSearch()" title="Clear search">
-                    ×
+                    <i class="fa fa-times"></i>
                 </button>
             </div>
 
             <div class="table-info">
-                Showing {{ startIndex }} to {{ endIndex }} of {{ filteredUsers.length }} users
-                <span *ngIf="searchTerm">(filtered from {{ users.length }} total)</span>
+                <!--Showing {{ startIndex }} to {{ endIndex }} of {{ filteredUsers.length }} users -->
+                Showing {{filteredUsers.length}} users
+                <!-- <span *ngIf="searchTerm">(filtered from {{ users.length }} total)</span> -->
             </div>
 
             <div class="per-page-selector">
