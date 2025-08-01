@@ -2,24 +2,27 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ModalComponent } from '../shared/modal/modal.component';
 
 interface User {
     id: number;
     name: string;
     email: string;
     role: string;
+    isactive: boolean;
 }
 
 interface NewUser {
     name: string;
     email: string;
     role: string;
+    isactive?: boolean;
 }
 
 @Component({
     selector: 'app-admin',
     standalone: true,
-    imports: [CommonModule, HttpClientModule, FormsModule],
+    imports: [CommonModule, HttpClientModule, FormsModule, ModalComponent],
     templateUrl: './admin.component.html',
     styleUrls: ['./admin.component.scss']
 })
@@ -28,17 +31,22 @@ export class AdminComponent implements OnInit {
     filteredUsers: User[] = [];
     loading = true;
     error: string | null = null;
-    
+    editUser: User | null = null;
+    editUserForm: NewUser = { name: '', email: '', role: 'user', isactive: true };
+    updatingUser = false;
     // Search property
     searchTerm = '';
-    
+    sortColumn: (keyof User) | '' = '';
+    sortDirection: 'asc' | 'desc' = 'asc';
+
     // Form properties
     showAddForm = false;
     addingUser = false;
     newUser: NewUser = {
         name: '',
         email: '',
-        role: 'user'
+        role: 'user',
+        isactive: true
     };
 
     // Pagination properties
@@ -75,6 +83,39 @@ export class AdminComponent implements OnInit {
         return Math.min(end, this.filteredUsers.length);
     }
 
+    sortBy(column: keyof User) {
+        if (this.sortColumn === column) {
+            // Toggle direction
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            this.sortColumn = column;
+            this.sortDirection = 'asc';
+        }
+        this.sortUsers();
+    }
+
+    sortUsers() {
+        if (!this.sortColumn) return;
+        const dir = this.sortDirection === 'asc' ? 1 : -1;
+        // Type guard to ensure sortColumn is keyof User
+        if (this.sortColumn) {
+            this.filteredUsers.sort((a, b) => {
+                const valA = a[this.sortColumn as keyof User];
+                const valB = b[this.sortColumn as keyof User];
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    return valA.localeCompare(valB) * dir;
+                }
+                if (typeof valA === 'number' && typeof valB === 'number') {
+                    return (valA - valB) * dir;
+                }
+                if (typeof valA === 'boolean' && typeof valB === 'boolean') {
+                    return (Number(valA) - Number(valB)) * dir;
+                }
+                return 0;
+            });
+        }
+    }
+
     onSearch(): void {
         this.filterUsers();
         this.currentPage = 1;
@@ -100,6 +141,7 @@ export class AdminComponent implements OnInit {
                 user.id.toString().includes(searchLower)
             );
         }
+        this.sortUsers();
     }
 
     updatePagination(): void {
@@ -165,6 +207,22 @@ export class AdminComponent implements OnInit {
         };
     }
 
+
+    cancelEdit(): void {
+        this.editUser = null;
+        this.updatingUser = false;
+    }
+
+
+    startEditUser(user: User): void {
+        this.editUser = { ...user };
+        this.editUserForm = {
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isactive: user.isactive
+        };
+    }
     addUser(): void {
         if (!this.newUser.name || !this.newUser.email) {
             return;
@@ -184,6 +242,31 @@ export class AdminComponent implements OnInit {
                 console.error(err);
                 this.error = 'Failed to add user';
                 this.addingUser = false;
+            }
+        });
+    }
+
+    updateUser(): void {
+        if (!this.editUser) return;
+        this.updatingUser = true;
+        const updatedUser = {
+            ...this.editUser,
+            ...this.editUserForm
+        };
+        this.http.put<User>(`${this.apiUrl}?id=${this.editUser.id}`, updatedUser).subscribe({
+            next: (user) => {
+                // Update the user in the local array
+                const idx = this.users.findIndex(u => u.id === user.id);
+                if (idx !== -1) this.users[idx] = user;
+                this.filterUsers();
+                this.updatePagination();
+                this.editUser = null;
+                this.updatingUser = false;
+            },
+            error: (err) => {
+                console.error(err);
+                this.error = 'Failed to update user';
+                this.updatingUser = false;
             }
         });
     }

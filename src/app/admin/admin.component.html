@@ -12,50 +12,27 @@
         <form (ngSubmit)="addUser()" #userForm="ngForm">
             <div class="form-group">
                 <label for="name">Name</label>
-                <input 
-                    type="text" 
-                    id="name" 
-                    name="name"
-                    [(ngModel)]="newUser.name" 
-                    required 
-                    class="form-control"
-                    placeholder="Full name"
-                >
+                <input type="text" id="name" name="name" [(ngModel)]="newUser.name" required class="form-control"
+                    placeholder="Full name">
             </div>
-            
+
             <div class="form-group">
                 <label for="email">Email</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email"
-                    [(ngModel)]="newUser.email" 
-                    required 
-                    class="form-control"
-                    placeholder="user@example.com"
-                >
+                <input type="email" id="email" name="email" [(ngModel)]="newUser.email" required class="form-control"
+                    placeholder="user@example.com">
             </div>
-            
+
             <div class="form-group">
                 <label for="role">Role</label>
-                <select 
-                    id="role" 
-                    name="role"
-                    [(ngModel)]="newUser.role" 
-                    class="form-control"
-                >
+                <select id="role" name="role" [(ngModel)]="newUser.role" class="form-control">
                     <option value="user">User</option>
                     <option value="moderator">Moderator</option>
                     <option value="admin">Admin</option>
                 </select>
             </div>
-            
+
             <div class="form-actions">
-                <button 
-                    type="submit" 
-                    class="btn btn-success"
-                    [disabled]="!userForm.form.valid || addingUser"
-                >
+                <button type="submit" class="btn btn-success" [disabled]="!userForm.form.valid || addingUser">
                     {{ addingUser ? 'Adding...' : 'Add User' }}
                 </button>
             </div>
@@ -66,40 +43,63 @@
     <div *ngIf="loading" class="loading">Loading users...</div>
     <div *ngIf="error" class="error">{{ error }}</div>
 
+
+    <app-modal [show]="!!editUser" title="Edit User" (close)="cancelEdit()">
+        <form *ngIf="editUser" (ngSubmit)="updateUser()" #editForm="ngForm">
+            <div class="form-group">
+                <label for="editName">Name</label>
+                <input type="text" id="editName" name="editName" [(ngModel)]="editUserForm.name" required
+                    class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="editEmail">Email</label>
+                <input type="email" id="editEmail" name="editEmail" [(ngModel)]="editUserForm.email" required
+                    class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="editRole">Role</label>
+                <select id="editRole" name="editRole" [(ngModel)]="editUserForm.role" class="form-control">
+                    <option value="user">User</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editIsActive">Status</label>
+                <select id="editIsActive" name="editIsActive" [(ngModel)]="editUserForm.isactive" class="form-control">
+                    <option [ngValue]="true">Active</option>
+                    <option [ngValue]="false">Inactive</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success" [disabled]="!editForm.form.valid || updatingUser">
+                    {{ updatingUser ? 'Updating...' : 'Update User' }}
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+            </div>
+        </form>
+    </app-modal>
+
     <!-- Users Table Section -->
     <div *ngIf="!loading && users.length > 0" class="table-section">
         <!-- Integrated Table Header with Search and Controls -->
         <div class="table-header">
             <div class="search-container">
-                <input 
-                    type="text" 
-                    class="search-input" 
-                    placeholder="Search users..."
-                    [(ngModel)]="searchTerm"
-                    (input)="onSearch()"
-                >
-                <button 
-                    *ngIf="searchTerm" 
-                    class="btn-clear" 
-                    (click)="clearSearch()"
-                    title="Clear search"
-                >
+                <input type="text" class="search-input" placeholder="Search users..." [(ngModel)]="searchTerm"
+                    (input)="onSearch()">
+                <button *ngIf="searchTerm" class="btn-clear" (click)="clearSearch()" title="Clear search">
                     ×
                 </button>
             </div>
-            
+
             <div class="table-info">
                 Showing {{ startIndex }} to {{ endIndex }} of {{ filteredUsers.length }} users
                 <span *ngIf="searchTerm">(filtered from {{ users.length }} total)</span>
             </div>
-            
+
             <div class="per-page-selector">
                 <label for="itemsPerPage">Show:</label>
-                <select 
-                    id="itemsPerPage" 
-                    [(ngModel)]="itemsPerPage" 
-                    (change)="onItemsPerPageChange()"
-                >
+                <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
                     <option *ngFor="let option of itemsPerPageOptions" [value]="option">
                         {{ option }}
                     </option>
@@ -118,10 +118,36 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
+                        <th (click)="sortBy('id')" style="cursor:pointer">
+                            ID
+                            <span *ngIf="sortColumn === 'id'">
+                                <i class="fa" [ngClass]="sortDirection === 'asc' ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                            </span>
+                        </th>
+                        <th (click)="sortBy('name')" style="cursor:pointer">
+                            Name
+                            <span *ngIf="sortColumn === 'name'">
+                                <i class="fa" [ngClass]="sortDirection === 'asc' ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                            </span>
+                        </th>
+                        <th (click)="sortBy('email')" style="cursor:pointer">
+                            Email
+                            <span *ngIf="sortColumn === 'email'">
+                                <i class="fa" [ngClass]="sortDirection === 'asc' ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                            </span>
+                        </th>
+                        <th (click)="sortBy('role')" style="cursor:pointer">
+                            Role
+                            <span *ngIf="sortColumn === 'role'">
+                                <i class="fa" [ngClass]="sortDirection === 'asc' ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                            </span>
+                        </th>
+                        <th (click)="sortBy('isactive')" style="cursor:pointer">
+                            Status
+                            <span *ngIf="sortColumn === 'isactive'">
+                                <i class="fa" [ngClass]="sortDirection === 'asc' ? 'fa-caret-up' : 'fa-caret-down'"></i>
+                            </span>
+                        </th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -136,12 +162,17 @@
                             </span>
                         </td>
                         <td>
-                            <button 
-                                class="btn btn-danger btn-sm" 
-                                (click)="deleteUser(user.id)"
-                                title="Delete user"
-                            >
-                                Delete
+                            <span class="status-badge" [ngClass]="user.isactive ? 'active' : 'inactive'">
+                                {{ user.isactive ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" (click)="startEditUser(user)" title="Edit user">
+                                <i class="fa fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" style="margin-left: 8px;"
+                                (click)="deleteUser(user.id)" title="Delete user">
+                                <i class="fa fa-trash"></i>
                             </button>
                         </td>
                     </tr>
@@ -152,28 +183,16 @@
         <!-- Pagination -->
         <div class="pagination-container" *ngIf="totalPages > 1">
             <div class="pagination">
-                <button 
-                    class="btn btn-pagination" 
-                    (click)="previousPage()" 
-                    [disabled]="currentPage === 1"
-                >
+                <button class="btn btn-pagination" (click)="previousPage()" [disabled]="currentPage === 1">
                     ← Prev
                 </button>
-                
-                <button 
-                    *ngFor="let page of totalPagesArray" 
-                    class="btn btn-pagination" 
-                    [class.active]="page === currentPage"
-                    (click)="goToPage(page)"
-                >
+
+                <button *ngFor="let page of totalPagesArray" class="btn btn-pagination"
+                    [class.active]="page === currentPage" (click)="goToPage(page)">
                     {{ page }}
                 </button>
-                
-                <button 
-                    class="btn btn-pagination" 
-                    (click)="nextPage()" 
-                    [disabled]="currentPage === totalPages"
-                >
+
+                <button class="btn btn-pagination" (click)="nextPage()" [disabled]="currentPage === totalPages">
                     Next →
                 </button>
             </div>

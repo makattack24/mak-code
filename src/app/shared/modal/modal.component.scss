@@ -1,0 +1,98 @@
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: var(--surface);
+    color: var(--foreground);
+    border-radius: 8px;
+    max-width: 420px;
+    width: 100%;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    border: 1px solid var(--border);
+    position: relative;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h3 {
+        margin: 0;
+        color: var(--foreground);
+        font-size: 1.15rem;
+        font-weight: 600;
+    }
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 0 0.5rem;
+    transition: color 0.15s;
+
+    &:hover,
+    &:focus {
+        color: var(--foreground);
+        outline: none;
+    }
+}
+
+/* Optional: style form fields inside modal for consistency */
+.form-group label {
+    color: var(--foreground);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    background: var(--surface);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+
+    &:focus {
+        border-color: var(--primary);
+        outline: none;
+    }
+}
+
+.form-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}

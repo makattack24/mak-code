@@ -9,7 +9,6 @@ const handler: Handler = async (event, context) => {
     try {
         switch (httpMethod) {
             case 'GET':
-                // Get all users
                 const users = await sql`SELECT * FROM Users ORDER BY id ASC`;
                 return {
                     statusCode: 200,
@@ -17,40 +16,64 @@ const handler: Handler = async (event, context) => {
                 };
 
             case 'POST':
-                // Add new user
-                const { name, email, role } = JSON.parse(body || '{}');
-                
+                const { name, email, role, isactive } = JSON.parse(body || '{}');
                 if (!name || !email) {
                     return {
                         statusCode: 400,
                         body: JSON.stringify({ error: 'Name and email are required' }),
                     };
                 }
-
                 const newUser = await sql`
-                    INSERT INTO Users (name, email, role) 
-                    VALUES (${name}, ${email}, ${role || 'user'}) 
+                    INSERT INTO Users (name, email, role, isactive)
+                    VALUES (${name}, ${email}, ${role || 'user'}, ${isactive !== undefined ? isactive : true})
                     RETURNING *
                 `;
-
                 return {
                     statusCode: 201,
                     body: JSON.stringify(newUser[0]),
                 };
 
+            case 'PUT':
+                // Update user by ID
+                const updateId = queryStringParameters?.['id'];
+                if (!updateId) {
+                    return {
+                        statusCode: 400,
+                        body: JSON.stringify({ error: 'User ID is required' }),
+                    };
+                }
+                const updateData = JSON.parse(body || '{}');
+                console.log('Update Data:', updateData);
+                const { name: upName, email: upEmail, role: upRole, isactive: upIsActive } = updateData;
+                const updated = await sql`
+                    UPDATE Users
+                    SET name = ${upName},
+                        email = ${upEmail},
+                        role = ${upRole},
+                        isactive = ${upIsActive}
+                    WHERE id = ${updateId}
+                    RETURNING *
+                `;
+                if (!updated[0]) {
+                    return {
+                        statusCode: 404,
+                        body: JSON.stringify({ error: 'User not found' }),
+                    };
+                }
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify(updated[0]),
+                };
+
             case 'DELETE':
-                // Delete user by ID
                 const userId = queryStringParameters?.['id'];
-                
                 if (!userId) {
                     return {
                         statusCode: 400,
                         body: JSON.stringify({ error: 'User ID is required' }),
                     };
                 }
-
                 await sql`DELETE FROM Users WHERE id = ${userId}`;
-                
                 return {
                     statusCode: 200,
                     body: JSON.stringify({ message: 'User deleted successfully' }),
