@@ -66,7 +66,9 @@
     }
 }
 
-.loading, .error, .no-users {
+.loading,
+.error,
+.no-users {
     text-align: center;
     padding: 1.5rem;
     color: var(--foreground);
@@ -100,7 +102,7 @@
         position: relative;
         flex: 1;
         max-width: 300px;
-        
+
         .search-input {
             width: 100%;
             padding: 0.5rem 2rem 0.5rem 0.75rem;
@@ -180,6 +182,18 @@
 .table-container {
     max-height: 400px;
     overflow: auto;
+
+    /* Hide scrollbar for Chrome, Edge, Safari */
+    &::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+    }
+
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+
+    /* Hide scrollbar for IE/Edge */
+    -ms-overflow-style: none;
 }
 
 .table {
@@ -354,15 +368,17 @@
             max-width: none;
         }
 
-        .table-info, .per-page-selector {
+        .table-info,
+        .per-page-selector {
             text-align: center;
         }
     }
 
     .table {
         font-size: 0.8rem;
-        
-        th, td {
+
+        th,
+        td {
             padding: 0.4rem 0.5rem;
         }
     }
