@@ -30,8 +30,8 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 	@ViewChild('resizeHandle', { static: false }) resizeHandle?: ElementRef<HTMLDivElement>;
 
 	isMinimized = false;
-	minHeight = 80;
-	maxHeight = 500;
+	minHeight: number = 36;
+	maxHeight: number = 300;
 	lines: TerminalLine[] = [
 		{ type: 'output', text: 'You can use commands like "help, /apps, /contact, /about, or visit "site name".' },
 		{ type: 'output', text: '---Version 0.0.1 alpha---' },

@@ -98,6 +98,7 @@
     position: relative;
     z-index: 20;
     user-select: none;
+    flex-shrink: 0;
 }
 
 .terminal {
@@ -185,4 +186,29 @@ a {
 body.resizing-terminal {
     cursor: ns-resize !important;
     user-select: none !important;
+}
+
+.terminal-container.minimized {
+    height: 36px;
+    min-height: 36px;
+    max-height: 36px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.terminal-container.minimized .terminal-toolbar {
+    height: 28px;
+    min-height: 28px;
+    max-height: 28px;
+    align-items: center;
+    display: flex;
+    padding: 0 0.9rem;
+    border-bottom: none;
+    position: static;
 }
