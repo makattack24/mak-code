@@ -11,6 +11,8 @@ import { SoundComponent } from './apps/sound/sound.component';
 import { EditorComponent } from './apps/editor/editor.component';
 import { AdminComponent } from './admin/admin.component';
 import { LoginComponent } from './login/login.component';
+import { SignupComponent } from './signup/signup.component';
+
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -18,6 +20,7 @@ export const routes: Routes = [
     { path: 'about', component: AboutComponent },
     { path: 'contact', component: ContactComponent },
     { path: 'login', component: LoginComponent },
+    { path: 'signup', component: SignupComponent },
     {
         path: 'apps', component: AppsComponent, children: [
             { path: 'calculator', component: CalculatorComponent },
