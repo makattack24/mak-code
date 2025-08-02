@@ -10,12 +10,14 @@ import { GraphicsgameComponent } from './apps/graphicsgame/graphicsgame.componen
 import { SoundComponent } from './apps/sound/sound.component';
 import { EditorComponent } from './apps/editor/editor.component';
 import { AdminComponent } from './admin/admin.component';
+import { LoginComponent } from './login/login.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'home', component: HomeComponent },
     { path: 'about', component: AboutComponent },
     { path: 'contact', component: ContactComponent },
+    { path: 'login', component: LoginComponent },
     {
         path: 'apps', component: AppsComponent, children: [
             { path: 'calculator', component: CalculatorComponent },

@@ -32,7 +32,7 @@ export class AdminComponent implements OnInit {
     loading = true;
     error: string | null = null;
     editUser: User | null = null;
-    editUserForm: NewUser = { name: '', email: '', role: 'user', isactive: true };
+    editUserForm: NewUser & { password?: string } = { name: '', email: '', role: 'user', isactive: true };
     updatingUser = false;
     // Search property
     searchTerm = '';
@@ -42,11 +42,12 @@ export class AdminComponent implements OnInit {
     // Form properties
     showAddForm = false;
     addingUser = false;
-    newUser: NewUser = {
+    newUser: NewUser & { password?: string } = {
         name: '',
         email: '',
         role: 'user',
-        isactive: true
+        isactive: true,
+        password: ''
     };
 
     // Pagination properties
@@ -227,9 +228,11 @@ export class AdminComponent implements OnInit {
         if (!this.newUser.name || !this.newUser.email) {
             return;
         }
-
         this.addingUser = true;
-        this.http.post<User>(this.apiUrl, this.newUser).subscribe({
+        // Only send password if set
+        const payload = { ...this.newUser };
+        if (!payload.password) delete payload.password;
+        this.http.post<User>(this.apiUrl, payload).subscribe({
             next: (user) => {
                 this.users.push(user);
                 this.addingUser = false;
@@ -253,9 +256,9 @@ export class AdminComponent implements OnInit {
             ...this.editUser,
             ...this.editUserForm
         };
+        if (!updatedUser.password) delete updatedUser.password;
         this.http.put<User>(`${this.apiUrl}?id=${this.editUser.id}`, updatedUser).subscribe({
             next: (user) => {
-                // Update the user in the local array
                 const idx = this.users.findIndex(u => u.id === user.id);
                 if (idx !== -1) this.users[idx] = user;
                 this.filterUsers();

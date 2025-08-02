@@ -31,6 +31,10 @@ export class TerminalCommandsService {
       lines.push({ type: 'output', text: 'Navigating to admin page.' });
       this.router.navigate(['/admin']);
     };
+    const goLogin = () => {
+      lines.push({ type: 'output', text: 'Navigating to login page.' });
+      this.router.navigate(['/login']);
+    };
     return {
       'about': goAbout,
       '/about': goAbout,
@@ -42,6 +46,8 @@ export class TerminalCommandsService {
       '/home': goHome,
       'admin': goAdmin,
       '/admin': goAdmin,
+      'login': goLogin,
+      '/login': goLogin,
       'help': () => {
         lines.push({ type: 'output', text: 'Available commands: /about, /contact, /apps, /home, /admin, back' });
       },

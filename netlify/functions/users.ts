@@ -1,5 +1,6 @@
 import { Handler } from '@netlify/functions';
 import { neon } from '@netlify/neon';
+import bcrypt from 'bcryptjs';
 
 const sql = neon();
 
@@ -16,16 +17,20 @@ const handler: Handler = async (event, context) => {
                 };
 
             case 'POST':
-                const { name, email, role, isactive } = JSON.parse(body || '{}');
+                const { name, email, role, isactive, password } = JSON.parse(body || '{}');
                 if (!name || !email) {
                     return {
                         statusCode: 400,
                         body: JSON.stringify({ error: 'Name and email are required' }),
                     };
                 }
+                let password_hash = null;
+                if (password) {
+                    password_hash = await bcrypt.hash(password, 10);
+                }
                 const newUser = await sql`
-                    INSERT INTO Users (name, email, role, isactive)
-                    VALUES (${name}, ${email}, ${role || 'user'}, ${isactive !== undefined ? isactive : true})
+                    INSERT INTO Users (name, email, role, isactive, password_hash)
+                    VALUES (${name}, ${email}, ${role || 'user'}, ${isactive !== undefined ? isactive : true}, ${password_hash})
                     RETURNING *
                 `;
                 return {
@@ -43,17 +48,32 @@ const handler: Handler = async (event, context) => {
                     };
                 }
                 const updateData = JSON.parse(body || '{}');
-                console.log('Update Data:', updateData);
-                const { name: upName, email: upEmail, role: upRole, isactive: upIsActive } = updateData;
-                const updated = await sql`
-                    UPDATE Users
-                    SET name = ${upName},
-                        email = ${upEmail},
-                        role = ${upRole},
-                        isactive = ${upIsActive}
-                    WHERE id = ${updateId}
-                    RETURNING *
-                `;
+                const { name: upName, email: upEmail, role: upRole, isactive: upIsActive, password: upPassword } = updateData;
+
+                let updated;
+                if (upPassword) {
+                    const upPasswordHash = await bcrypt.hash(upPassword, 10);
+                    updated = await sql`
+            UPDATE Users
+            SET name = ${upName},
+                email = ${upEmail},
+                role = ${upRole},
+                isactive = ${upIsActive},
+                password_hash = ${upPasswordHash}
+            WHERE id = ${updateId}
+            RETURNING *
+        `;
+                } else {
+                    updated = await sql`
+            UPDATE Users
+            SET name = ${upName},
+                email = ${upEmail},
+                role = ${upRole},
+                isactive = ${upIsActive}
+            WHERE id = ${updateId}
+            RETURNING *
+        `;
+                }
                 if (!updated[0]) {
                     return {
                         statusCode: 404,

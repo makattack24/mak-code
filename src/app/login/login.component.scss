@@ -1,0 +1,39 @@
+.login-form {
+    max-width: 350px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--surface);
+    border-radius: 8px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+    border: 1px solid var(--border);
+
+    label {
+        display: block;
+        margin-bottom: 0.3rem;
+        color: var(--muted);
+        font-weight: 500;
+    }
+
+    input {
+        width: 100%;
+        margin-bottom: 1rem;
+        background: var(--secondary);
+        color: var(--foreground);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .error {
+        color: var(--error);
+        margin-top: 0.5rem;
+        text-align: center;
+    }
+}
