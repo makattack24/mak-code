@@ -29,8 +29,14 @@ export class LoginComponent {
                     password: this.password
                 })
             );
-            // Handle successful login (e.g., store user info, redirect)
-            alert('Login successful!');
+            // Redirect based on role
+            console.log(result);
+            if (result.role === 'admin') {
+                window.location.href = '/admin';
+            } else {
+                alert('Login successful!');
+                // Optionally redirect to home or another page
+            }
         } catch (err: any) {
             this.error = err.error || 'Login failed';
         } finally {
