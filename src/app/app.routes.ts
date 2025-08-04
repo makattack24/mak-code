@@ -12,6 +12,7 @@ import { EditorComponent } from './apps/editor/editor.component';
 import { AdminComponent } from './admin/admin.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { RocketStatsComponent } from './rocketleague/rocket.component';
 
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
     { path: 'contact', component: ContactComponent },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
+    { path: 'stats', component: RocketStatsComponent },
     {
         path: 'apps', component: AppsComponent, children: [
             { path: 'calculator', component: CalculatorComponent },
@@ -29,10 +31,8 @@ export const routes: Routes = [
             { path: 'sim', component: GraphicsgameComponent },
             { path: 'sound', component: SoundComponent },
             { path: 'editor', component: EditorComponent },
-
-            // Add more project routes here as needed
         ]
     },
     { path: 'admin', component: AdminComponent },
-    { path: '**', redirectTo: '' } // Redirect any unknown paths to home
+    { path: '**', redirectTo: '' } 
 ];
