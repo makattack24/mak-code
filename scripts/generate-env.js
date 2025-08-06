@@ -1,4 +1,13 @@
 const fs = require('fs');
+const path = require('path');
+
+const envDir = path.join(__dirname, '../src/environments');
+
+// Ensure the environments directory exists
+if (!fs.existsSync(envDir)) {
+  fs.mkdirSync(envDir, { recursive: true });
+}
+
 const dev = `
 export const environment = {
   production: false,
@@ -20,6 +29,6 @@ export const environment = {
 };
 `;
 
-fs.writeFileSync('./src/environments/environment.ts', dev);
-fs.writeFileSync('./src/environments/environment.prod.ts', prod);
+fs.writeFileSync(path.join(envDir, 'environment.ts'), dev);
+fs.writeFileSync(path.join(envDir, 'environment.prod.ts'), prod);
 console.log('Generated Angular environment files from Netlify env vars');
