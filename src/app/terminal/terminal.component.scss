@@ -54,6 +54,11 @@
     top: 0;
     z-index: 10;
     flex-shrink: 0;
+    gap: 0.35rem; // space between all toolbar items
+}
+
+.toolbar-spacer {
+    flex: 1 1 auto;
 }
 
 .terminal-container.minimized .terminal-toolbar {
@@ -66,20 +71,22 @@
     border: none;
     color: var(--primary);
     cursor: pointer;
-    font-size: 0.9rem;
-    margin-left: 0.15rem;
+    font-size: 1.1rem;
+    margin: 0;
     padding: 0;
-    border-radius: 2px;
+    border-radius: 3px;
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 22px;
     width: 22px;
-    justify-content: center;
-    transition: background 0.15s;
+    transition: background 0.15s, color 0.15s;
 }
 
-.toolbar-btn:hover {
-    background: rgba(38, 99, 235, 0.08);
+.toolbar-btn:hover,
+.toolbar-btn:focus {
+    background: rgba(38, 99, 235, 0.10);
+    color: var(--primary-hover, #265feb);
 }
 
 .restore-btn {
@@ -93,6 +100,24 @@
     font-weight: bold;
 }
 
+.user-email {
+    color: var(--muted, #888);
+    font-size: 0.95rem;
+    margin-right: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fa-solid {
+    font-size: 1.1em;
+    vertical-align: middle;
+    margin-right: 0.15em;
+}
 .terminal {
     flex: 1 1 0;
     display: flex;
