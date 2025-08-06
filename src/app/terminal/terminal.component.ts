@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
 import { TerminalCommandsService } from '../services/commands.service';
+import { AuthService } from '@auth0/auth0-angular';
 
 type PinPosition = 'center' | 'bottom' | 'left' | 'right';
 
@@ -28,7 +29,6 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 	@Input() height: number | undefined;
 	@Output() heightChange = new EventEmitter<number>();
 	@ViewChild('resizeHandle', { static: false }) resizeHandle?: ElementRef<HTMLDivElement>;
-
 	isMinimized = false;
 	minHeight: number = 36;
 	maxHeight: number = 300;
@@ -52,12 +52,14 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 	private startY = 0;
 	private startHeight = 0;
 	private navigationHistory: string[] = [];
+	public locationOrigin = window.location.origin;
 
 	constructor(
 		private renderer: Renderer2,
 		private el: ElementRef,
 		private router: Router,
-		private commandsService: TerminalCommandsService
+		private commandsService: TerminalCommandsService,
+		public auth: AuthService
 	) {
 		this.commandHandlers = this.commandsService.getHandlers(this.lines, this.navigationHistory);
 		this.router.events.subscribe(event => {

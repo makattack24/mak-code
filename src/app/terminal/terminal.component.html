@@ -2,6 +2,19 @@
     <div #resizeHandle class="terminal-resize-handle"></div>
     <div class="terminal-toolbar">
         <app-themetoggle></app-themetoggle>
+        <!-- Login/Logout buttons -->
+        <ng-container *ngIf="auth.isAuthenticated$ | async as isAuth; else showLogin">
+            <span class="user-email">{{ (auth.user$ | async)?.email }}</span>
+            <button class="toolbar-btn" (click)="auth.logout({ logoutParams: { returnTo: locationOrigin } })"
+                title="Logout">
+                Logout
+            </button>
+        </ng-container>
+        <ng-template #showLogin>
+            <button class="toolbar-btn" (click)="auth.loginWithRedirect()" title="Login">
+                Login
+            </button>
+        </ng-template>
         <button *ngIf="!isMinimized" class="toolbar-btn" title="Minimize" (click)="minimizeTerminal()">
             <svg width="16" height="16" viewBox="0 0 16 16">
                 <polyline points="4,6 8,10 12,6" fill="none" stroke="#00e676" stroke-width="2" stroke-linecap="round"

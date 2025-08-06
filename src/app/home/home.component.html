@@ -2,4 +2,11 @@
     <p>
         Welcome to techwithmak! Use the terminal to navigate the site.
     </p>
+    <div *ngIf="auth.isAuthenticated$ | async; else notLoggedIn">
+        <h3>User Info</h3>
+        <pre>{{ auth.user$ | async | json }}</pre>
+    </div>
+    <ng-template #notLoggedIn>
+        <p>You are not logged in.</p>
+    </ng-template>
 </div>

@@ -13,7 +13,7 @@ import { AdminComponent } from './admin/admin.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { RocketStatsComponent } from './rocketleague/rocket.component';
-
+import { AuthGuard } from '@auth0/auth0-angular';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -33,6 +33,6 @@ export const routes: Routes = [
             { path: 'editor', component: EditorComponent },
         ]
     },
-    { path: 'admin', component: AdminComponent },
-    { path: '**', redirectTo: '' } 
+    { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+    { path: '**', redirectTo: '' }
 ];
