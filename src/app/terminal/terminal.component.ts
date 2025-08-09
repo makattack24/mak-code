@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Output, EventEmitter, Input, Component, AfterViewInit, AfterViewChecked, ElementRef, Renderer2, ViewChild, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
 import { TerminalCommandsService } from '../services/commands.service';
 import { AuthService } from '@auth0/auth0-angular';
@@ -16,7 +16,7 @@ interface TerminalLine {
 @Component({
 	selector: 'app-terminal',
 	standalone: true,
-	imports: [FormsModule, CommonModule, ThemeToggleComponent],
+	imports: [FormsModule, CommonModule, ThemeToggleComponent, RouterModule],
 	templateUrl: './terminal.component.html',
 	styleUrl: './terminal.component.scss'
 })
@@ -103,7 +103,10 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 	ngAfterViewChecked() {
 		this.scrollToBottom();
 	}
-
+	showHelp() {
+		this.lines.push({ type: 'output', text: 'Available commands: <strong>help, apps, contact, about, visit [site]</strong>' });
+		this.scrollToBottom();
+	}
 	private isUserAtBottom(): boolean {
 		const el = this.linesContainer?.nativeElement;
 		if (!el) return true;
@@ -297,15 +300,19 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 		this.isMinimized = true;
 		this.height = this.minHeight;
 		this.heightChange.emit(this.height);
-		this.resize.emit({ height: this.height });
+		setTimeout(() => {
+			this.resize.emit({ height: this.height });
+		}, 0);
 	}
 
 	restoreTerminal() {
 		this.isMinimized = false;
 		this.height = 300; // Or your preferred default height
 		this.heightChange.emit(this.height);
-		this.resize.emit({ height: this.height });
-		setTimeout(() => this.focusInput(), 0);
+		setTimeout(() => {
+			this.resize.emit({ height: this.height });
+			this.focusInput();
+		}, 0);
 	}
 
 	onResizeEnd = () => {

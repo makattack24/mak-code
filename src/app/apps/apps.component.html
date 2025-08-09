@@ -1,37 +1,43 @@
 <div class="apps-layout">
     <div class="content-row">
-        <nav class="apps-main" aria-label="Project navigation">
-            <h2>Apps</h2>
-            <ul class="apps-list">
-                <li>
-                    <span class="project-title">Calculator</span>
-                    <span class="project-command"><code>run calc</code></span>
-                </li>
-                <li>
-                    <span class="project-title">Clock</span>
-                    <span class="project-command"><code>run time</code></span>
-                </li>
-                <li>
-                    <span class="project-title">Game</span>
-                    <span class="project-command"><code>run game</code></span>
-                </li>
-                <li>
-                    <span class="project-title">Sim</span>
-                    <span class="project-command"><code>run sim</code></span>
-                </li>
-                <li>
-                    <span class="project-title">Sound</span>
-                    <span class="project-command"><code>run song</code></span>
-                </li>
-                <li>
-                    <span class="project-title">Editor</span>
-                    <span class="project-command"><code>run text</code></span>
-                </li>
-                <li>
-                    <span class="project-title">Terminate</span>
-                    <span class="project-command"><code>kill</code></span>
-                </li>
-            </ul>
+        <nav class="apps-main" [class.collapsed]="sidebarCollapsed" aria-label="Project navigation">
+            <button class="sidebar-toggle" (click)="toggleSidebar()" [attr.aria-label]="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+                <span *ngIf="!sidebarCollapsed">&#x25C0;</span>
+                <span *ngIf="sidebarCollapsed">&#x25B6;</span>
+            </button>
+            <ng-container *ngIf="!sidebarCollapsed">
+                <h2>Apps</h2>
+                <ul class="apps-list">
+                    <li>
+                        <span class="project-title">Calculator</span>
+                        <span class="project-command"><code>run calc</code></span>
+                    </li>
+                    <li>
+                        <span class="project-title">Clock</span>
+                        <span class="project-command"><code>run time</code></span>
+                    </li>
+                    <li>
+                        <span class="project-title">Game</span>
+                        <span class="project-command"><code>run game</code></span>
+                    </li>
+                    <li>
+                        <span class="project-title">Sim</span>
+                        <span class="project-command"><code>run sim</code></span>
+                    </li>
+                    <li>
+                        <span class="project-title">Sound</span>
+                        <span class="project-command"><code>run song</code></span>
+                    </li>
+                    <li>
+                        <span class="project-title">Editor</span>
+                        <span class="project-command"><code>run text</code></span>
+                    </li>
+                    <li>
+                        <span class="project-title">Terminate</span>
+                        <span class="project-command"><code>kill</code></span>
+                    </li>
+                </ul>
+            </ng-container>
         </nav>
         <main class="apps-side">
             <div class="apps-side-content">
