@@ -20,7 +20,7 @@ $font-lg: 0.9rem;
     border-radius: $border-radius;
     background: var(--surface);
     color: var(--foreground);
-    
+
     &:focus {
         outline: none;
         border-color: var(--primary);
@@ -89,7 +89,9 @@ $font-lg: 0.9rem;
 }
 
 // Status messages
-.loading, .error, .no-users {
+.loading,
+.error,
+.no-users {
     text-align: center;
     padding: 1.5rem;
     color: var(--foreground);
@@ -208,7 +210,8 @@ $font-lg: 0.9rem;
     border-collapse: collapse;
     background: var(--surface);
 
-    th, td {
+    th,
+    td {
         padding: $padding-md $padding-lg;
         font-size: $font-md;
         border-bottom: 1px solid var(--border);
@@ -241,9 +244,20 @@ $font-lg: 0.9rem;
         font-weight: 600;
         text-transform: uppercase;
 
-        &.admin { background: rgba(220, 38, 38, 0.1); color: #dc2626; }
-        &.moderator { background: rgba(245, 158, 66, 0.1); color: #f59e42; }
-        &.user { background: rgba(107, 114, 128, 0.1); color: #6b7280; }
+        &.admin {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+        }
+
+        &.moderator {
+            background: rgba(245, 158, 66, 0.1);
+            color: #f59e42;
+        }
+
+        &.user {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+        }
     }
 }
 
@@ -276,22 +290,35 @@ $font-lg: 0.9rem;
         background: var(--primary);
         color: white;
         border-color: var(--primary);
-        &:hover { opacity: 0.9; }
+
+        &:hover {
+            opacity: 0.9;
+        }
     }
 
     &.btn-success {
         background: #10b981;
         color: white;
         border-color: #10b981;
-        &:hover { background: #059669; }
-        &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        &:hover {
+            background: #059669;
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     }
 
     &.btn-danger {
         background: #dc2626;
         color: white;
         border-color: #dc2626;
-        &:hover { background: #b91c1c; }
+
+        &:hover {
+            background: #b91c1c;
+        }
     }
 
     &.btn-sm {
@@ -330,8 +357,10 @@ $font-lg: 0.9rem;
 
 // Mobile responsive
 @media (max-width: 768px) {
-    .admin-container { padding: $padding-md; }
-    
+    .admin-container {
+        padding: $padding-md;
+    }
+
     .header {
         flex-direction: column;
         gap: $padding-lg;
@@ -343,10 +372,23 @@ $font-lg: 0.9rem;
         gap: $padding-lg;
         align-items: stretch;
 
-        .search-container { max-width: none; }
-        .table-info, .per-page-selector { text-align: center; }
+        .search-container {
+            max-width: none;
+        }
+
+        .table-info,
+        .per-page-selector {
+            text-align: center;
+        }
     }
 
-    .table th, .table td { padding: 0.4rem $padding-md; }
-    .btn { padding: 0.35rem 0.6rem; font-size: 0.8rem; }
+    .table th,
+    .table td {
+        padding: 0.4rem $padding-md;
+    }
+
+    .btn {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.8rem;
+    }
 }

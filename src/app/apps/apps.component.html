@@ -1,48 +1,107 @@
 <div class="apps-layout">
-    <div class="content-row">
-        <nav class="apps-main" [class.collapsed]="sidebarCollapsed" aria-label="Project navigation">
-            <button class="sidebar-toggle" (click)="toggleSidebar()" [attr.aria-label]="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
-                <span *ngIf="!sidebarCollapsed">&#x25C0;</span>
-                <span *ngIf="sidebarCollapsed">&#x25B6;</span>
-            </button>
-            <ng-container *ngIf="!sidebarCollapsed">
-                <h2>Apps</h2>
-                <ul class="apps-list">
-                    <li>
-                        <span class="project-title">Calculator</span>
-                        <span class="project-command"><code>run calc</code></span>
-                    </li>
-                    <li>
-                        <span class="project-title">Clock</span>
-                        <span class="project-command"><code>run time</code></span>
-                    </li>
-                    <li>
-                        <span class="project-title">Game</span>
-                        <span class="project-command"><code>run game</code></span>
-                    </li>
-                    <li>
-                        <span class="project-title">Sim</span>
-                        <span class="project-command"><code>run sim</code></span>
-                    </li>
-                    <li>
-                        <span class="project-title">Sound</span>
-                        <span class="project-command"><code>run song</code></span>
-                    </li>
-                    <li>
-                        <span class="project-title">Editor</span>
-                        <span class="project-command"><code>run text</code></span>
-                    </li>
-                    <li>
-                        <span class="project-title">Terminate</span>
-                        <span class="project-command"><code>kill</code></span>
-                    </li>
-                </ul>
-            </ng-container>
-        </nav>
-        <main class="apps-side">
-            <div class="apps-side-content">
-                <router-outlet></router-outlet>
-            </div>
-        </main>
-    </div>
+	<div class="content-row">
+		<nav
+			class="apps-main"
+			[class.collapsed]="sidebarCollapsed"
+			aria-label="Project navigation"
+		>
+			<button
+				class="sidebar-toggle"
+				(click)="toggleSidebar()"
+				[attr.aria-label]="
+					sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
+				"
+			>
+				<span *ngIf="!sidebarCollapsed">&#x25C0;</span>
+				<span *ngIf="sidebarCollapsed">&#x25B6;</span>
+			</button>
+			<ng-container *ngIf="!sidebarCollapsed">
+				<h2>Apps</h2>
+				<ul class="apps-list">
+					<li>
+						<span class="project-title">Calculator</span>
+						<span class="project-command">
+							<code
+								(click)="runCommand('run calc')"
+								tabindex="0"
+								role="button"
+								>{{ "run calc" }}</code
+							>
+						</span>
+					</li>
+					<li>
+						<span class="project-title">Clock</span>
+						<span class="project-command">
+							<code
+								(click)="runCommand('run time')"
+								tabindex="0"
+								role="button"
+								>{{ "run time" }}</code
+							>
+						</span>
+					</li>
+					<li>
+						<span class="project-title">Game</span>
+						<span class="project-command">
+							<code
+								(click)="runCommand('run game')"
+								tabindex="0"
+								role="button"
+								>{{ "run game" }}</code
+							>
+						</span>
+					</li>
+					<li>
+						<span class="project-title">Sim</span>
+						<span class="project-command">
+							<code
+								(click)="runCommand('run sim')"
+								tabindex="0"
+								role="button"
+								>{{ "run sim" }}</code
+							>
+						</span>
+					</li>
+					<li>
+						<span class="project-title">Sound</span>
+						<span class="project-command">
+							<code
+								(click)="runCommand('run song')"
+								tabindex="0"
+								role="button"
+								>{{ "run song" }}</code
+							>
+						</span>
+					</li>
+					<li>
+						<span class="project-title">Editor</span>
+						<span class="project-command">
+							<code
+								(click)="runCommand('run text')"
+								tabindex="0"
+								role="button"
+								>{{ "run text" }}</code
+							>
+						</span>
+					</li>
+					<li>
+						<span class="project-title">Terminate</span>
+						<span class="project-command">
+							<code
+								(click)="runCommand('kill')"
+								tabindex="0"
+								role="button"
+								>{{ "kill" }}</code
+							>
+						</span>
+					</li>
+				</ul>
+			</ng-container>
+		</nav>
+		<main class="apps-side">
+			<div class="apps-side-content">
+				<router-outlet></router-outlet>
+			</div>
+		</main>
+	</div>
 </div>

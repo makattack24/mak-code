@@ -7,11 +7,13 @@ import { DatePipe, NgIf } from '@angular/common';
 	standalone: true,
 	imports: [FormsModule, DatePipe, NgIf],
 	templateUrl: './sound.component.html',
-	styleUrl: './sound.component.scss'
+	styleUrl: './sound.component.scss',
 })
 export class SoundComponent implements AfterViewInit {
-	@ViewChild('waveCanvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
-	@ViewChild('audioRef', { static: false }) audioRef!: ElementRef<HTMLAudioElement>;
+	@ViewChild('waveCanvas', { static: false })
+	canvasRef!: ElementRef<HTMLCanvasElement>;
+	@ViewChild('audioRef', { static: false })
+	audioRef!: ElementRef<HTMLAudioElement>;
 
 	isPlaying = false;
 	isMuted = false;
@@ -28,7 +30,8 @@ export class SoundComponent implements AfterViewInit {
 			console.error('Unable to get 2D context');
 			return;
 		}
-		const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+		const audioCtx = new (window.AudioContext ||
+			(window as any).webkitAudioContext)();
 		const analyser = audioCtx.createAnalyser();
 
 		let sourceCreated = false;
@@ -63,7 +66,7 @@ export class SoundComponent implements AfterViewInit {
 				let x = 0;
 				for (let i = 0; i < bufferLength; i++) {
 					const v = dataArray[i] / 128.0;
-					const y = v * canvas.height / 2;
+					const y = (v * canvas.height) / 2;
 					if (i === 0) {
 						ctx.moveTo(x, y);
 					} else {

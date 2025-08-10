@@ -1,49 +1,91 @@
-<div class="terminal-container" [ngClass]="pinPosition" [class.minimized]="isMinimized" [style.height.px]="height">
-    <div #resizeHandle class="terminal-resize-handle"></div>
-    <div class="terminal-toolbar">
-        <app-themetoggle></app-themetoggle>
-            <nav class="toolbar-nav">
-        <a routerLink="/home" class="toolbar-link">Home</a>
-        <a routerLink="/apps" class="toolbar-link">Apps</a>
-        <a routerLink="/about" class="toolbar-link">About</a>
-    </nav>
-        <div class="toolbar-spacer"></div>
-        <button class="toolbar-btn" title="Help" (click)="showHelp()">
-            <i class="fa-solid fa-circle-question"></i>
-        </button>
-        <ng-container *ngIf="auth.isAuthenticated$ | async as isAuth; else showLogin">
-            <span class="user-email" title="{{ (auth.user$ | async)?.email }}">
-                <i class="fa-solid fa-user"></i>
-                {{ (auth.user$ | async)?.email }}
-            </span>
-            <button class="toolbar-btn" (click)="auth.logout({ logoutParams: { returnTo: locationOrigin } })" title="Logout">
-                <i class="fa-solid fa-right-from-bracket"></i>
-            </button>
-        </ng-container>
-        <ng-template #showLogin>
-            <button class="toolbar-btn" (click)="auth.loginWithRedirect()" title="Login">
-                <i class="fa-solid fa-right-to-bracket"></i>
-            </button>
-        </ng-template>
-        <button *ngIf="!isMinimized" class="toolbar-btn" title="Minimize" (click)="minimizeTerminal()">
-            <i class="fa-solid fa-window-minimize"></i>
-        </button>
-        <button *ngIf="isMinimized" class="toolbar-btn" title="Restore" (click)="restoreTerminal()">
-            <i class="fa-solid fa-window-restore"></i>
-        </button>
-    </div>
-    <div class="terminal" *ngIf="!isMinimized" (click)="focusInput()">
-        <div class="terminal-lines" #linesContainer>
-            <div *ngFor="let line of lines">
-                <span *ngIf="line.type === 'command'" class="terminal-command">{{ line.text }}</span>
-                <span *ngIf="line.type === 'output'" class="terminal-output" [innerHTML]="line.text"></span>
-            </div>
-        </div>
-        <div class="terminal-input">
-            <span>&gt;</span>
-            <input #terminalInput [(ngModel)]="input" (keydown)="handleInput($event)" autocomplete="off"
-                spellcheck="false" (focus)="isInputFocused = true" (blur)="isInputFocused = false"
-                (click)="$event.stopPropagation()" />
-        </div>
-    </div>
+<div
+	class="terminal-container"
+	[ngClass]="pinPosition"
+	[class.minimized]="isMinimized"
+	[style.height.px]="height"
+>
+	<div #resizeHandle class="terminal-resize-handle"></div>
+	<div class="terminal-toolbar">
+		<app-themetoggle></app-themetoggle>
+		<nav class="toolbar-nav">
+			<a routerLink="/home" class="toolbar-link">Home</a>
+			<a routerLink="/apps" class="toolbar-link">Apps</a>
+			<a routerLink="/about" class="toolbar-link">About</a>
+		</nav>
+		<div class="toolbar-spacer"></div>
+		<button class="toolbar-btn" title="Help" (click)="showHelp()">
+			<i class="fa-solid fa-circle-question"></i>
+		</button>
+		<ng-container
+			*ngIf="auth.isAuthenticated$ | async as isAuth; else showLogin"
+		>
+			<span class="user-email" title="{{ (auth.user$ | async)?.email }}">
+				<i class="fa-solid fa-user"></i>
+				{{ (auth.user$ | async)?.email }}
+			</span>
+			<button
+				class="toolbar-btn"
+				(click)="
+					auth.logout({ logoutParams: { returnTo: locationOrigin } })
+				"
+				title="Logout"
+			>
+				<i class="fa-solid fa-right-from-bracket"></i>
+			</button>
+		</ng-container>
+		<ng-template #showLogin>
+			<button
+				class="toolbar-btn"
+				(click)="auth.loginWithRedirect()"
+				title="Login"
+			>
+				<i class="fa-solid fa-right-to-bracket"></i>
+			</button>
+		</ng-template>
+		<button
+			*ngIf="!isMinimized"
+			class="toolbar-btn"
+			title="Minimize"
+			(click)="minimizeTerminal()"
+		>
+			<i class="fa-solid fa-window-minimize"></i>
+		</button>
+		<button
+			*ngIf="isMinimized"
+			class="toolbar-btn"
+			title="Restore"
+			(click)="restoreTerminal()"
+		>
+			<i class="fa-solid fa-window-restore"></i>
+		</button>
+	</div>
+	<div class="terminal" *ngIf="!isMinimized" (click)="focusInput()">
+		<div class="terminal-lines" #linesContainer>
+			<div *ngFor="let line of lines">
+				<span
+					*ngIf="line.type === 'command'"
+					class="terminal-command"
+					>{{ line.text }}</span
+				>
+				<span
+					*ngIf="line.type === 'output'"
+					class="terminal-output"
+					[innerHTML]="line.text"
+				></span>
+			</div>
+		</div>
+		<div class="terminal-input">
+			<span>&gt;</span>
+			<input
+				#terminalInput
+				[(ngModel)]="input"
+				(keydown)="handleInput($event)"
+				autocomplete="off"
+				spellcheck="false"
+				(focus)="isInputFocused = true"
+				(blur)="isInputFocused = false"
+				(click)="$event.stopPropagation()"
+			/>
+		</div>
+	</div>
 </div>

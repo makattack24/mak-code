@@ -1,4 +1,10 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, HostListener} from '@angular/core';
+import {
+	Component,
+	ViewChild,
+	ElementRef,
+	AfterViewInit,
+	HostListener,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -7,7 +13,7 @@ import { CommonModule } from '@angular/common';
 	standalone: true,
 	imports: [FormsModule, CommonModule],
 	templateUrl: './editor.component.html',
-	styleUrl: './editor.component.scss'
+	styleUrl: './editor.component.scss',
 })
 export class EditorComponent implements AfterViewInit {
 	code: string = `// Define your function\nfunction add(a, b) {\n  return a + b;\n}\n\n// Test cases\nconsole.log(add(2, 3)); // 5\nconsole.log(add(-1, 1)); // 0`;
@@ -17,29 +23,31 @@ export class EditorComponent implements AfterViewInit {
 	@ViewChild('editorTextarea') textarea!: ElementRef<HTMLTextAreaElement>;
 
 	get lineNumbers(): number[] {
-		return Array(this.code.split('\n').length).fill(0).map((_, i) => i + 1);
+		return Array(this.code.split('\n').length)
+			.fill(0)
+			.map((_, i) => i + 1);
 	}
 
 	// Add keyboard shortcut listeners
-    @HostListener('document:keydown', ['$event'])
-    handleKeyboardShortcut(event: KeyboardEvent) {
-        // F5 to run code
-        if (event.key === 'F5') {
-            event.preventDefault();
-            this.runCode();
-        }
-        // Ctrl+Enter to run code
-        else if (event.ctrlKey && event.key === 'Enter') {
-            event.preventDefault();
-            this.runCode();
-        }
-        // Ctrl+Shift+R to run code
-        else if (event.ctrlKey && event.shiftKey && event.key === 'R') {
-            event.preventDefault();
-            this.runCode();
-        }
-    }
-	
+	@HostListener('document:keydown', ['$event'])
+	handleKeyboardShortcut(event: KeyboardEvent) {
+		// F5 to run code
+		if (event.key === 'F5') {
+			event.preventDefault();
+			this.runCode();
+		}
+		// Ctrl+Enter to run code
+		else if (event.ctrlKey && event.key === 'Enter') {
+			event.preventDefault();
+			this.runCode();
+		}
+		// Ctrl+Shift+R to run code
+		else if (event.ctrlKey && event.shiftKey && event.key === 'R') {
+			event.preventDefault();
+			this.runCode();
+		}
+	}
+
 	ngAfterViewInit() {
 		this.autoResize();
 	}
@@ -75,7 +83,6 @@ export class EditorComponent implements AfterViewInit {
 			textarea.setSelectionRange(start, end);
 		}
 	}
-
 
 	private runInSandbox(code: string) {
 		const iframe = document.createElement('iframe');

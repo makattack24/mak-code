@@ -1,20 +1,12 @@
-<!-- <div class="app-layout">
-    <div class="app-content">
-        <router-outlet></router-outlet>
-    </div>
-    <app-terminal [style.height.px]="terminalHeight" [height]="terminalHeight"
-        (heightChange)="onTerminalHeightChange($event)">
-    </app-terminal>
-</div> -->
-
 <div class="app-layout">
-    <div class="app-content">
-        <router-outlet></router-outlet>
-    </div>
-    <app-terminal
-        [style.height.px]="terminalHeight"
-        [height]="terminalHeight"
-        (heightChange)="onTerminalHeightChange($event)"
-        (resize)="onTerminalResize($event)">
-    </app-terminal>
+	<div class="app-content">
+		<router-outlet></router-outlet>
+	</div>
+	<app-terminal
+		[style.height.px]="terminalHeight"
+		[height]="terminalHeight"
+		(heightChange)="onTerminalHeightChange($event)"
+		(resize)="onTerminalResize($event)"
+	>
+	</app-terminal>
 </div>

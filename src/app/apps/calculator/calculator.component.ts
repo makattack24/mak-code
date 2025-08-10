@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 	standalone: true,
 	imports: [CommonModule],
 	templateUrl: './calculator.component.html',
-	styleUrl: './calculator.component.scss'
+	styleUrl: './calculator.component.scss',
 })
 export class CalculatorComponent implements OnInit {
 	display = '';
@@ -14,7 +14,7 @@ export class CalculatorComponent implements OnInit {
 		['7', '8', '9', '/'],
 		['4', '5', '6', '*'],
 		['1', '2', '3', '-'],
-		['0', '.', '=', '+']
+		['0', '.', '=', '+'],
 	];
 
 	isMobile = false;
@@ -49,7 +49,9 @@ export class CalculatorComponent implements OnInit {
 			// Only allow numbers, operators, parentheses, and decimal points
 			if (/^[\d+\-*/().\s]+$/.test(this.display)) {
 				// eslint-disable-next-line no-new-func
-				this.display = Function('"use strict";return (' + this.display + ')')().toString();
+				this.display = Function(
+					'"use strict";return (' + this.display + ')'
+				)().toString();
 			} else {
 				this.display = 'Error';
 			}
@@ -59,7 +61,23 @@ export class CalculatorComponent implements OnInit {
 	}
 
 	onKey(event: KeyboardEvent) {
-		const allowed = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '+', '-', '*', '/'];
+		const allowed = [
+			'0',
+			'1',
+			'2',
+			'3',
+			'4',
+			'5',
+			'6',
+			'7',
+			'8',
+			'9',
+			'.',
+			'+',
+			'-',
+			'*',
+			'/',
+		];
 		if (allowed.includes(event.key)) {
 			this.display += event.key;
 			event.preventDefault();

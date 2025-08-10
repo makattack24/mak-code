@@ -16,23 +16,25 @@ import { RocketStatsComponent } from './rocketleague/rocket.component';
 import { AuthGuard } from '@auth0/auth0-angular';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
-    { path: 'home', component: HomeComponent },
-    { path: 'about', component: AboutComponent },
-    { path: 'contact', component: ContactComponent },
-    { path: 'login', component: LoginComponent },
-    { path: 'signup', component: SignupComponent },
-    { path: 'stats', component: RocketStatsComponent },
-    {
-        path: 'apps', component: AppsComponent, children: [
-            { path: 'calculator', component: CalculatorComponent },
-            { path: 'clock', component: ClockComponent },
-            { path: 'game', component: GameComponent },
-            { path: 'sim', component: GraphicsgameComponent },
-            { path: 'sound', component: SoundComponent },
-            { path: 'editor', component: EditorComponent },
-        ]
-    },
-    { path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
-    { path: '**', redirectTo: '' }
+	{ path: '', component: HomeComponent },
+	{ path: 'home', component: HomeComponent },
+	{ path: 'about', component: AboutComponent },
+	{ path: 'contact', component: ContactComponent },
+	{ path: 'login', component: LoginComponent },
+	{ path: 'signup', component: SignupComponent },
+	{ path: 'stats', component: RocketStatsComponent },
+	{
+		path: 'apps',
+		component: AppsComponent,
+		children: [
+			{ path: 'calculator', component: CalculatorComponent },
+			{ path: 'clock', component: ClockComponent },
+			{ path: 'game', component: GameComponent },
+			{ path: 'sim', component: GraphicsgameComponent },
+			{ path: 'sound', component: SoundComponent },
+			{ path: 'editor', component: EditorComponent },
+		],
+	},
+	{ path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+	{ path: '**', redirectTo: '' },
 ];

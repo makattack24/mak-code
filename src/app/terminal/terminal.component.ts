@@ -1,5 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Output, EventEmitter, Input, Component, AfterViewInit, AfterViewChecked, ElementRef, Renderer2, ViewChild, OnDestroy } from '@angular/core';
+import {
+	Output,
+	EventEmitter,
+	Input,
+	Component,
+	AfterViewInit,
+	AfterViewChecked,
+	ElementRef,
+	Renderer2,
+	ViewChild,
+	OnDestroy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
@@ -18,31 +29,53 @@ interface TerminalLine {
 	standalone: true,
 	imports: [FormsModule, CommonModule, ThemeToggleComponent, RouterModule],
 	templateUrl: './terminal.component.html',
-	styleUrl: './terminal.component.scss'
+	styleUrl: './terminal.component.scss',
 })
-export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
+export class TerminalComponent
+	implements AfterViewInit, AfterViewChecked, OnDestroy
+{
 	@Input() pinPosition: PinPosition = 'bottom';
 	@Output() pinPositionChange = new EventEmitter<PinPosition>();
-	@Output() resize = new EventEmitter<{ width?: number, height?: number }>();
-	@ViewChild('terminalInput', { static: false }) terminalInput?: ElementRef<HTMLInputElement>;
-	@ViewChild('linesContainer', { static: false }) linesContainer?: ElementRef<HTMLDivElement>;
+	@Output() resize = new EventEmitter<{ width?: number; height?: number }>();
+	@ViewChild('terminalInput', { static: false })
+	terminalInput?: ElementRef<HTMLInputElement>;
+	@ViewChild('linesContainer', { static: false })
+	linesContainer?: ElementRef<HTMLDivElement>;
 	@Input() height: number | undefined;
 	@Output() heightChange = new EventEmitter<number>();
-	@ViewChild('resizeHandle', { static: false }) resizeHandle?: ElementRef<HTMLDivElement>;
+	@ViewChild('resizeHandle', { static: false })
+	resizeHandle?: ElementRef<HTMLDivElement>;
 	isMinimized = false;
 	minHeight: number = 36;
 	maxHeight: number = 300;
 	lines: TerminalLine[] = [
-		{ type: 'output', text: 'You can use commands like "help, /apps, /contact, /about, or visit "site name".' },
+		{
+			type: 'output',
+			text: 'You can use commands like "help, /apps, /contact, /about, or visit "site name".',
+		},
 		{ type: 'output', text: '---Version 0.0.1 alpha---' },
-		{ type: 'output', text: 'Want to know more about this project? Visit this <a href="https://github.com/makattack24?tab=repositories" target="_blank">github</a> page.' },
-		{ type: 'output', text: '------------------------------------------------------------------------------------------' },
+		{
+			type: 'output',
+			text: 'Want to know more about this project? Visit this <a href="https://github.com/makattack24?tab=repositories" target="_blank">github</a> page.',
+		},
+		{
+			type: 'output',
+			text: '------------------------------------------------------------------------------------------',
+		},
 	];
 
 	input = '';
 	history: string[] = [];
 	historyIndex = -1;
-	autocompleteList: string[] = ['about', 'contact', 'apps', 'help', 'cls', 'clear', 'home'];
+	autocompleteList: string[] = [
+		'about',
+		'contact',
+		'apps',
+		'help',
+		'cls',
+		'clear',
+		'home',
+	];
 	isInputFocused = false;
 
 	private shouldAutoScroll = true;
@@ -61,10 +94,17 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 		private commandsService: TerminalCommandsService,
 		public auth: AuthService
 	) {
-		this.commandHandlers = this.commandsService.getHandlers(this.lines, this.navigationHistory);
-		this.router.events.subscribe(event => {
+		this.commandHandlers = this.commandsService.getHandlers(
+			this.lines,
+			this.navigationHistory
+		);
+		this.router.events.subscribe((event) => {
 			const url = (event as any).url;
-			if (url && url !== this.navigationHistory[this.navigationHistory.length - 1]) {
+			if (
+				url &&
+				url !==
+					this.navigationHistory[this.navigationHistory.length - 1]
+			) {
 				this.navigationHistory.push(url);
 				if (this.navigationHistory.length > 50) {
 					this.navigationHistory.shift();
@@ -88,7 +128,11 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 		}
 
 		if (this.resizeHandle?.nativeElement) {
-			this.renderer.listen(this.resizeHandle.nativeElement, 'mousedown', (event: MouseEvent) => this.onResizeStart(event));
+			this.renderer.listen(
+				this.resizeHandle.nativeElement,
+				'mousedown',
+				(event: MouseEvent) => this.onResizeStart(event)
+			);
 		}
 	}
 
@@ -104,7 +148,10 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 		this.scrollToBottom();
 	}
 	showHelp() {
-		this.lines.push({ type: 'output', text: 'Available commands: <strong>help, apps, contact, about, visit [site]</strong>' });
+		this.lines.push({
+			type: 'output',
+			text: 'Available commands: <strong>help, apps, contact, about, visit [site]</strong>',
+		});
 		this.scrollToBottom();
 	}
 	private isUserAtBottom(): boolean {
@@ -168,20 +215,26 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 		if (command.startsWith('run ')) {
 			const project = command.substring(4).trim();
 			const projectRoutes: { [key: string]: string } = {
-				'calc': '/apps/calculator',
-				'calculator': '/apps/calculator',
-				'time': '/apps/clock',
-				'game': '/apps/game',
-				'sim': '/apps/sim',
-				'song': '/apps/sound',
-				'text': '/apps/editor',
+				calc: '/apps/calculator',
+				calculator: '/apps/calculator',
+				time: '/apps/clock',
+				game: '/apps/game',
+				sim: '/apps/sim',
+				song: '/apps/sound',
+				text: '/apps/editor',
 			};
 			const route = projectRoutes[project];
 			if (route) {
-				this.lines.push({ type: 'output', text: `Running ${project}...` });
+				this.lines.push({
+					type: 'output',
+					text: `Running ${project}...`,
+				});
 				this.router.navigate([route]);
 			} else {
-				this.lines.push({ type: 'output', text: `Unknown project: ${project}` });
+				this.lines.push({
+					type: 'output',
+					text: `Unknown project: ${project}`,
+				});
 			}
 			this.scrollToBottom();
 			return;
@@ -192,24 +245,24 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 			let url = '';
 
 			const shortcuts: { [key: string]: string } = {
-				'github': 'https://github.com/',
-				'google': 'https://www.google.com/',
-				'youtube': 'https://www.youtube.com/',
-				'twitter': 'https://twitter.com/',
-				'reddit': 'https://www.reddit.com/',
-				'facebook': 'https://www.facebook.com/',
-				'linkedin': 'https://www.linkedin.com/',
-				'stackoverflow': 'https://stackoverflow.com/',
-				'npm': 'https://www.npmjs.com/',
-				'angular': 'https://angular.io/',
-				'docs': 'https://angular.dev/docs',
-				'wikipedia': 'https://en.wikipedia.org/',
-				'bing': 'https://www.bing.com/',
-				'amazon': 'https://www.amazon.com/',
-				'netflix': 'https://www.netflix.com/',
-				'makattack24': 'https://github.com/makattack24?tab=repositories',
-				'trezyn': 'https://soundcloud.com/trezyn',
-				'soundcloud': 'https://soundcloud.com/',
+				github: 'https://github.com/',
+				google: 'https://www.google.com/',
+				youtube: 'https://www.youtube.com/',
+				twitter: 'https://twitter.com/',
+				reddit: 'https://www.reddit.com/',
+				facebook: 'https://www.facebook.com/',
+				linkedin: 'https://www.linkedin.com/',
+				stackoverflow: 'https://stackoverflow.com/',
+				npm: 'https://www.npmjs.com/',
+				angular: 'https://angular.io/',
+				docs: 'https://angular.dev/docs',
+				wikipedia: 'https://en.wikipedia.org/',
+				bing: 'https://www.bing.com/',
+				amazon: 'https://www.amazon.com/',
+				netflix: 'https://www.netflix.com/',
+				makattack24: 'https://github.com/makattack24?tab=repositories',
+				trezyn: 'https://soundcloud.com/trezyn',
+				soundcloud: 'https://soundcloud.com/',
 			};
 
 			if (shortcuts[site]) {
@@ -221,10 +274,16 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 			}
 
 			if (url) {
-				this.lines.push({ type: 'output', text: `Opening ${url} in a new tab...` });
+				this.lines.push({
+					type: 'output',
+					text: `Opening ${url} in a new tab...`,
+				});
 				window.open(url, '_blank');
 			} else {
-				this.lines.push({ type: 'output', text: `Unknown site: ${site}` });
+				this.lines.push({
+					type: 'output',
+					text: `Unknown site: ${site}`,
+				});
 			}
 			this.scrollToBottom();
 			return;
@@ -239,15 +298,27 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 					// eslint-disable-next-line no-new-func
 					const result = Function(`"use strict";return (${cmd})`)();
 					if (typeof result === 'number' && isFinite(result)) {
-						this.lines.push({ type: 'output', text: result.toString() });
+						this.lines.push({
+							type: 'output',
+							text: result.toString(),
+						});
 					} else {
-						this.lines.push({ type: 'output', text: 'Invalid expression.' });
+						this.lines.push({
+							type: 'output',
+							text: 'Invalid expression.',
+						});
 					}
 				} else {
-					this.lines.push({ type: 'output', text: `Unknown command: ${cmd}` });
+					this.lines.push({
+						type: 'output',
+						text: `Unknown command: ${cmd}`,
+					});
 				}
 			} catch {
-				this.lines.push({ type: 'output', text: 'Invalid expression.' });
+				this.lines.push({
+					type: 'output',
+					text: 'Invalid expression.',
+				});
 			}
 		}
 		this.scrollToBottom();
@@ -267,7 +338,10 @@ export class TerminalComponent implements AfterViewInit, AfterViewChecked, OnDes
 		if (!this.resizing) return;
 		const delta = this.startY - event.clientY;
 		let newHeight = this.startHeight + delta;
-		newHeight = Math.max(this.minHeight, Math.min(this.maxHeight, newHeight));
+		newHeight = Math.max(
+			this.minHeight,
+			Math.min(this.maxHeight, newHeight)
+		);
 
 		const snapThreshold = 40;
 		const windowHeight = window.innerHeight;

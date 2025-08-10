@@ -105,11 +105,14 @@
     }
 
     .project-command code {
-      background: var(--border, #333);
-      color: var(--accent, #60a5fa);
+      background: var(--secondary);
+      color: var(--accent);
       padding: 0.15em 0.4em;
       border-radius: 4px;
       font-size: 0.95em;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
     }
   }
 }
