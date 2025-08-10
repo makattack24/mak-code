@@ -7,7 +7,7 @@ export class ResizeService {
   resize$ = this.resizeSubject.asObservable();
 
   triggerResize() {
-    console.log('Resize triggered');
+    // console.log('Resize triggered');
     this.resizeSubject.next();
   }
 }
