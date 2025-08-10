@@ -1,1 +1,54 @@
-<p>contact works!</p>
+<div class="contact-page-bg">
+	<div class="contact-container">
+		<h2>Contact</h2>
+		<form
+			*ngIf="!submitted"
+			(ngSubmit)="onSubmit()"
+			#contactForm="ngForm"
+			autocomplete="off"
+		>
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input
+					id="name"
+					name="name"
+					type="text"
+					class="form-control"
+					required
+					[(ngModel)]="name"
+					placeholder="Your name"
+				/>
+			</div>
+			<div class="form-group">
+				<label for="email">Email</label>
+				<input
+					id="email"
+					name="email"
+					type="email"
+					class="form-control"
+					required
+					[(ngModel)]="email"
+					placeholder="you@example.com"
+				/>
+			</div>
+			<div class="form-group">
+				<label for="message">Message</label>
+				<textarea
+					id="message"
+					name="message"
+					class="form-control"
+					required
+					rows="5"
+					[(ngModel)]="message"
+					placeholder="How can we help you?"
+				></textarea>
+			</div>
+			<div *ngIf="error" class="error">{{ error }}</div>
+			<button type="submit" class="btn btn-primary">Send</button>
+		</form>
+		<div *ngIf="submitted" class="success-message">
+			<h3>Thank you!</h3>
+			<p>Your message has been sent.</p>
+		</div>
+	</div>
+</div>
