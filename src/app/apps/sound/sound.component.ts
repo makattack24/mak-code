@@ -86,6 +86,8 @@ export class SoundComponent implements AfterViewInit {
 
 		// Custom player events
 		audio.addEventListener('loadedmetadata', () => {
+			audio.currentTime = 0;
+			this.currentTime = 0;
 			this.duration = audio.duration;
 		});
 		audio.addEventListener('timeupdate', () => {
@@ -112,7 +114,6 @@ export class SoundComponent implements AfterViewInit {
 		const audio = this.audioRef.nativeElement;
 		const value = (event.target as HTMLInputElement).value;
 		audio.currentTime = parseFloat(value);
-		this.currentTime = audio.currentTime;
 	}
 
 	changeVolume(event: Event) {

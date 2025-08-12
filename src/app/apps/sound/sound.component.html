@@ -1,20 +1,42 @@
 <div class="sound-card">
-    <canvas #waveCanvas width="600" height="120"></canvas>
+	<canvas #waveCanvas width="600" height="120"></canvas>
 
-    <div class="audio-player">
-        <button class="audio-btn" (click)="togglePlay()">
-            <span *ngIf="!isPlaying">&#9654;</span>
-            <span *ngIf="isPlaying">&#10073;&#10073;</span>
-        </button>
-        <span class="audio-time">{{ currentTime | date:'mm:ss' }} / {{ duration | date:'mm:ss' }}</span>
-        <input type="range" min="0" [max]="duration" step="0.01" [(ngModel)]="currentTime" (input)="seekAudio($event)"
-            class="audio-slider" />
-        <button class="audio-btn" (click)="toggleMute()">
-            <span class="material-icons">{{ isMuted ? 'volume_off' : 'volume_up' }}</span>
-        </button>
-        <input type="range" min="0" max="1" step="0.01" [(ngModel)]="volume" (input)="changeVolume($event)"
-            class="audio-volume" [style.--val]="volume" />
-    </div>
-    <!-- Hidden native audio element -->
-    <audio #audioRef src="assets/test.mp3"></audio>
+	<div class="audio-player">
+		<button class="audio-btn" (click)="togglePlay()">
+			<span *ngIf="!isPlaying">&#9654;</span>
+			<span *ngIf="isPlaying">&#10073;&#10073;</span>
+		</button>
+		<span class="audio-time">
+			{{ currentTime * 1000 | date : "mm:ss" }} /
+			{{ duration * 1000 | date : "mm:ss" }}
+		</span>
+		<input
+			type="range"
+			min="0"
+			[max]="duration > 0 ? duration : 1"
+			step="0.01"
+			[value]="currentTime"
+			(input)="seekAudio($event)"
+			class="audio-slider"
+			*ngIf="duration > 0"
+			[style.--progress]="duration ? currentTime / duration : 0"
+		/>
+		<button class="audio-btn" (click)="toggleMute()">
+			<span class="material-icons">{{
+				isMuted ? "volume_off" : "volume_up"
+			}}</span>
+		</button>
+		<input
+			type="range"
+			min="0"
+			max="1"
+			step="0.01"
+			[(ngModel)]="volume"
+			(input)="changeVolume($event)"
+			class="audio-volume"
+			[style.--val]="volume"
+		/>
+	</div>
+	<!-- Hidden native audio element -->
+	<audio #audioRef src="assets/test.mp3"></audio>
 </div>

@@ -19,7 +19,7 @@ export class AppComponent {
 
 	title = 'myweb';
 
-	terminalHeight = 240; // CHANGED: Default height in px
+	terminalHeight = 240;
 
 	constructor(private resizeService: ResizeService) {}
 
