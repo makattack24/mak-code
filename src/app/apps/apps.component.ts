@@ -51,7 +51,7 @@ export class AppsComponent {
 				this.router.navigate(['/apps/clock']);
 				break;
 			case 'game':
-				this.router.navigate(['/apps/graphicsgame']);
+				this.router.navigate(['/apps/game']);
 				break;
 			case 'sim':
 				this.router.navigate(['/apps/sim']);

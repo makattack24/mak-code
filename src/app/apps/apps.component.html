@@ -5,18 +5,26 @@
 			[class.collapsed]="sidebarCollapsed"
 			aria-label="Project navigation"
 		>
-			<button
-				class="sidebar-toggle"
-				(click)="toggleSidebar()"
-				[attr.aria-label]="
-					sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
-				"
-			>
-				<span *ngIf="!sidebarCollapsed">&#x25C0;</span>
-				<span *ngIf="sidebarCollapsed">&#x25B6;</span>
-			</button>
+			<div class="sidebar-header">
+				<button
+					class="sidebar-toggle"
+					(click)="toggleSidebar()"
+					[attr.aria-label]="
+						sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
+					"
+				>
+					<span *ngIf="sidebarCollapsed" class="material-icons"
+						>menu</span
+					>
+					<span *ngIf="!sidebarCollapsed" class="material-icons"
+						>chevron_left</span
+					>
+				</button>
+				<ng-container *ngIf="!sidebarCollapsed">
+					<h2>Apps</h2>
+				</ng-container>
+			</div>
 			<ng-container *ngIf="!sidebarCollapsed">
-				<h2>Apps</h2>
 				<ul class="apps-list">
 					<li>
 						<span class="project-title">Calculator</span>
