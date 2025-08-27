@@ -9,6 +9,13 @@ const handler: Handler = async (event, context) => {
 		ua: event.headers['user-agent'] || 'unknown',
 		time: new Date().toISOString(),
 	};
+	const webhookUrl = process.env['DISCORD_WEBHOOK_URL'] as string;
+
+	if (!webhookUrl) {
+		throw new Error(
+			'DISCORD_WEBHOOK_URL is not defined in environment variables'
+		);
+	}
 
 	try {
 		// --- 1) Insert visit into Neon DB ---
@@ -18,16 +25,13 @@ const handler: Handler = async (event, context) => {
 		`;
 
 		// --- 2) Send Discord notification ---
-		await fetch(
-			'https://discord.com/api/webhooks/1410048420365996162/qnkPPE5g3RTw6T0Rjp0EeYe1_qZ5h7sKjmgEhzYgSWLv0Wm0OSwlz7EWvjB1uLmhK00_',
-			{
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					content: `👋 New visitor!\nIP: ${visitorInfo.ip}\nUA: ${visitorInfo.ua}\nTime: ${visitorInfo.time}`,
-				}),
-			}
-		);
+		await fetch(webhookUrl, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				content: `👋 New visitor!\nIP: ${visitorInfo.ip}\nUA: ${visitorInfo.ua}\nTime: ${visitorInfo.time}`,
+			}),
+		});
 
 		return {
 			statusCode: 200,
