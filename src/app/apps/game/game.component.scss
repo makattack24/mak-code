@@ -3,14 +3,16 @@
     color: var(--foreground, #fff);
     border-radius: 10px;
     box-shadow: 0 2px 16px #0003;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem 1.2rem;
     max-width: 350px;
-    margin: 2rem auto;
+    width: 100%;
+    margin: 1.5rem auto;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.2rem;
+    gap: 1rem;
     border: 1px solid var(--border, #333);
+    box-sizing: border-box;
 
     h2 {
         margin: 0 0 0.5rem 0;
@@ -69,5 +71,36 @@
         margin-top: 0.5rem;
         font-size: 0.98rem;
         color: var(--muted, #aaa);
+    }
+}
+
+@media (max-width: 500px) {
+    .game-card {
+        max-width: 100%;
+        margin: 0.75rem 0.5rem;
+        padding: 1rem 0.75rem;
+        border-radius: 8px;
+
+        h2 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            font-size: 1rem;
+        }
+
+        form {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            font-size: 1rem;
+        }
+
+        button {
+            font-size: 1rem;
+        }
     }
 }

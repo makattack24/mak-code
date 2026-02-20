@@ -40,7 +40,7 @@ export class ThemeToggleComponent {
     const saved = localStorage.getItem('theme');
     if (saved === 'light' || saved === 'dark') {
       this.theme = saved;
-      document.documentElement.setAttribute('data-theme', this.theme);
     }
+    document.documentElement.setAttribute('data-theme', this.theme);
   }
 }

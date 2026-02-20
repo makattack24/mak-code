@@ -16,12 +16,16 @@
 	color: var(--foreground);
 	border-radius: 8px;
 	max-width: 420px;
-	width: 100%;
+	width: calc(100% - 2rem);
 	padding: 2rem 1.5rem 1.5rem 1.5rem;
 	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
 	border: 1px solid var(--border);
 	position: relative;
 	animation: fadeIn 0.2s;
+	max-height: calc(100vh - 4rem);
+	max-height: calc(100dvh - 4rem);
+	overflow-y: auto;
+	box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -95,4 +99,31 @@
 	display: flex;
 	gap: 0.5rem;
 	justify-content: flex-end;
+	flex-wrap: wrap;
+}
+
+@media (max-width: 500px) {
+	.modal {
+		width: calc(100% - 1rem);
+		padding: 1.25rem 1rem 1rem 1rem;
+		border-radius: 6px;
+		max-height: calc(100vh - 2rem);
+		max-height: calc(100dvh - 2rem);
+	}
+
+	.modal-header h3 {
+		font-size: 1rem;
+	}
+
+	.form-control {
+		font-size: 1rem; // prevent iOS zoom
+	}
+
+	.form-actions {
+		flex-direction: column;
+
+		button {
+			width: 100%;
+		}
+	}
 }

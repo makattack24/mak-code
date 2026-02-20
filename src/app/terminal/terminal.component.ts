@@ -133,6 +133,11 @@ export class TerminalComponent
 				'mousedown',
 				(event: MouseEvent) => this.onResizeStart(event)
 			);
+			this.renderer.listen(
+				this.resizeHandle.nativeElement,
+				'touchstart',
+				(event: TouchEvent) => this.onTouchResizeStart(event)
+			);
 		}
 	}
 
@@ -400,5 +405,60 @@ export class TerminalComponent
 	private removeResizeListeners() {
 		window.removeEventListener('mousemove', this.onResizing);
 		window.removeEventListener('mouseup', this.onResizeEnd);
+		window.removeEventListener('touchmove', this.onTouchResizing);
+		window.removeEventListener('touchend', this.onTouchResizeEnd);
 	}
+
+	onTouchResizeStart(event: TouchEvent) {
+		event.preventDefault();
+		this.resizing = true;
+		this.startY = event.touches[0].clientY;
+		this.startHeight = this.height ?? this.minHeight;
+		this.renderer.addClass(document.body, 'resizing-terminal');
+		window.addEventListener('touchmove', this.onTouchResizing, { passive: false });
+		window.addEventListener('touchend', this.onTouchResizeEnd);
+	}
+
+	onTouchResizing = (event: TouchEvent) => {
+		if (!this.resizing) return;
+		event.preventDefault();
+		const clientY = event.touches[0].clientY;
+		const delta = this.startY - clientY;
+		let newHeight = this.startHeight + delta;
+		newHeight = Math.max(
+			this.minHeight,
+			Math.min(this.maxHeight, newHeight)
+		);
+
+		const snapThreshold = 40;
+		const windowHeight = window.innerHeight;
+
+		if (windowHeight - clientY < snapThreshold) {
+			this.isMinimized = true;
+			this.height = this.minHeight;
+			this.heightChange.emit(this.height);
+			this.resize.emit({ height: this.height });
+			this.resizing = false;
+			this.renderer.removeClass(document.body, 'resizing-terminal');
+			window.removeEventListener('touchmove', this.onTouchResizing);
+			window.removeEventListener('touchend', this.onTouchResizeEnd);
+			return;
+		}
+
+		if (this.isMinimized && newHeight > this.minHeight + 30) {
+			this.restoreTerminal();
+		}
+
+		this.height = newHeight;
+		this.heightChange.emit(this.height);
+		this.resize.emit({ height: this.height });
+	};
+
+	onTouchResizeEnd = () => {
+		if (!this.resizing) return;
+		this.resizing = false;
+		this.renderer.removeClass(document.body, 'resizing-terminal');
+		window.removeEventListener('touchmove', this.onTouchResizing);
+		window.removeEventListener('touchend', this.onTouchResizeEnd);
+	};
 }

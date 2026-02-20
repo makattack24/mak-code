@@ -2,11 +2,11 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 20px;
+    padding: 16px;
     border-radius: 8px;
     width: 100%;
     max-width: 400px;
-    margin: 2rem auto;
+    margin: 1.5rem auto;
     border: 1px solid var(--border, #333);
     background: var(--surface, #181a20);
     box-sizing: border-box;
@@ -124,14 +124,29 @@
 @media (max-width: 500px),
 (max-height: 500px) {
     .calculator-container {
-        padding: 8px;
-        max-width: 100vw;
+        padding: 6px;
+        max-width: 100%;
         margin: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        max-height: 100%;
     }
 
     .calculator-display {
-        padding: 0.5rem 0.5rem;
+        padding: 0.4rem 0.5rem;
         font-size: clamp(1rem, 4vw, 1.2rem);
+        gap: 0.5rem;
+    }
+
+    .calculator-display span {
+        padding-right: 0.5rem;
+    }
+
+    .clear-btn {
+        margin-left: 0.4rem;
+        padding: 0.3rem 0.7rem;
+        font-size: 0.9rem;
     }
 
     .calculator-row button {

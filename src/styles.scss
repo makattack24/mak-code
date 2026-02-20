@@ -61,9 +61,10 @@
 
 html,
 body {
-	width: 100vw;
+	width: 100%;
 	margin: 0;
 	padding: 0;
+	overflow-x: hidden;
 }
 
 body {
@@ -73,6 +74,8 @@ body {
 	color: var(--foreground);
 	font-family: var(--font-family);
 	transition: background 0.3s, color 0.3s;
+	font-size: clamp(14px, 1.6vw, 16px);
+	-webkit-text-size-adjust: 100%;
 }
 
 /* Universal box-sizing and font inheritance */
@@ -223,17 +226,29 @@ table {
 	border-collapse: collapse;
 	background: var(--surface);
 	color: var(--foreground);
+	display: block;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 th,
 td {
 	border: 1px solid var(--border);
 	padding: 0.5rem;
+	white-space: nowrap;
 }
 
 th {
 	background: var(--secondary);
 	color: var(--foreground);
+}
+
+@media (max-width: 600px) {
+	th,
+	td {
+		padding: 0.35rem 0.4rem;
+		font-size: 0.85rem;
+	}
 }
 
 /* Misc */
@@ -250,9 +265,33 @@ app-contact,
 app-graphicsgame,
 app-calculator,
 app-admin,
-app-sound {
+app-sound,
+app-editor,
+app-clock,
+app-game {
 	display: flex;
 	flex: 1 1 auto;
 	min-height: 0;
 	min-width: 0;
+	width: 100%;
+	overflow: hidden;
+}
+
+/* Responsive inputs and buttons globally */
+@media (max-width: 600px) {
+	button,
+	.btn {
+		padding: 0.45rem 0.9rem;
+		font-size: 0.9rem;
+	}
+
+	input,
+	textarea,
+	select {
+		font-size: 1rem; /* prevent iOS zoom */
+	}
+
+	h1 { font-size: 1.6rem; }
+	h2 { font-size: 1.35rem; }
+	h3 { font-size: 1.15rem; }
 }

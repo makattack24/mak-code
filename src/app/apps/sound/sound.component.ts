@@ -1,4 +1,11 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import {
+	Component,
+	ElementRef,
+	ViewChild,
+	AfterViewInit,
+	NgZone,
+	ChangeDetectorRef,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, NgIf } from '@angular/common';
 
@@ -21,6 +28,14 @@ export class SoundComponent implements AfterViewInit {
 	currentTime = 0;
 	volume = 1;
 	private previousVolume = 1;
+	private audioCtx!: AudioContext;
+	private analyser!: AnalyserNode;
+	private sourceCreated = false;
+
+	constructor(
+		private ngZone: NgZone,
+		private cdr: ChangeDetectorRef
+	) {}
 
 	ngAfterViewInit() {
 		const canvas = this.canvasRef.nativeElement;
@@ -30,25 +45,17 @@ export class SoundComponent implements AfterViewInit {
 			console.error('Unable to get 2D context');
 			return;
 		}
-		const audioCtx = new (window.AudioContext ||
-			(window as any).webkitAudioContext)();
-		const analyser = audioCtx.createAnalyser();
-
-		let sourceCreated = false;
 
 		audio.addEventListener('play', () => {
-			if (audioCtx.state === 'suspended') {
-				audioCtx.resume();
-			}
-			if (!sourceCreated) {
-				const source = audioCtx.createMediaElementSource(audio);
-				source.connect(analyser);
-				analyser.connect(audioCtx.destination);
-				sourceCreated = true;
+			if (!this.sourceCreated) {
+				const source = this.audioCtx.createMediaElementSource(audio);
+				source.connect(this.analyser);
+				this.analyser.connect(this.audioCtx.destination);
+				this.sourceCreated = true;
 			}
 
-			analyser.fftSize = 1024;
-			const bufferLength = analyser.frequencyBinCount;
+			this.analyser.fftSize = 1024;
+			const bufferLength = this.analyser.frequencyBinCount;
 			const dataArray = new Uint8Array(bufferLength);
 
 			const draw = () => {
@@ -56,7 +63,7 @@ export class SoundComponent implements AfterViewInit {
 				canvas.height = canvas.offsetHeight;
 
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				analyser.getByteTimeDomainData(dataArray);
+				this.analyser.getByteTimeDomainData(dataArray);
 
 				ctx.lineWidth = 2;
 				ctx.strokeStyle = '#2563eb';
@@ -84,25 +91,49 @@ export class SoundComponent implements AfterViewInit {
 			draw();
 		});
 
-		// Custom player events
-		audio.addEventListener('loadedmetadata', () => {
-			audio.currentTime = 0;
-			this.currentTime = 0;
-			this.duration = audio.duration;
-		});
-		audio.addEventListener('timeupdate', () => {
-			this.currentTime = audio.currentTime;
-		});
-		audio.addEventListener('ended', () => {
-			this.isPlaying = false;
+		// Custom player events — run inside NgZone so change detection picks up updates
+		this.ngZone.run(() => {
+			audio.addEventListener('loadedmetadata', () => {
+				this.ngZone.run(() => {
+					audio.currentTime = 0;
+					this.currentTime = 0;
+					this.duration = audio.duration;
+				});
+			});
+			audio.addEventListener('timeupdate', () => {
+				this.ngZone.run(() => {
+					this.currentTime = audio.currentTime;
+				});
+			});
+			audio.addEventListener('ended', () => {
+				this.ngZone.run(() => {
+					this.isPlaying = false;
+				});
+			});
+			audio.addEventListener('error', () => {
+				console.error('Audio load error:', audio.error);
+			});
 		});
 		audio.volume = this.volume;
 	}
 
 	togglePlay() {
 		const audio = this.audioRef.nativeElement;
+
+		// Create AudioContext on first user gesture so it starts in 'running' state
+		if (!this.audioCtx) {
+			this.audioCtx = new (window.AudioContext ||
+				(window as any).webkitAudioContext)();
+			this.analyser = this.audioCtx.createAnalyser();
+		}
+
+		// Resume from user gesture context — browsers require this
+		if (this.audioCtx.state === 'suspended') {
+			this.audioCtx.resume();
+		}
+
 		if (audio.paused) {
-			audio.play();
+			audio.play().catch((err) => console.error('Play failed:', err));
 			this.isPlaying = true;
 		} else {
 			audio.pause();

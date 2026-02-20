@@ -12,7 +12,6 @@ import { EditorComponent } from './apps/editor/editor.component';
 import { AdminComponent } from './admin/admin.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-import { RocketStatsComponent } from './rocketleague/rocket.component';
 import { AuthGuard } from '@auth0/auth0-angular';
 
 export const routes: Routes = [
@@ -22,7 +21,6 @@ export const routes: Routes = [
 	{ path: 'contact', component: ContactComponent },
 	{ path: 'login', component: LoginComponent },
 	{ path: 'signup', component: SignupComponent },
-	{ path: 'stats', component: RocketStatsComponent },
 	{
 		path: 'apps',
 		component: AppsComponent,
