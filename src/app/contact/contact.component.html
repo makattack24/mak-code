@@ -44,7 +44,9 @@
 				></textarea>
 			</div>
 			<div *ngIf="error" class="error">{{ error }}</div>
-			<button type="submit" class="btn btn-primary">Send</button>
+			<button type="submit" class="btn btn-primary" [disabled]="submitting">
+				{{ submitting ? 'Sending...' : 'Send' }}
+			</button>
 		</form>
 		<div *ngIf="submitted" class="success-message">
 			<h3>Thank you!</h3>

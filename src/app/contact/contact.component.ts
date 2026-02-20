@@ -14,15 +14,37 @@ export class ContactComponent {
 	email = '';
 	message = '';
 	submitted = false;
+	submitting = false;
 	error = '';
 
-	onSubmit() {
+	async onSubmit() {
 		this.error = '';
 		if (!this.name || !this.email || !this.message) {
 			this.error = 'Please fill in all fields.';
 			return;
 		}
-		// Simulate sending (replace with real API call)
-		this.submitted = true;
+
+		this.submitting = true;
+		try {
+			const response = await fetch('/.netlify/functions/contacts', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name: this.name,
+					email: this.email,
+					message: this.message,
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to send message');
+			}
+
+			this.submitted = true;
+		} catch (err) {
+			this.error = 'Something went wrong. Please try again.';
+		} finally {
+			this.submitting = false;
+		}
 	}
 }
