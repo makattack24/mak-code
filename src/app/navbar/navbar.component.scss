@@ -79,6 +79,26 @@
 	gap: 0.5rem;
 }
 
+// Admin link highlight
+.admin-link {
+	color: var(--primary) !important;
+	font-weight: 600;
+}
+
+// Login link
+.login-link {
+	white-space: nowrap;
+}
+
+// Logout button styled as nav-link
+.logout-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-family: inherit;
+	white-space: nowrap;
+}
+
 // Terminal toggle
 .terminal-toggle {
 	background: none;

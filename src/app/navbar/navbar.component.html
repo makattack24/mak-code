@@ -19,8 +19,38 @@
 			</li>
 		</ul>
 
-		<!-- Right side: theme toggle + terminal toggle + mobile hamburger -->
+		<!-- Right side: auth + theme toggle + terminal toggle + mobile hamburger -->
 		<div class="nav-actions">
+			<!-- Admin link (desktop) -->
+			<a
+				*ngIf="isAdmin$ | async"
+				routerLink="/admin"
+				routerLinkActive="active"
+				class="nav-link admin-link"
+			>
+				<i class="fa-solid fa-shield-halved"></i>
+				Admin
+			</a>
+
+			<!-- Login / Logout (desktop) -->
+			<a
+				*ngIf="!(isLoggedIn$ | async)"
+				routerLink="/login"
+				routerLinkActive="active"
+				class="nav-link login-link"
+			>
+				<i class="fa-solid fa-right-to-bracket"></i>
+				Login
+			</a>
+			<button
+				*ngIf="isLoggedIn$ | async"
+				class="nav-link logout-btn"
+				(click)="logout()"
+			>
+				<i class="fa-solid fa-right-from-bracket"></i>
+				Logout
+			</button>
+
 			<button
 				class="terminal-toggle"
 				(click)="toggleTerminal.emit()"
@@ -56,6 +86,38 @@
 		>
 			<i [class]="link.icon"></i>
 			{{ link.label }}
+		</a>
+
+		<!-- Admin link (mobile) -->
+		<a
+			*ngIf="isAdmin$ | async"
+			routerLink="/admin"
+			routerLinkActive="active"
+			class="mobile-link"
+			(click)="closeMenu()"
+		>
+			<i class="fa-solid fa-shield-halved"></i>
+			Admin
+		</a>
+
+		<!-- Login / Logout (mobile) -->
+		<a
+			*ngIf="!(isLoggedIn$ | async)"
+			routerLink="/login"
+			routerLinkActive="active"
+			class="mobile-link"
+			(click)="closeMenu()"
+		>
+			<i class="fa-solid fa-right-to-bracket"></i>
+			Login
+		</a>
+		<a
+			*ngIf="isLoggedIn$ | async"
+			class="mobile-link"
+			(click)="logout()"
+		>
+			<i class="fa-solid fa-right-from-bracket"></i>
+			Logout
 		</a>
 	</div>
 </nav>

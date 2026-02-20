@@ -12,7 +12,7 @@ import { EditorComponent } from './apps/editor/editor.component';
 import { AdminComponent } from './admin/admin.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
-import { AuthGuard } from '@auth0/auth0-angular';
+import { adminGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
 	{ path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -33,6 +33,6 @@ export const routes: Routes = [
 			{ path: 'editor', component: EditorComponent },
 		],
 	},
-	{ path: 'admin', component: AdminComponent, canActivate: [AuthGuard] },
+	{ path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
 	{ path: '**', redirectTo: '' },
 ];

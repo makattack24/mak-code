@@ -44,22 +44,49 @@
 
 .terminal-toolbar {
     background: var(--surface);
-    padding: 0 0.5rem;
+    padding: 0 0.75rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     border-bottom: 1px solid var(--border);
-    min-height: 28px;
+    min-height: 36px;
     position: sticky;
     top: 0;
     z-index: 10;
     flex-shrink: 0;
-    gap: 0.25rem;
-    flex-wrap: wrap;
+    gap: 0.5rem;
     overflow: hidden;
 }
 
-.toolbar-spacer {
-    flex: 1 1 auto;
+// ── Toolbar layout sections ─────────────────────────────
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+}
+
+.toolbar-center {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+    margin: 0 0.15rem;
+    flex-shrink: 0;
 }
 
 .terminal-container.minimized .terminal-toolbar {
@@ -70,55 +97,57 @@
 .toolbar-btn {
     background: none;
     border: none;
-    color: var(--primary);
+    color: var(--muted);
     cursor: pointer;
-    font-size: 1.25rem;
+    font-size: 0.85rem;
     margin: 0;
     padding: 0;
     border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 30px;
-    width: 30px;
+    height: 28px;
+    width: 28px;
     transition: background 0.15s, color 0.15s;
+    text-decoration: none;
 }
 
 .toolbar-btn:hover,
 .toolbar-btn:focus {
-    background: rgba(38, 99, 235, 0.10);
-    color: var(--primary-hover, #265feb);
-}
-
-.restore-btn {
-    margin-left: auto;
-    background: var(--surface);
+    background: var(--secondary);
     color: var(--primary);
-    border: none;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
 }
 
-.user-email {
-    color: var(--muted, #888);
-    font-size: 0.85rem;
-    margin-right: 0.25rem;
+.admin-btn {
+    color: var(--primary);
+}
+
+.user-badge {
+    color: var(--muted);
+    font-size: 0.78rem;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    max-width: 120px;
+    gap: 0.35rem;
+    max-width: 280px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     flex-shrink: 1;
     min-width: 0;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+
+    i {
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
 }
 
 .toolbar-nav {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.1rem;
     align-items: center;
     flex-shrink: 1;
     min-width: 0;
@@ -126,24 +155,33 @@
 }
 
 .toolbar-link {
-    color: inherit;
+    color: var(--muted);
     text-decoration: none;
     font-weight: 500;
-    padding: 0.25rem 0.4rem;
-    border-radius: 3px;
-    transition: background 0.2s;
+    padding: 0.2rem 0.45rem;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
     white-space: nowrap;
-    font-size: 0.9rem;
-}
-.toolbar-link:hover {
-    background: rgba(0,0,0,0.1);
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    i {
+        font-size: 0.7rem;
+    }
+
+    .link-label {
+        font-size: 0.78rem;
+    }
 }
 
-.fa-solid {
-    font-size: 1.1em;
-    vertical-align: middle;
-    margin-right: 0.15em;
+.toolbar-link:hover,
+.toolbar-link.active {
+    background: var(--secondary);
+    color: var(--primary);
 }
+
 .terminal {
     flex: 1 1 0;
     display: flex;
@@ -260,27 +298,30 @@ body.resizing-terminal {
 /* Mobile responsive */
 @media (max-width: 600px) {
     .terminal-toolbar {
-        padding: 0 0.3rem;
-        gap: 0.15rem;
-        min-height: 32px;
+        padding: 0 0.4rem;
+        gap: 0.25rem;
+        min-height: 34px;
     }
 
     .toolbar-nav {
-        gap: 0.2rem;
+        gap: 0.05rem;
     }
 
     .toolbar-link {
         padding: 0.2rem 0.3rem;
-        font-size: 0.8rem;
+
+        .link-label {
+            display: none;
+        }
     }
 
     .toolbar-btn {
-        width: 24px;
-        height: 24px;
-        font-size: 0.95rem;
+        width: 26px;
+        height: 26px;
+        font-size: 0.8rem;
     }
 
-    .user-email {
+    .user-badge {
         display: none;
     }
 
@@ -296,13 +337,13 @@ body.resizing-terminal {
     }
 
     .terminal-resize-handle {
-        height: 12px; /* larger touch target */
+        height: 12px;
     }
 }
 
 @media (max-width: 380px) {
     .toolbar-nav {
-        gap: 0.1rem;
+        gap: 0;
     }
 
     .toolbar-link {

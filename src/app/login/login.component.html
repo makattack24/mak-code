@@ -1,4 +1,31 @@
-<div class="login-container">
-    <h2>Login</h2>
-    <button (click)="auth.loginWithRedirect()">Login with Auth0</button>
-</div>
+<form class="login-form" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+	<h2>Login</h2>
+
+	<label for="email">Email</label>
+	<input
+		id="email"
+		type="email"
+		name="email"
+		[(ngModel)]="email"
+		required
+		placeholder="you@example.com"
+		autocomplete="email"
+	/>
+
+	<label for="password">Password</label>
+	<input
+		id="password"
+		type="password"
+		name="password"
+		[(ngModel)]="password"
+		required
+		placeholder="Enter password"
+		autocomplete="current-password"
+	/>
+
+	<button type="submit" [disabled]="!loginForm.form.valid || loading">
+		{{ loading ? 'Signing in...' : 'Sign In' }}
+	</button>
+
+	<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+</form>

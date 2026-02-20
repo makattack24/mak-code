@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
 import { TerminalCommandsService } from '../services/commands.service';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService } from '../services/auth.service';
 
 type PinPosition = 'center' | 'bottom' | 'left' | 'right';
 
@@ -88,7 +88,6 @@ export class TerminalComponent
 	private startY = 0;
 	private startHeight = 0;
 	private navigationHistory: string[] = [];
-	public locationOrigin = window.location.origin;
 
 	constructor(
 		private renderer: Renderer2,
@@ -226,6 +225,26 @@ export class TerminalComponent
 				text: 'Switching to navbar mode...',
 			});
 			this.showNavbar.emit();
+			return;
+		}
+
+		if (command === 'whoami') {
+			const user = this.auth.currentUser;
+			if (user) {
+				this.lines.push({ type: 'output', text: `${user.email} (${user.role})` });
+			} else {
+				this.lines.push({ type: 'output', text: 'Not logged in.' });
+			}
+			return;
+		}
+
+		if (command === 'logout') {
+			if (this.auth.currentUser) {
+				this.auth.logout();
+				this.lines.push({ type: 'output', text: 'Logged out.' });
+			} else {
+				this.lines.push({ type: 'output', text: 'Not logged in.' });
+			}
 			return;
 		}
 

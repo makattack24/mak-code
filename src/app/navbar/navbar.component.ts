@@ -1,7 +1,8 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
+import { AuthService } from '../services/auth.service';
 
 @Component({
 	selector: 'app-navbar',
@@ -11,6 +12,8 @@ import { ThemeToggleComponent } from '../themetoggle/themetoggle.component';
 	styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
+	private auth = inject(AuthService);
+
 	mobileMenuOpen = false;
 	@Input() terminalVisible = true;
 	@Output() toggleTerminal = new EventEmitter<void>();
@@ -22,12 +25,21 @@ export class NavbarComponent {
 		{ path: '/contact', label: 'Contact', icon: 'fa-solid fa-envelope' },
 	];
 
+	isLoggedIn$ = this.auth.isLoggedIn$;
+	isAdmin$ = this.auth.isAdmin$;
+	currentUser$ = this.auth.currentUser$;
+
 	toggleMenu(): void {
 		this.mobileMenuOpen = !this.mobileMenuOpen;
 	}
 
 	closeMenu(): void {
 		this.mobileMenuOpen = false;
+	}
+
+	logout(): void {
+		this.auth.logout();
+		this.closeMenu();
 	}
 
 	@HostListener('document:keydown.escape')

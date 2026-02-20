@@ -6,66 +6,90 @@
 >
 	<div #resizeHandle class="terminal-resize-handle"></div>
 	<div class="terminal-toolbar">
-		<app-themetoggle></app-themetoggle>
-		<nav class="toolbar-nav">
-			<a routerLink="/home" class="toolbar-link">Home</a>
-			<a routerLink="/apps" class="toolbar-link">Apps</a>
-			<a routerLink="/about" class="toolbar-link">About</a>
-			<a routerLink="/contact" class="toolbar-link">Contact</a>
-		</nav>
-		<div class="toolbar-spacer"></div>
-		<button class="toolbar-btn" title="Help" (click)="showHelp()">
-			<i class="fa-solid fa-circle-question"></i>
-		</button>
-		<ng-container
-			*ngIf="auth.isAuthenticated$ | async as isAuth; else showLogin"
-		>
-			<span class="user-email" title="{{ (auth.user$ | async)?.email }}">
-				<i class="fa-solid fa-user"></i>
-				{{ (auth.user$ | async)?.email }}
-			</span>
+		<!-- Left: nav links -->
+		<div class="toolbar-left">
+			<app-themetoggle></app-themetoggle>
+			<nav class="toolbar-nav">
+				<a routerLink="/home" routerLinkActive="active" class="toolbar-link" title="Home">
+					<i class="fa-solid fa-house"></i>
+					<span class="link-label">Home</span>
+				</a>
+				<a routerLink="/apps" routerLinkActive="active" class="toolbar-link" title="Apps">
+					<i class="fa-solid fa-grip"></i>
+					<span class="link-label">Apps</span>
+				</a>
+				<a routerLink="/about" routerLinkActive="active" class="toolbar-link" title="About">
+					<i class="fa-solid fa-user"></i>
+					<span class="link-label">About</span>
+				</a>
+				<a routerLink="/contact" routerLinkActive="active" class="toolbar-link" title="Contact">
+					<i class="fa-solid fa-envelope"></i>
+					<span class="link-label">Contact</span>
+				</a>
+			</nav>
+		</div>
+
+		<!-- Center: user info -->
+		<div class="toolbar-center">
+			<ng-container *ngIf="auth.currentUser$ | async as user">
+				<span class="user-badge" [title]="user.email">
+					<i class="fa-solid fa-circle-user"></i>
+					{{ user.email }}
+				</span>
+			</ng-container>
+		</div>
+
+		<!-- Right: action buttons -->
+		<div class="toolbar-right">
+			<button class="toolbar-btn" title="Help" (click)="showHelp()">
+				<i class="fa-regular fa-circle-question"></i>
+			</button>
+
+			<ng-container *ngIf="auth.currentUser$ | async as user; else showLogin">
+				<a
+					*ngIf="user.role === 'admin'"
+					routerLink="/admin"
+					class="toolbar-btn admin-btn"
+					title="Admin Panel"
+				>
+					<i class="fa-solid fa-shield-halved"></i>
+				</a>
+				<button class="toolbar-btn" title="Logout" (click)="auth.logout()">
+					<i class="fa-solid fa-arrow-right-from-bracket"></i>
+				</button>
+			</ng-container>
+			<ng-template #showLogin>
+				<a routerLink="/login" class="toolbar-btn" title="Login">
+					<i class="fa-solid fa-arrow-right-to-bracket"></i>
+				</a>
+			</ng-template>
+
+			<span class="toolbar-divider"></span>
+
+			<button
+				*ngIf="!isMinimized"
+				class="toolbar-btn"
+				title="Minimize terminal"
+				(click)="minimizeTerminal()"
+			>
+				<i class="fa-solid fa-chevron-down"></i>
+			</button>
+			<button
+				*ngIf="isMinimized"
+				class="toolbar-btn"
+				title="Restore terminal"
+				(click)="restoreTerminal()"
+			>
+				<i class="fa-solid fa-chevron-up"></i>
+			</button>
 			<button
 				class="toolbar-btn"
-				title="Logout"
-				(click)="
-					auth.logout({ logoutParams: { returnTo: locationOrigin } })
-				"
+				title="Switch to navbar"
+				(click)="showNavbar.emit()"
 			>
-				<i class="fa-solid fa-right-from-bracket"></i>
+				<i class="fa-solid fa-up-right-from-square"></i>
 			</button>
-		</ng-container>
-		<ng-template #showLogin>
-			<button
-				class="toolbar-btn"
-				title="Login"
-				(click)="auth.loginWithRedirect()"
-			>
-				<i class="fa-solid fa-right-to-bracket"></i>
-			</button>
-		</ng-template>
-		<button
-			*ngIf="!isMinimized"
-			class="toolbar-btn"
-			title="Minimize"
-			(click)="minimizeTerminal()"
-		>
-			<i class="fa-solid fa-window-minimize"></i>
-		</button>
-		<button
-			*ngIf="isMinimized"
-			class="toolbar-btn"
-			title="Restore"
-			(click)="restoreTerminal()"
-		>
-			<i class="fa-solid fa-window-restore"></i>
-		</button>
-		<button
-			class="toolbar-btn"
-			title="Switch to navbar"
-			(click)="showNavbar.emit()"
-		>
-			<i class="fa-solid fa-bars"></i>
-		</button>
+		</div>
 	</div>
 	<div class="terminal" *ngIf="!isMinimized" (click)="focusInput()">
 		<div class="terminal-lines" #linesContainer>
