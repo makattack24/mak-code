@@ -1,3 +1,11 @@
+:host {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	min-height: 0;
+	width: 100%;
+}
+
 .sound-card {
 	padding: 1.5rem;
 	background: var(--surface);

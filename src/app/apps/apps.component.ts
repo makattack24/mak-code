@@ -1,80 +1,84 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
-import { ResizeService } from '../services/resize.service';
-import { TerminalCommandsService } from '../services/commands.service';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
+interface AppItem {
+	name: string;
+	icon: string;
+	route: string;
+	description: string;
+}
 
 @Component({
 	selector: 'app-apps',
 	imports: [RouterOutlet, CommonModule],
 	templateUrl: './apps.component.html',
 	styleUrl: './apps.component.scss',
+	host: { style: 'display:flex;flex-direction:column;flex:1 1 auto;min-height:0;width:100%' },
 })
 export class AppsComponent {
-	sidebarCollapsed = false;
+	activeApp: string | null = null;
 
-	private lines: { type: 'command' | 'output'; text: string }[] = [];
-	private navigationHistory: string[] = [];
+	apps: AppItem[] = [
+		{
+			name: 'Calculator',
+			icon: 'fa-solid fa-calculator',
+			route: '/apps/calculator',
+			description: 'Basic calculator',
+		},
+		{
+			name: 'Clock',
+			icon: 'fa-solid fa-clock',
+			route: '/apps/clock',
+			description: 'Digital clock',
+		},
+		{
+			name: 'Game',
+			icon: 'fa-solid fa-gamepad',
+			route: '/apps/game',
+			description: 'Browser game',
+		},
+		{
+			name: 'Sim',
+			icon: 'fa-solid fa-cube',
+			route: '/apps/sim',
+			description: 'Graphics simulation',
+		},
+		{
+			name: 'Sound',
+			icon: 'fa-solid fa-music',
+			route: '/apps/sound',
+			description: 'Audio player',
+		},
+		{
+			name: 'Editor',
+			icon: 'fa-solid fa-code',
+			route: '/apps/editor',
+			description: 'Text editor',
+		},
+	];
 
-	constructor(
-		private resizeService: ResizeService,
-		private commandsService: TerminalCommandsService,
-		private router: Router
-	) {}
-
-	toggleSidebar() {
-		this.sidebarCollapsed = !this.sidebarCollapsed;
-		setTimeout(() => {
-			this.resizeService.triggerResize();
-		}, 0);
+	constructor(private router: Router) {
+		this.router.events
+			.pipe(filter((e) => e instanceof NavigationEnd))
+			.subscribe((e) => {
+				const url = (e as NavigationEnd).urlAfterRedirects;
+				if (url === '/apps') {
+					this.activeApp = null;
+				} else {
+					const app = this.apps.find((a) => url.startsWith(a.route));
+					this.activeApp = app?.name ?? null;
+				}
+			});
 	}
 
-	runCommand(command: string) {
-		// Add to history
-		this.navigationHistory.push(this.router.url);
+	openApp(app: AppItem): void {
+		this.router.navigate([app.route]);
+	}
 
-		// Get handlers
-		const handlers = this.commandsService.getHandlers(
-			this.lines,
-			this.navigationHistory
-		);
-
-		// Remove "run " prefix if present
-		const cmd = command.startsWith('run ') ? command.slice(4) : command;
-
-		// Map sidebar commands to routes or handlers
-		switch (cmd) {
-			case 'calc':
-				this.router.navigate(['/apps/calculator']);
-				break;
-			case 'time':
-				this.router.navigate(['/apps/clock']);
-				break;
-			case 'game':
-				this.router.navigate(['/apps/game']);
-				break;
-			case 'sim':
-				this.router.navigate(['/apps/sim']);
-				break;
-			case 'song':
-				this.router.navigate(['/apps/sound']);
-				break;
-			case 'text':
-				this.router.navigate(['/apps/editor']);
-				break;
-			case 'kill':
-				if (handlers['kill']) handlers['kill']();
-				break;
-			default:
-				// fallback: try handler
-				if (handlers[cmd]) {
-					handlers[cmd]();
-				} else {
-					this.lines.push({
-						type: 'output',
-						text: `Unknown command: ${command}`,
-					});
-				}
-		}
+	closeApp(): void {
+		this.activeApp = null;
+		this.router.navigate(['/apps']);
 	}
 }

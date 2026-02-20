@@ -1,115 +1,35 @@
-<div class="apps-layout">
-	<div class="content-row">
-		<nav
-			class="apps-main"
-			[class.collapsed]="sidebarCollapsed"
-			aria-label="Project navigation"
-		>
-			<div class="sidebar-header">
-				<button
-					class="sidebar-toggle"
-					(click)="toggleSidebar()"
-					[attr.aria-label]="
-						sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
-					"
-				>
-					<span *ngIf="sidebarCollapsed" class="material-icons"
-						>menu</span
-					>
-					<span *ngIf="!sidebarCollapsed" class="material-icons"
-						>chevron_left</span
-					>
-				</button>
-				<ng-container *ngIf="!sidebarCollapsed">
-					<h2>Apps</h2>
-				</ng-container>
-			</div>
-			<ng-container *ngIf="!sidebarCollapsed">
-				<ul class="apps-list">
-					<li>
-						<span class="project-title">Calculator</span>
-						<span class="project-command">
-							<code
-								(click)="runCommand('run calc')"
-								tabindex="0"
-								role="button"
-								>{{ "run calc" }}</code
-							>
-						</span>
-					</li>
-					<li>
-						<span class="project-title">Clock</span>
-						<span class="project-command">
-							<code
-								(click)="runCommand('run time')"
-								tabindex="0"
-								role="button"
-								>{{ "run time" }}</code
-							>
-						</span>
-					</li>
-					<li>
-						<span class="project-title">Game</span>
-						<span class="project-command">
-							<code
-								(click)="runCommand('run game')"
-								tabindex="0"
-								role="button"
-								>{{ "run game" }}</code
-							>
-						</span>
-					</li>
-					<li>
-						<span class="project-title">Sim</span>
-						<span class="project-command">
-							<code
-								(click)="runCommand('run sim')"
-								tabindex="0"
-								role="button"
-								>{{ "run sim" }}</code
-							>
-						</span>
-					</li>
-					<li>
-						<span class="project-title">Sound</span>
-						<span class="project-command">
-							<code
-								(click)="runCommand('run song')"
-								tabindex="0"
-								role="button"
-								>{{ "run song" }}</code
-							>
-						</span>
-					</li>
-					<li>
-						<span class="project-title">Editor</span>
-						<span class="project-command">
-							<code
-								(click)="runCommand('run text')"
-								tabindex="0"
-								role="button"
-								>{{ "run text" }}</code
-							>
-						</span>
-					</li>
-					<li>
-						<span class="project-title">Terminate</span>
-						<span class="project-command">
-							<code
-								(click)="runCommand('kill')"
-								tabindex="0"
-								role="button"
-								>{{ "kill" }}</code
-							>
-						</span>
-					</li>
-				</ul>
-			</ng-container>
-		</nav>
-		<main class="apps-side">
-			<div class="apps-side-content">
-				<router-outlet></router-outlet>
-			</div>
-		</main>
+<div class="apps-page">
+	<!-- App Launcher (shown when no app is active) -->
+	<div *ngIf="!activeApp" class="app-launcher">
+		<div class="launcher-header">
+			<h1>Apps</h1>
+			<p class="launcher-subtitle">Pick an app to launch</p>
+		</div>
+		<div class="app-grid">
+			<button
+				*ngFor="let app of apps"
+				class="app-card"
+				(click)="openApp(app)"
+			>
+				<div class="app-icon">
+					<i [class]="app.icon"></i>
+				</div>
+				<span class="app-name">{{ app.name }}</span>
+				<span class="app-desc">{{ app.description }}</span>
+			</button>
+		</div>
+	</div>
+
+	<!-- Active App View -->
+	<div class="app-view" [class.active]="activeApp">
+		<div *ngIf="activeApp" class="app-view-header">
+			<button class="back-btn" (click)="closeApp()">
+				<i class="fa-solid fa-arrow-left"></i> Apps
+			</button>
+			<span class="active-app-name">{{ activeApp }}</span>
+		</div>
+		<div class="app-view-content">
+			<router-outlet></router-outlet>
+		</div>
 	</div>
 </div>

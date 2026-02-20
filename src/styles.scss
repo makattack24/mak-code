@@ -282,23 +282,13 @@ hr {
 	margin: 2rem 0;
 }
 
-app-apps,
-app-home,
-app-about,
-app-contact,
-app-graphicsgame,
-app-calculator,
-app-admin,
-app-sound,
-app-editor,
-app-clock,
-app-game {
-	display: flex;
-	flex: 1 1 auto;
-	min-height: 0;
-	min-width: 0;
-	width: 100%;
-	overflow: hidden;
+/* ── Router layout ─────────────────────────────────────────
+   Angular renders routed components as siblings of <router-outlet>.
+   These global rules ensure the outlet itself takes no space and
+   routed host elements stretch to fill their flex parent.
+   ───────────────────────────────────────────────────────── */
+router-outlet {
+	display: none !important;
 }
 
 /* Responsive inputs and buttons globally */

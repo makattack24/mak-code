@@ -1,3 +1,11 @@
+:host {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 auto;
+	min-height: 0;
+	width: 100%;
+}
+
 .editor-main {
 	display: flex;
 	background: var(--surface);
