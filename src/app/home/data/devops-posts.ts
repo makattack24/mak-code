@@ -1,0 +1,59 @@
+import { BlogPost } from '../models/blog-post.model';
+
+export const DEVOPS_POSTS: BlogPost[] = [
+	{
+		id: 4,
+		title: 'Getting Started with Docker for .NET Developers',
+		summary:
+			"Docker simplifies deployment by packaging your app and its dependencies into containers. Here's a practical guide for .NET devs.",
+		category: 'DevOps',
+		date: '2026-02-08',
+		readTime: '6 min read',
+		tags: ['Docker', 'DevOps', '.NET', 'Deployment'],
+		content: `Docker lets you package your .NET app into a container that runs the same everywhere — your machine, CI/CD, production.\n\n**Basic Dockerfile for .NET**\n\`\`\`dockerfile\nFROM mcr.microsoft.com/dotnet/sdk:9.0 AS build\nWORKDIR /app\nCOPY . .\nRUN dotnet publish -c Release -o out\n\nFROM mcr.microsoft.com/dotnet/aspnet:9.0\nWORKDIR /app\nCOPY --from=build /app/out .\nENTRYPOINT ["dotnet", "MyApp.dll"]\n\`\`\`\n\n**Key Commands**\n- \`docker build -t myapp .\` — build the image\n- \`docker run -p 8080:80 myapp\` — run the container\n- \`docker compose up\` — run multi-container setups\n\n**Why Docker?**\n- Consistent environments (no more "works on my machine")\n- Easy scaling and deployment\n- Great for microservices\n\nOnce you're comfortable with Docker, explore Docker Compose for multi-service apps and Kubernetes for orchestration.`,
+	},
+	{
+		id: 23,
+		title: 'CI/CD with GitHub Actions for .NET and Angular Projects',
+		summary:
+			'Automate your build, test, and deployment pipeline with GitHub Actions. A practical walkthrough for full-stack .NET and Angular apps.',
+		category: 'DevOps',
+		date: '2025-10-28',
+		readTime: '7 min read',
+		tags: ['GitHub Actions', 'CI/CD', 'DevOps', '.NET', 'Angular'],
+		content: `GitHub Actions lets you automate your entire development pipeline — from running tests on every PR to deploying on every merge.\n\n**Basic .NET Build and Test**\n\`\`\`yaml\nname: .NET CI\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-dotnet@v4\n        with:\n          dotnet-version: '9.0.x'\n      - run: dotnet restore\n      - run: dotnet build --no-restore\n      - run: dotnet test --no-build --verbosity normal\n\`\`\`\n\n**Angular Build and Test**\n\`\`\`yaml\n  frontend:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: '22'\n          cache: 'npm'\n      - run: npm ci\n      - run: npm run lint\n      - run: npm run test -- --watch=false --browsers=ChromeHeadless\n      - run: npm run build -- --configuration=production\n\`\`\`\n\n**Deploy to Azure on Merge**\n\`\`\`yaml\n  deploy:\n    needs: [build, frontend]\n    if: github.ref == 'refs/heads/main'\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: dotnet publish -c Release -o ./publish\n      - uses: azure/webapps-deploy@v3\n        with:\n          app-name: 'my-app'\n          publish-profile: $\{{ secrets.AZURE_PUBLISH_PROFILE }}\n          package: ./publish\n\`\`\`\n\n**Matrix Builds**\nTest across multiple environments:\n\`\`\`yaml\nstrategy:\n  matrix:\n    dotnet-version: ['8.0.x', '9.0.x']\n    os: [ubuntu-latest, windows-latest]\n\`\`\`\n\n**Caching Dependencies**\nSpeed up builds by caching NuGet and npm packages:\n\`\`\`yaml\n- uses: actions/cache@v4\n  with:\n    path: ~/.nuget/packages\n    key: nuget-$\{{ hashFiles('**/*.csproj') }}\n\`\`\`\n\n**Best Practices**\n- Keep workflows in \`.github/workflows/\`\n- Use branch protection rules to require CI to pass\n- Store secrets in GitHub Secrets, never in code\n- Pin action versions to specific commits or tags\n- Use \`needs:\` to define job dependencies\n\nA good CI/CD pipeline catches bugs before they reach production and makes deployment boring — which is exactly what you want.`,
+	},
+	{
+		id: 24,
+		title: 'Monitoring .NET Applications with OpenTelemetry',
+		summary:
+			'OpenTelemetry is the industry standard for observability. Learn how to instrument .NET apps with traces, metrics, and logs.',
+		category: 'DevOps',
+		date: '2025-10-20',
+		readTime: '6 min read',
+		tags: ['OpenTelemetry', 'Monitoring', '.NET', 'DevOps'],
+		content: `When something goes wrong in production, logs alone aren't enough. OpenTelemetry gives you traces, metrics, and logs in a vendor-neutral format.\n\n**What Is OpenTelemetry?**\nAn open standard for collecting observability data:\n- **Traces** — Follow a request across services\n- **Metrics** — Counters, histograms, gauges\n- **Logs** — Structured log events correlated with traces\n\n**Adding OpenTelemetry to .NET**\n\`\`\`csharp\nbuilder.Services.AddOpenTelemetry()\n    .WithTracing(tracing => tracing\n        .AddAspNetCoreInstrumentation()\n        .AddHttpClientInstrumentation()\n        .AddEntityFrameworkCoreInstrumentation()\n        .AddOtlpExporter())\n    .WithMetrics(metrics => metrics\n        .AddAspNetCoreInstrumentation()\n        .AddHttpClientInstrumentation()\n        .AddRuntimeInstrumentation()\n        .AddOtlpExporter());\n\`\`\`\n\n**Custom Traces**\nAdd your own spans for business logic:\n\`\`\`csharp\nprivate static readonly ActivitySource Source = new("MyApp.Orders\");\n\npublic async Task<Order> PlaceOrderAsync(Cart cart)\n{\n    using var activity = Source.StartActivity(\"PlaceOrder\");\n    activity?.SetTag(\"cart.itemCount\", cart.Items.Count);\n    activity?.SetTag(\"cart.total\", cart.Total);\n\n    var order = await CreateOrder(cart);\n    activity?.SetTag(\"order.id\", order.Id);\n\n    await SendConfirmationEmail(order);\n    return order;\n}\n\`\`\`\n\n**Custom Metrics**\n\`\`\`csharp\nprivate static readonly Meter Meter = new(\"MyApp.Orders\");\nprivate static readonly Counter<int> OrdersPlaced = Meter.CreateCounter<int>(\"orders.placed\");\nprivate static readonly Histogram<double> OrderValue = Meter.CreateHistogram<double>(\"orders.value\");\n\npublic async Task<Order> PlaceOrderAsync(Cart cart)\n{\n    var order = await CreateOrder(cart);\n    OrdersPlaced.Add(1, new KeyValuePair<string, object?>(\"region\", order.Region));\n    OrderValue.Record(order.Total);\n    return order;\n}\n\`\`\`\n\n**Viewing the Data**\nExport to any OpenTelemetry-compatible backend:\n- Jaeger or Zipkin (tracing)\n- Prometheus + Grafana (metrics)\n- Azure Monitor / Application Insights\n- Datadog, New Relic, Honeycomb\n\n**Distributed Tracing**\nThe real power is seeing a request flow across microservices. OpenTelemetry automatically propagates trace context through HTTP headers, so you can see the full picture of why a request was slow.\n\nObservability isn't optional for production systems. OpenTelemetry gives you a vendor-neutral foundation that works across languages and platforms.`,
+	},
+	{
+		id: 25,
+		title: 'Git Branching Strategies for Teams',
+		summary:
+			'Trunk-based development, GitFlow, or GitHub Flow? Each branching strategy has trade-offs. Pick the right one for your team.',
+		category: 'DevOps',
+		date: '2025-10-12',
+		readTime: '5 min read',
+		tags: ['Git', 'DevOps', 'Team Workflow'],
+		content: `Your Git branching strategy affects how fast you ship, how often you break things, and how painful code reviews are. Choose wisely.\n\n**Trunk-Based Development**\nEveryone commits to \`main\` (or \`trunk\`) with short-lived feature branches (< 1 day).\n\`\`\`\nmain ──●──●──●──●──●──●──\n        \\─●─/   \\─●─/\n        feat-a   feat-b\n\`\`\`\n\nPros:\n- Fast integration, small diffs\n- Works well with CI/CD and feature flags\n- Used by Google, Meta, and Microsoft\n\nCons:\n- Requires strong CI/CD and test coverage\n- Feature flags add complexity\n\n**GitHub Flow**\nCreate a feature branch, open a PR, merge to \`main\` after review.\n\`\`\`\nmain ──●──────●──────●──\n        \\─●─●─/\n        feature/login\n\`\`\`\n\nPros:\n- Simple to understand\n- PRs enable code review\n- Works well for most teams\n\nCons:\n- Long-lived branches can cause merge conflicts\n- No release branch concept\n\n**GitFlow**\nSeparate branches for development, features, releases, and hotfixes.\n\`\`\`\nmain     ──●─────────●──\nrelease      \\──●──●─/\ndevelop  ──●──●──●──●──●──\n            \\─●─/\n            feature/x\n\`\`\`\n\nPros:\n- Clear separation of concerns\n- Good for scheduled releases\n\nCons:\n- Complex — many branches to manage\n- Slow integration cycle\n- Overkill for most web projects\n\n**My Recommendation**\nFor most web development teams, **GitHub Flow** with short-lived branches (1-3 days max) is the sweet spot. Add feature flags if you need to deploy incomplete features.\n\nIf you're doing continuous deployment (multiple deploys per day), consider trunk-based development.\n\nAvoid GitFlow unless you have a genuine need for release branches (e.g., mobile apps with staged rollouts or software with long-term support versions).\n\n**Branch Naming Conventions**\nPick a convention and stick to it:\n\`\`\`\nfeature/user-authentication\nbugfix/login-redirect-loop\nhotfix/payment-null-check\nchore/update-dependencies\n\`\`\`\n\nThe best branching strategy is the one your team actually follows consistently.`,
+	},
+	{
+		id: 26,
+		title: 'Infrastructure as Code with Terraform: A Practical Introduction',
+		summary:
+			"Stop clicking through cloud consoles. Terraform lets you define infrastructure in code that's version-controlled, reviewed, and repeatable.",
+		category: 'DevOps',
+		date: '2025-10-05',
+		readTime: '7 min read',
+		tags: ['Terraform', 'IaC', 'DevOps', 'Cloud'],
+		content: `Manually provisioning infrastructure through a cloud console doesn't scale. Terraform lets you declare what you want, and it figures out how to create it.\n\n**What Is Terraform?**\nTerraform is an Infrastructure as Code (IaC) tool by HashiCorp. You write \`.tf\` files describing your infrastructure, and Terraform creates, updates, or destroys resources to match.\n\n**Basic Azure Example**\n\`\`\`hcl\nprovider "azurerm" {\n  features {}\n}\n\nresource "azurerm_resource_group" "main" {\n  name     = "rg-myapp-prod"\n  location = "East US"\n}\n\nresource "azurerm_app_service_plan" "main" {\n  name                = "asp-myapp-prod"\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  os_type             = "Linux"\n  sku_name            = "B1"\n}\n\nresource "azurerm_linux_web_app" "main" {\n  name                = "app-myapp-prod"\n  location            = azurerm_resource_group.main.location\n  resource_group_name = azurerm_resource_group.main.name\n  service_plan_id     = azurerm_app_service_plan.main.id\n\n  site_config {\n    application_stack {\n      dotnet_version = "9.0"\n    }\n  }\n}\n\`\`\`\n\n**Core Commands**\n\`\`\`bash\nterraform init      # Download providers\nterraform plan      # Preview changes\nterraform apply     # Apply changes\nterraform destroy   # Tear everything down\n\`\`\`\n\n**Variables and Environments**\n\`\`\`hcl\nvariable "environment" {\n  type    = string\n  default = "dev"\n}\n\nresource "azurerm_resource_group" "main" {\n  name = "rg-myapp-\${var.environment}"\n}\n\`\`\`\nUse different \`.tfvars\` files for dev, staging, and production.\n\n**State Management**\nTerraform tracks what it's created in a state file. For teams, store state remotely:\n\`\`\`hcl\nterraform {\n  backend "azurerm" {\n    resource_group_name  = "rg-terraform"\n    storage_account_name = "stterraformstate"\n    container_name       = "tfstate"\n    key                  = "myapp.terraform.tfstate"\n  }\n}\n\`\`\`\n\n**Why IaC?**\n- Infrastructure is reviewed via PR, just like code\n- Environments are reproducible and consistent\n- Disaster recovery is a \`terraform apply\` away\n- Documentation is the code itself\n\nIf you're managing cloud resources, Infrastructure as Code isn't optional — it's a professional standard.`,
+	},
+];

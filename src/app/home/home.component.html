@@ -5,6 +5,28 @@
 		<p class="tagline">Updates on Angular, C#, .NET, and modern web development.</p>
 	</header>
 
+	<!-- Search & Controls -->
+	<div class="search-sort-bar">
+		<div class="search-box">
+			<i class="fa-solid fa-magnifying-glass"></i>
+			<input
+				type="text"
+				placeholder="Search posts..."
+				[(ngModel)]="searchQuery"
+				(ngModelChange)="onSearchChange()"
+			/>
+			<button *ngIf="searchQuery" class="clear-btn" (click)="searchQuery = ''; onSearchChange()">
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+		</div>
+		<div class="sort-box">
+			<i class="fa-solid fa-arrow-down-wide-short"></i>
+			<select [(ngModel)]="activeSortOption" (ngModelChange)="onSortChange()">
+				<option *ngFor="let opt of sortOptions" [value]="opt.value">{{ opt.label }}</option>
+			</select>
+		</div>
+	</div>
+
 	<!-- Category Filter -->
 	<nav class="category-bar">
 		<button
@@ -44,7 +66,9 @@
 		<div
 			*ngFor="let post of filteredPosts; let i = index"
 			class="post-card"
-			[class.featured]="i === 0 && activeCategory === 'All'"
+			[class.span-1]="getPostSpan(i) === 1"
+			[class.span-2]="getPostSpan(i) === 2"
+			[class.span-3]="getPostSpan(i) === 3"
 			(click)="openPost(post)"
 		>
 			<div class="post-card-top">
@@ -62,6 +86,8 @@
 
 	<!-- Empty State -->
 	<div *ngIf="!selectedPost && filteredPosts.length === 0" class="empty-state">
-		<p>No posts in this category yet. Check back soon!</p>
+		<i class="fa-solid fa-magnifying-glass empty-icon"></i>
+		<p *ngIf="searchQuery">No posts matching "{{ searchQuery }}". Try a different search.</p>
+		<p *ngIf="!searchQuery">No posts in this category yet. Check back soon!</p>
 	</div>
 </div>

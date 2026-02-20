@@ -1,107 +1,158 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface BlogPost {
-	id: number;
-	title: string;
-	summary: string;
-	category: string;
-	date: string;
-	readTime: string;
-	tags: string[];
-	content: string;
-}
+import { FormsModule } from '@angular/forms';
+import { BlogPost, ALL_POSTS } from './data';
 
 @Component({
 	selector: 'app-home',
 	standalone: true,
-	imports: [CommonModule],
+	imports: [CommonModule, FormsModule],
 	templateUrl: './home.component.html',
 	styleUrl: './home.component.scss',
 })
 export class HomeComponent {
 	selectedPost: BlogPost | null = null;
 	activeCategory = 'All';
+	searchQuery = '';
+	activeSortOption = 'random';
 
 	categories = ['All', 'Angular', 'C#', '.NET', 'Web Dev', 'DevOps'];
 
-	posts: BlogPost[] = [
-		{
-			id: 1,
-			title: 'Angular 19: What\'s New and Why It Matters',
-			summary:
-				'A deep dive into the latest Angular release — standalone components by default, signal-based reactivity, and improved SSR.',
-			category: 'Angular',
-			date: '2026-02-18',
-			readTime: '5 min read',
-			tags: ['Angular', 'TypeScript', 'Frontend'],
-			content: `Angular 19 brings a wave of improvements that make the framework leaner and more modern.\n\n**Standalone by Default**\nComponents are now standalone by default — no more NgModules unless you need them. This simplifies project structure significantly.\n\n**Signal-Based Reactivity**\nSignals are now the recommended way to manage state. They offer fine-grained reactivity without the complexity of RxJS for simple use cases.\n\n**Improved SSR & Hydration**\nServer-side rendering got a major overhaul with incremental hydration, making pages interactive faster.\n\n**Deferrable Views**\nThe @defer block lets you lazy-load parts of a template based on triggers like viewport visibility or user interaction.\n\nAngular 19 is a solid step forward — if you haven't upgraded yet, now's the time.`,
-		},
-		{
-			id: 2,
-			title: 'Building REST APIs with ASP.NET Core Minimal APIs',
-			summary:
-				'Minimal APIs in .NET make building lightweight HTTP services fast and clean. Here\'s how to get started.',
-			category: 'C#',
-			date: '2026-02-15',
-			readTime: '7 min read',
-			tags: ['C#', '.NET', 'Backend', 'API'],
-			content: `Minimal APIs in ASP.NET Core let you build HTTP endpoints with just a few lines of code — no controllers needed.\n\n**Getting Started**\nCreate a new project with:\n\`\`\`\ndotnet new web -n MyApi\n\`\`\`\n\n**Define Endpoints**\n\`\`\`csharp\nvar app = builder.Build();\napp.MapGet("/hello", () => "Hello World!");\napp.MapPost("/items", (Item item) => Results.Created($"/items/{item.Id}", item));\napp.Run();\n\`\`\`\n\n**When to Use Minimal APIs**\n- Microservices and small APIs\n- Prototyping\n- When you want less ceremony than MVC\n\nMinimal APIs pair beautifully with Entity Framework Core for database access. They're production-ready and fully supported.`,
-		},
-		{
-			id: 3,
-			title: 'CSS Container Queries Are Here — Stop Using Only Media Queries',
-			summary:
-				'Container queries let components respond to their parent\'s size, not just the viewport. This changes everything for reusable components.',
-			category: 'Web Dev',
-			date: '2026-02-12',
-			readTime: '4 min read',
-			tags: ['CSS', 'Frontend', 'Responsive Design'],
-			content: `Media queries respond to the **viewport** size. But what if your component lives in a sidebar one moment and a full-width section the next?\n\n**Container Queries to the Rescue**\n\`\`\`css\n.card-container {\n  container-type: inline-size;\n}\n\n@container (min-width: 400px) {\n  .card { display: flex; }\n}\n\n@container (max-width: 399px) {\n  .card { display: block; }\n}\n\`\`\`\n\nThe component adapts to its **container**, not the screen. This is huge for design systems and reusable components.\n\n**Browser Support**\nAll modern browsers now support container queries. It's safe to use in production.\n\nStart using \`container-type: inline-size\` on wrapper elements and write \`@container\` rules instead of \`@media\` for component-level responsiveness.`,
-		},
-		{
-			id: 4,
-			title: 'Getting Started with Docker for .NET Developers',
-			summary:
-				'Docker simplifies deployment by packaging your app and its dependencies into containers. Here\'s a practical guide for .NET devs.',
-			category: 'DevOps',
-			date: '2026-02-08',
-			readTime: '6 min read',
-			tags: ['Docker', 'DevOps', '.NET', 'Deployment'],
-			content: `Docker lets you package your .NET app into a container that runs the same everywhere — your machine, CI/CD, production.\n\n**Basic Dockerfile for .NET**\n\`\`\`dockerfile\nFROM mcr.microsoft.com/dotnet/sdk:9.0 AS build\nWORKDIR /app\nCOPY . .\nRUN dotnet publish -c Release -o out\n\nFROM mcr.microsoft.com/dotnet/aspnet:9.0\nWORKDIR /app\nCOPY --from=build /app/out .\nENTRYPOINT ["dotnet", "MyApp.dll"]\n\`\`\`\n\n**Key Commands**\n- \`docker build -t myapp .\` — build the image\n- \`docker run -p 8080:80 myapp\` — run the container\n- \`docker compose up\` — run multi-container setups\n\n**Why Docker?**\n- Consistent environments (no more "works on my machine")\n- Easy scaling and deployment\n- Great for microservices\n\nOnce you're comfortable with Docker, explore Docker Compose for multi-service apps and Kubernetes for orchestration.`,
-		},
-		{
-			id: 5,
-			title: 'Entity Framework Core: Tips for Better Performance',
-			summary:
-				'EF Core is powerful but easy to misuse. These tips will help you avoid common performance pitfalls.',
-			category: '.NET',
-			date: '2026-02-05',
-			readTime: '5 min read',
-			tags: ['C#', '.NET', 'Entity Framework', 'Database'],
-			content: `Entity Framework Core makes database access easy, but that convenience can hide performance issues.\n\n**1. Use AsNoTracking for Read-Only Queries**\n\`\`\`csharp\nvar users = await db.Users.AsNoTracking().ToListAsync();\n\`\`\`\nSkips change tracking — faster for queries where you don't need to update data.\n\n**2. Avoid N+1 Queries**\nUse \`.Include()\` to eager-load related data:\n\`\`\`csharp\nvar orders = await db.Orders.Include(o => o.Items).ToListAsync();\n\`\`\`\n\n**3. Use Projections with Select**\nDon't load entire entities when you only need a few fields:\n\`\`\`csharp\nvar names = await db.Users.Select(u => new { u.Name, u.Email }).ToListAsync();\n\`\`\`\n\n**4. Batch Updates with ExecuteUpdate**\n.NET 7+ supports bulk operations:\n\`\`\`csharp\nawait db.Users.Where(u => !u.IsActive).ExecuteDeleteAsync();\n\`\`\`\n\n**5. Always Check Generated SQL**\nUse \`.ToQueryString()\` or logging to see what SQL EF is actually generating.`,
-		},
-		{
-			id: 6,
-			title: 'Angular Signals vs RxJS: When to Use Which',
-			summary:
-				'Signals and RxJS both handle reactivity in Angular — but they solve different problems. Here\'s when to reach for each.',
-			category: 'Angular',
-			date: '2026-02-01',
-			readTime: '4 min read',
-			tags: ['Angular', 'RxJS', 'Signals', 'TypeScript'],
-			content: `With Angular Signals now stable, developers are wondering: do I still need RxJS?\n\n**Use Signals When:**\n- Managing simple component state (counters, toggles, form values)\n- You want synchronous, fine-grained reactivity\n- You're building new components from scratch\n\n\`\`\`typescript\ncount = signal(0);\ndoubled = computed(() => this.count() * 2);\nincrement() { this.count.update(v => v + 1); }\n\`\`\`\n\n**Use RxJS When:**\n- Working with HTTP requests, WebSockets, or event streams\n- You need operators like debounceTime, switchMap, retry\n- Handling complex async workflows\n\n\`\`\`typescript\nthis.searchResults$ = this.searchInput$.pipe(\n  debounceTime(300),\n  switchMap(query => this.http.get(\`/api/search?q=\${query}\`))\n);\n\`\`\`\n\n**The Bottom Line**\nSignals replace simple uses of BehaviorSubject and basic state management. RxJS is still the right tool for async streams and complex event handling. They complement each other.`,
-		},
+	sortOptions = [
+		{ value: 'random', label: 'Shuffle' },
+		{ value: 'newest', label: 'Newest First' },
+		{ value: 'oldest', label: 'Oldest First' },
+		{ value: 'title-az', label: 'Title A–Z' },
+		{ value: 'title-za', label: 'Title Z–A' },
+		{ value: 'read-time', label: 'Read Time' },
 	];
 
+	posts: BlogPost[] = this.shuffleArray([...ALL_POSTS]);
+
+	// Precomputed spans that look random but fill the 3-column grid cleanly
+	private spanCache = new Map<string, number[]>();
+	private seed = Math.floor(Math.random() * 100000);
+
 	get filteredPosts(): BlogPost[] {
-		if (this.activeCategory === 'All') return this.posts;
-		return this.posts.filter((p) => p.category === this.activeCategory);
+		let result = this.activeCategory === 'All'
+			? [...this.posts]
+			: this.posts.filter((p) => p.category === this.activeCategory);
+
+		if (this.searchQuery.trim()) {
+			const q = this.searchQuery.toLowerCase().trim();
+			result = result.filter((p) =>
+				p.title.toLowerCase().includes(q) ||
+				p.summary.toLowerCase().includes(q) ||
+				p.tags.some((t) => t.toLowerCase().includes(q))
+			);
+		}
+
+		return result;
+	}
+
+	getPostSpan(index: number): number {
+		const key = this.activeCategory;
+		if (!this.spanCache.has(key)) {
+			this.spanCache.set(key, this.buildSpans(this.filteredPosts));
+		}
+		return this.spanCache.get(key)![index] ?? 1;
+	}
+
+	/**
+	 * Builds a span array that fills 3-column rows with varied sizes.
+	 * Uses a simple hash of the post id for deterministic "randomness".
+	 */
+	private buildSpans(posts: BlogPost[]): number[] {
+		const spans: number[] = [];
+		let remaining = 3; // columns left in current row
+
+		for (let i = 0; i < posts.length; i++) {
+			const hash = this.hashId(posts[i].id + i * 7 + this.seed);
+			let span: number;
+
+			if (i === 0 && posts.length > 2) {
+				// First post is always a hero
+				span = 3;
+			} else if (remaining === 3) {
+				// Starting a new row — pick a varied size
+				const roll = hash % 10;
+				if (roll < 2 && posts.length - i >= 3) {
+					span = 1; // ~20%: three singles
+				} else if (roll < 5 && posts.length - i >= 2) {
+					span = 2; // ~30%: wide + single
+				} else if (roll < 7 && posts.length - i >= 2) {
+					span = 1; // ~20%: single then decide
+				} else {
+					span = 3; // ~30%: full-width
+				}
+			} else if (remaining === 2) {
+				const roll = hash % 6;
+				if (roll < 3 && posts.length - i >= 2) {
+					span = 1; // two singles to fill
+				} else {
+					span = 2; // one wide to fill
+				}
+			} else {
+				span = 1; // only 1 column left
+			}
+
+			// Safety: don't exceed remaining columns
+			span = Math.min(span, remaining);
+			spans.push(span);
+			remaining -= span;
+			if (remaining <= 0) remaining = 3;
+		}
+
+		return spans;
+	}
+
+	private hashId(n: number): number {
+		let h = n * 2654435761;
+		h = ((h >>> 16) ^ h) * 0x45d9f3b;
+		h = (h >>> 16) ^ h;
+		return Math.abs(h);
+	}
+
+	private shuffleArray(arr: BlogPost[]): BlogPost[] {
+		for (let i = arr.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[arr[i], arr[j]] = [arr[j], arr[i]];
+		}
+		return arr;
+	}
+
+	onSearchChange(): void {
+		this.spanCache.clear();
+	}
+
+	onSortChange(): void {
+		switch (this.activeSortOption) {
+			case 'newest':
+				this.posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+				break;
+			case 'oldest':
+				this.posts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+				break;
+			case 'title-az':
+				this.posts.sort((a, b) => a.title.localeCompare(b.title));
+				break;
+			case 'title-za':
+				this.posts.sort((a, b) => b.title.localeCompare(a.title));
+				break;
+			case 'read-time':
+				this.posts.sort((a, b) => parseInt(a.readTime) - parseInt(b.readTime));
+				break;
+			case 'random':
+				this.shuffleArray(this.posts);
+				break;
+		}
+		this.spanCache.clear();
 	}
 
 	selectCategory(category: string): void {
 		this.activeCategory = category;
 		this.selectedPost = null;
+		this.spanCache.clear();
 	}
 
 	openPost(post: BlogPost): void {
