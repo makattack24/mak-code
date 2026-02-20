@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
 	title = 'myweb';
 
 	terminalHeight = 240;
-	terminalVisible = true;
+	terminalVisible = false;
 
 	constructor(
 		private resizeService: ResizeService,
