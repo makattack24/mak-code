@@ -26,10 +26,10 @@
 			</span>
 			<button
 				class="toolbar-btn"
+				title="Logout"
 				(click)="
 					auth.logout({ logoutParams: { returnTo: locationOrigin } })
 				"
-				title="Logout"
 			>
 				<i class="fa-solid fa-right-from-bracket"></i>
 			</button>
@@ -37,8 +37,8 @@
 		<ng-template #showLogin>
 			<button
 				class="toolbar-btn"
-				(click)="auth.loginWithRedirect()"
 				title="Login"
+				(click)="auth.loginWithRedirect()"
 			>
 				<i class="fa-solid fa-right-to-bracket"></i>
 			</button>
@@ -58,6 +58,13 @@
 			(click)="restoreTerminal()"
 		>
 			<i class="fa-solid fa-window-restore"></i>
+		</button>
+		<button
+			class="toolbar-btn"
+			title="Switch to navbar"
+			(click)="showNavbar.emit()"
+		>
+			<i class="fa-solid fa-bars"></i>
 		</button>
 	</div>
 	<div class="terminal" *ngIf="!isMinimized" (click)="focusInput()">

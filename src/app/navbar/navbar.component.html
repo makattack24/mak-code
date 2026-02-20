@@ -1,0 +1,61 @@
+<nav class="navbar">
+	<div class="nav-inner">
+		<!-- Logo -->
+		<a class="nav-logo" routerLink="/home" (click)="closeMenu()">
+			tech<span class="accent">with</span>mak
+		</a>
+
+		<!-- Desktop Links -->
+		<ul class="nav-links">
+			<li *ngFor="let link of navLinks">
+				<a
+					[routerLink]="link.path"
+					routerLinkActive="active"
+					class="nav-link"
+				>
+					<i [class]="link.icon"></i>
+					{{ link.label }}
+				</a>
+			</li>
+		</ul>
+
+		<!-- Right side: theme toggle + terminal toggle + mobile hamburger -->
+		<div class="nav-actions">
+			<button
+				class="terminal-toggle"
+				(click)="toggleTerminal.emit()"
+				[attr.aria-label]="terminalVisible ? 'Hide terminal' : 'Show terminal'"
+				[title]="terminalVisible ? 'Hide terminal' : 'Show terminal'"
+			>
+				<i class="fa-solid fa-terminal"></i>
+				<i [class]="terminalVisible ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"
+					style="font-size: 0.6rem; margin-left: -2px;"></i>
+			</button>
+			<app-themetoggle></app-themetoggle>
+			<button
+				class="hamburger"
+				(click)="toggleMenu()"
+				[attr.aria-expanded]="mobileMenuOpen"
+				aria-label="Toggle navigation menu"
+			>
+				<span class="bar" [class.open]="mobileMenuOpen"></span>
+				<span class="bar" [class.open]="mobileMenuOpen"></span>
+				<span class="bar" [class.open]="mobileMenuOpen"></span>
+			</button>
+		</div>
+	</div>
+
+	<!-- Mobile Menu -->
+	<div class="mobile-menu" [class.open]="mobileMenuOpen">
+		<a
+			*ngFor="let link of navLinks"
+			[routerLink]="link.path"
+			routerLinkActive="active"
+			class="mobile-link"
+			(click)="closeMenu()"
+		>
+			<i [class]="link.icon"></i>
+			{{ link.label }}
+		</a>
+	</div>
+</nav>

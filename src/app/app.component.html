@@ -1,12 +1,19 @@
 <div class="app-layout">
+	<app-navbar
+		*ngIf="!terminalVisible"
+		[terminalVisible]="terminalVisible"
+		(toggleTerminal)="onToggleTerminal()"
+	></app-navbar>
 	<div class="app-content">
 		<router-outlet></router-outlet>
 	</div>
 	<app-terminal
+		*ngIf="terminalVisible"
 		[style.height.px]="terminalHeight"
 		[height]="terminalHeight"
 		(heightChange)="onTerminalHeightChange($event)"
 		(resize)="onTerminalResize($event)"
+		(showNavbar)="onToggleTerminal()"
 	>
 	</app-terminal>
 </div>

@@ -37,6 +37,7 @@ export class TerminalComponent
 	@Input() pinPosition: PinPosition = 'bottom';
 	@Output() pinPositionChange = new EventEmitter<PinPosition>();
 	@Output() resize = new EventEmitter<{ width?: number; height?: number }>();
+	@Output() showNavbar = new EventEmitter<void>();
 	@ViewChild('terminalInput', { static: false })
 	terminalInput?: ElementRef<HTMLInputElement>;
 	@ViewChild('linesContainer', { static: false })
@@ -75,6 +76,8 @@ export class TerminalComponent
 		'cls',
 		'clear',
 		'home',
+		'navbar',
+		'nav',
 	];
 	isInputFocused = false;
 
@@ -155,7 +158,7 @@ export class TerminalComponent
 	showHelp() {
 		this.lines.push({
 			type: 'output',
-			text: 'Available commands: <strong>help, apps, contact, about, visit [site]</strong>',
+			text: 'Available commands: <strong>help, apps, contact, about, visit [site], navbar</strong>',
 		});
 		this.scrollToBottom();
 	}
@@ -216,6 +219,15 @@ export class TerminalComponent
 		if (!cmd) return;
 		this.lines.push({ type: 'command', text: `> ${cmd}` });
 		const command = cmd.toLowerCase();
+
+		if (command === 'navbar' || command === 'nav') {
+			this.lines.push({
+				type: 'output',
+				text: 'Switching to navbar mode...',
+			});
+			this.showNavbar.emit();
+			return;
+		}
 
 		if (command.startsWith('run ')) {
 			const project = command.substring(4).trim();
