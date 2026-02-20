@@ -15,7 +15,7 @@ import { SignupComponent } from './signup/signup.component';
 import { AuthGuard } from '@auth0/auth0-angular';
 
 export const routes: Routes = [
-	{ path: '', component: HomeComponent },
+	{ path: '', redirectTo: 'home', pathMatch: 'full' },
 	{ path: 'home', component: HomeComponent },
 	{ path: 'about', component: AboutComponent },
 	{ path: 'contact', component: ContactComponent },
