@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BlogPost, ALL_POSTS } from './data';
@@ -17,6 +17,7 @@ export class HomeComponent {
 	activeSortOption = 'random';
 
 	categories = ['All', 'Angular', 'C#', '.NET', 'Web Dev', 'DevOps'];
+	sortDropdownOpen = false;
 
 	sortOptions = [
 		{ value: 'random', label: 'Shuffle' },
@@ -26,6 +27,15 @@ export class HomeComponent {
 		{ value: 'title-za', label: 'Title Z–A' },
 		{ value: 'read-time', label: 'Read Time' },
 	];
+
+	get activeSortLabel(): string {
+		return this.sortOptions.find(o => o.value === this.activeSortOption)?.label ?? 'Sort';
+	}
+
+	@HostListener('document:click')
+	onDocumentClick(): void {
+		this.sortDropdownOpen = false;
+	}
 
 	posts: BlogPost[] = this.shuffleArray([...ALL_POSTS]);
 
@@ -123,6 +133,12 @@ export class HomeComponent {
 
 	onSearchChange(): void {
 		this.spanCache.clear();
+	}
+
+	selectSort(value: string): void {
+		this.activeSortOption = value;
+		this.sortDropdownOpen = false;
+		this.onSortChange();
 	}
 
 	onSortChange(): void {

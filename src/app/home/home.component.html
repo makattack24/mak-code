@@ -19,11 +19,20 @@
 				<i class="fa-solid fa-xmark"></i>
 			</button>
 		</div>
-		<div class="sort-box">
-			<i class="fa-solid fa-arrow-down-wide-short"></i>
-			<select [(ngModel)]="activeSortOption" (ngModelChange)="onSortChange()">
-				<option *ngFor="let opt of sortOptions" [value]="opt.value">{{ opt.label }}</option>
-			</select>
+		<div class="sort-box" [class.open]="sortDropdownOpen" (click)="$event.stopPropagation()">
+			<button class="sort-toggle" (click)="sortDropdownOpen = !sortDropdownOpen">
+				<i class="fa-solid fa-arrow-down-wide-short"></i>
+				<span>{{ activeSortLabel }}</span>
+				<i class="fa-solid fa-chevron-down sort-chevron"></i>
+			</button>
+			<ul *ngIf="sortDropdownOpen" class="sort-dropdown">
+				<li *ngFor="let opt of sortOptions"
+					[class.active]="activeSortOption === opt.value"
+					(click)="selectSort(opt.value)">
+					<i *ngIf="activeSortOption === opt.value" class="fa-solid fa-check"></i>
+					{{ opt.label }}
+				</li>
+			</ul>
 		</div>
 	</div>
 
