@@ -34,6 +34,11 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "/assets"
+              },
+              {
+                "glob": "README.md",
+                "input": ".",
+                "output": "/assets"
               }
             ],
             "styles": [
