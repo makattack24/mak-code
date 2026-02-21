@@ -185,6 +185,11 @@ export class ProfileComponent implements OnInit {
 			});
 	}
 
+	logout(): void {
+		this.auth.logout();
+		this.router.navigate(['/home']);
+	}
+
 	private clearMessages() {
 		this.successMessage = '';
 		this.errorMessage = '';

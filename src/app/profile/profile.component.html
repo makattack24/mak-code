@@ -117,5 +117,15 @@
 				<p *ngIf="passwordError" class="error">{{ passwordError }}</p>
 			</div>
 		</section>
+
+		<hr />
+
+		<!-- ── Logout Section ── -->
+		<section class="logout-section">
+			<button class="logout-btn" (click)="logout()">
+				<i class="fa-solid fa-right-from-bracket"></i>
+				Log Out
+			</button>
+		</section>
 	</div>
 </div>

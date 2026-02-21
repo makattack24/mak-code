@@ -32,7 +32,7 @@
 				Admin
 			</a>
 
-			<!-- Login / Logout (desktop) -->
+			<!-- Login (desktop) -->
 			<a
 				*ngIf="!(isLoggedIn$ | async)"
 				routerLink="/login"
@@ -42,14 +42,6 @@
 				<i class="fa-solid fa-right-to-bracket"></i>
 				Login
 			</a>
-			<button
-				*ngIf="isLoggedIn$ | async"
-				class="nav-link logout-btn"
-				(click)="logout()"
-			>
-				<i class="fa-solid fa-right-from-bracket"></i>
-				Logout
-			</button>
 
 			<!-- Profile avatar (desktop) -->
 			<a
@@ -119,7 +111,7 @@
 			Admin
 		</a>
 
-		<!-- Login / Logout (mobile) -->
+		<!-- Login (mobile) -->
 		<a
 			*ngIf="!(isLoggedIn$ | async)"
 			routerLink="/login"
@@ -139,14 +131,6 @@
 		>
 			<i class="fa-solid fa-user"></i>
 			Profile
-		</a>
-		<a
-			*ngIf="isLoggedIn$ | async"
-			class="mobile-link"
-			(click)="logout()"
-		>
-			<i class="fa-solid fa-right-from-bracket"></i>
-			Logout
 		</a>
 	</div>
 </nav>
