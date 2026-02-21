@@ -30,12 +30,20 @@
 }
 
 h2 {
-	margin-bottom: 1.2rem;
+	margin-bottom: 0.5rem;
 	color: var(--primary, #2563eb);
 	font-size: 2rem;
 	font-weight: 700;
 	text-align: center;
 	letter-spacing: 0.5px;
+}
+
+.welcome-message {
+	text-align: center;
+	color: var(--muted, #555);
+	font-size: 1rem;
+	line-height: 1.55;
+	margin-bottom: 1rem;
 }
 
 .form-group {
