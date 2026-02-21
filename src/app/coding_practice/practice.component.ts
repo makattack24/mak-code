@@ -3,12 +3,19 @@ import {
 	ViewChild,
 	ElementRef,
 	AfterViewInit,
+	OnInit,
 	HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Problem, TestCase } from './models/problem.model';
 import { PROBLEMS } from './data/problems';
+import { AuthService } from '../services/auth.service';
+import {
+	PracticeStatsService,
+	UserPracticeStats,
+	ProblemStats,
+} from '../services/practice-stats.service';
 
 interface TestResult {
 	input: string;
@@ -24,7 +31,7 @@ interface TestResult {
 	templateUrl: './practice.component.html',
 	styleUrls: ['./practice.component.scss'],
 })
-export class PracticeComponent implements AfterViewInit {
+export class PracticeComponent implements AfterViewInit, OnInit {
 	// ── Problem list state ──
 	problems: Problem[] = PROBLEMS;
 	filteredProblems: Problem[] = PROBLEMS;
@@ -47,8 +54,12 @@ export class PracticeComponent implements AfterViewInit {
 	allPassed = false;
 	activeTab: 'description' | 'results' = 'description';
 
-	// ── Solved tracking (sessionStorage) ──
+	// ── Solved tracking (sessionStorage + DB) ──
 	solvedIds = new Set<number>();
+
+	// ── Stats ──
+	stats: UserPracticeStats | null = null;
+	showStats = false;
 
 	// ── Panel resizing ──
 	leftPanelWidth = 45; // percentage
@@ -70,17 +81,36 @@ export class PracticeComponent implements AfterViewInit {
 		return this.testResults.length;
 	}
 
-	constructor() {
+	constructor(
+		public authService: AuthService,
+		private practiceStats: PracticeStatsService
+	) {
 		const cats = new Set(this.problems.map((p) => p.category));
 		this.categories = ['All', ...Array.from(cats).sort()];
 
-		// Restore solved problems from sessionStorage
+		// Restore solved problems from sessionStorage as fallback
 		try {
 			const saved = sessionStorage.getItem('practice_solved');
 			if (saved) {
 				this.solvedIds = new Set(JSON.parse(saved));
 			}
 		} catch {}
+	}
+
+	ngOnInit() {
+		// If logged in, load stats from DB and merge solved IDs
+		const user = this.authService.currentUser;
+		if (user) {
+			this.practiceStats.loadStats(user.id).subscribe((stats) => {
+				if (stats) {
+					this.stats = stats;
+					// Merge DB-solved problems into local set
+					stats.perProblem
+						.filter((p) => p.solved)
+						.forEach((p) => this.solvedIds.add(p.problem_id));
+				}
+			});
+		}
 	}
 
 	ngAfterViewInit() {
@@ -262,6 +292,18 @@ console.log(JSON.stringify(__result));
 							);
 						} catch {}
 					}
+
+					// Record attempt in DB if logged in
+					const user = this.authService.currentUser;
+					if (user && this.selectedProblem) {
+						this.practiceStats
+							.recordAttempt(user.id, this.selectedProblem.id, this.allPassed)
+							.subscribe((stats) => {
+								if (this.practiceStats.currentStats) {
+									this.stats = this.practiceStats.currentStats;
+								}
+							});
+					}
 				}
 			});
 		});
@@ -350,13 +392,33 @@ console.log(JSON.stringify(__result));
 		this.isResizing = false;
 	}
 
+	// ── Stats helpers ──
+	toggleStats() {
+		this.showStats = !this.showStats;
+	}
+
+	get successRate(): number {
+		if (!this.stats || this.stats.overall.total_attempts === 0) return 0;
+		return Math.round(
+			(this.stats.overall.total_passed / this.stats.overall.total_attempts) * 100
+		);
+	}
+
+	getProblemAttempts(problemId: number): number {
+		return this.practiceStats.getProblemStats(problemId)?.attempts ?? 0;
+	}
+
+	getProblemPasses(problemId: number): number {
+		return this.practiceStats.getProblemStats(problemId)?.passes ?? 0;
+	}
+
 	// ── Helpers ──
 	getDifficultyClass(diff: string): string {
 		return 'diff-' + diff.toLowerCase();
 	}
 
 	isSolved(id: number): boolean {
-		return this.solvedIds.has(id);
+		return this.solvedIds.has(id) || this.practiceStats.isProblemSolved(id);
 	}
 
 	formatDescription(text: string): string {

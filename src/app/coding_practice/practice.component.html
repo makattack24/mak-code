@@ -5,6 +5,52 @@
 		<p class="tagline">Solve coding challenges, sharpen your skills. JavaScript only.</p>
 	</header>
 
+	<!-- Stats Dashboard (logged-in users only) -->
+	<div class="stats-dashboard" *ngIf="authService.currentUser && stats">
+		<button class="stats-toggle" (click)="toggleStats()">
+			<i class="fa-solid" [ngClass]="showStats ? 'fa-chevron-up' : 'fa-chart-bar'"></i>
+			{{ showStats ? 'Hide Stats' : 'My Stats' }}
+			<span class="stats-quick">{{ stats.overall.problems_solved }}/{{ problems.length }} solved</span>
+		</button>
+		<div class="stats-panel" *ngIf="showStats">
+			<div class="stats-grid">
+				<div class="stat-card">
+					<div class="stat-value">{{ stats.overall.total_attempts }}</div>
+					<div class="stat-label">Total Attempts</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">{{ stats.overall.total_passed }}</div>
+					<div class="stat-label">Passed</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">{{ successRate }}%</div>
+					<div class="stat-label">Success Rate</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">{{ stats.overall.problems_solved }}</div>
+					<div class="stat-label">Problems Solved</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">{{ stats.overall.problems_attempted }}</div>
+					<div class="stat-label">Attempted</div>
+				</div>
+			</div>
+
+			<!-- Recent Activity -->
+			<div class="recent-activity" *ngIf="stats.recent.length > 0">
+				<h3>Recent Activity</h3>
+				<div class="activity-list">
+					<div *ngFor="let r of stats.recent" class="activity-item" [class.passed]="r.passed" [class.failed]="!r.passed">
+						<i class="fa-solid" [ngClass]="r.passed ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
+						<span class="activity-problem">Problem {{ r.problem_id }}</span>
+						<span class="activity-result">{{ r.passed ? 'Passed' : 'Failed' }}</span>
+						<span class="activity-time">{{ r.attempted_at | date:'short' }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- Search & Filter Bar -->
 	<div class="filter-bar">
 		<div class="search-box">
@@ -45,6 +91,9 @@
 				'' }}</p>
 			<div class="card-footer">
 				<span class="test-count"><i class="fa-solid fa-flask"></i> {{ problem.testCases.length }} tests</span>
+				<span class="attempt-count" *ngIf="getProblemAttempts(problem.id) > 0">
+					<i class="fa-solid fa-rotate"></i> {{ getProblemAttempts(problem.id) }} attempts
+				</span>
 			</div>
 		</div>
 	</div>
@@ -85,6 +134,16 @@
 		<!-- Description Tab -->
 		<div class="tab-content" *ngIf="activeTab === 'description'">
 			<h2>{{ selectedProblem.id }}. {{ selectedProblem.title }}</h2>
+
+			<!-- Per-problem stats bar -->
+			<div class="problem-stats-bar" *ngIf="authService.currentUser && getProblemAttempts(selectedProblem.id) > 0">
+				<span><i class="fa-solid fa-rotate"></i> {{ getProblemAttempts(selectedProblem.id) }} attempts</span>
+				<span><i class="fa-solid fa-circle-check"></i> {{ getProblemPasses(selectedProblem.id) }} passed</span>
+				<span *ngIf="isSolved(selectedProblem.id)" class="solved-tag">
+					<i class="fa-solid fa-trophy"></i> Solved
+				</span>
+			</div>
+
 			<div class="problem-description" [innerHTML]="formatDescription(selectedProblem.description)"></div>
 
 			<div class="examples-section">
