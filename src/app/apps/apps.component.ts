@@ -34,10 +34,10 @@ export class AppsComponent {
 			description: 'Digital clock',
 		},
 		{
-			name: 'Game',
+			name: 'Snake',
 			icon: 'fa-solid fa-gamepad',
 			route: '/apps/game',
-			description: 'Browser game',
+			description: 'Classic snake game',
 		},
 		{
 			name: 'Sim',

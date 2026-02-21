@@ -1,11 +1,49 @@
-<div class="game-card">
-    <h2>Guess the Number</h2>
-    <p>{{ message }}</p>
-    <form (ngSubmit)="submitGuess()" *ngIf="!finished">
-        <input type="number" [(ngModel)]="guess" name="guess" min="1" max="100" required [disabled]="finished"
-            autofocus />
-        <button type="submit" [disabled]="finished">Guess</button>
-    </form>
-    <button (click)="reset()" *ngIf="finished">Play Again</button>
-    <div class="attempts">Attempts: {{ attempts }}</div>
+<div class="game-wrapper">
+	<!-- Header -->
+	<div class="game-header">
+		<div class="game-title">
+			<i class="fa-solid fa-gamepad"></i> Snake
+		</div>
+		<div class="game-scores">
+			<span class="score">Score: <strong>{{ score }}</strong></span>
+			<span class="high-score">Best: <strong>{{ highScore }}</strong></span>
+		</div>
+	</div>
+
+	<!-- Canvas area -->
+	<div class="game-canvas-container"
+		(touchstart)="onTouchStart($event)"
+		(touchend)="onTouchEnd($event)">
+		<canvas #gameCanvas></canvas>
+	</div>
+
+	<!-- Controls bar -->
+	<div class="game-controls">
+		<button *ngIf="!started || gameOver" (click)="startGame()">
+			<i class="fa-solid fa-play"></i> {{ gameOver ? 'Play Again' : 'Start Game' }}
+		</button>
+		<div class="game-hints" *ngIf="!started">
+			<span><kbd>Arrow keys</kbd> or <kbd>WASD</kbd> to move</span>
+			<span><kbd>Space</kbd> to pause</span>
+		</div>
+		<div class="game-hints" *ngIf="started && !gameOver">
+			<span><kbd>Space</kbd> to {{ paused ? 'resume' : 'pause' }}</span>
+		</div>
+	</div>
+
+	<!-- Mobile D-pad -->
+	<div class="dpad" *ngIf="started && !gameOver">
+		<button class="dpad-btn dpad-up" (click)="nextDirection = direction !== 'DOWN' ? 'UP' : direction">
+			<i class="fa-solid fa-chevron-up"></i>
+		</button>
+		<button class="dpad-btn dpad-left" (click)="nextDirection = direction !== 'RIGHT' ? 'LEFT' : direction">
+			<i class="fa-solid fa-chevron-left"></i>
+		</button>
+		<button class="dpad-btn dpad-right" (click)="nextDirection = direction !== 'LEFT' ? 'RIGHT' : direction">
+			<i class="fa-solid fa-chevron-right"></i>
+		</button>
+		<button class="dpad-btn dpad-down" (click)="nextDirection = direction !== 'UP' ? 'DOWN' : direction">
+			<i class="fa-solid fa-chevron-down"></i>
+		</button>
+	</div>
 </div>
