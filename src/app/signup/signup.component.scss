@@ -1,0 +1,132 @@
+.signup-form {
+	max-width: 380px;
+	width: 100%;
+	margin: 2rem auto;
+	padding: 2rem;
+	background: var(--surface);
+	border-radius: 8px;
+	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+	border: 1px solid var(--border);
+	box-sizing: border-box;
+
+	h2 {
+		text-align: center;
+		margin-bottom: 1.2rem;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.3rem;
+		color: var(--muted);
+		font-weight: 500;
+	}
+
+	input {
+		width: 100%;
+		margin-bottom: 0.5rem;
+		background: var(--secondary);
+		color: var(--foreground);
+		border: 1px solid var(--border);
+		border-radius: 4px;
+		padding: 0.5rem;
+		font-size: 1rem;
+		transition: border-color 0.2s;
+		box-sizing: border-box;
+	}
+
+	button[type='submit'] {
+		width: 100%;
+		margin-top: 0.75rem;
+	}
+
+	.error {
+		color: var(--error);
+		margin-top: 0.5rem;
+		text-align: center;
+		font-size: 0.9rem;
+	}
+
+	.success {
+		color: var(--success);
+		margin-top: 0.5rem;
+		text-align: center;
+		font-size: 0.9rem;
+	}
+}
+
+.password-field {
+	position: relative;
+	display: flex;
+	align-items: center;
+
+	input {
+		padding-right: 2.5rem;
+		margin-bottom: 0.25rem;
+	}
+
+	.toggle-pw {
+		position: absolute;
+		right: 0.5rem;
+		top: 50%;
+		transform: translateY(-65%);
+		background: none;
+		border: none;
+		color: var(--muted);
+		cursor: pointer;
+		padding: 0.2rem 0.4rem;
+		font-size: 0.9rem;
+
+		&:hover {
+			color: var(--foreground);
+			box-shadow: none;
+		}
+	}
+}
+
+.pw-strength,
+.pw-match {
+	margin-bottom: 0.75rem;
+	font-size: 0.8rem;
+
+	.valid {
+		color: var(--success);
+
+		i {
+			margin-right: 0.25rem;
+		}
+	}
+
+	.invalid {
+		color: var(--error);
+
+		i {
+			margin-right: 0.25rem;
+		}
+	}
+}
+
+.switch-link {
+	text-align: center;
+	margin-top: 1rem;
+	font-size: 0.88rem;
+	color: var(--muted);
+
+	a {
+		color: var(--link);
+		text-decoration: none;
+		font-weight: 600;
+
+		&:hover {
+			color: var(--link-hover);
+			text-decoration: underline;
+		}
+	}
+}
+
+@media (max-width: 500px) {
+	.signup-form {
+		margin: 1rem 0.5rem;
+		padding: 1.25rem 1rem;
+		max-width: 100%;
+	}
+}

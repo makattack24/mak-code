@@ -26,16 +26,20 @@
 					<i class="fa-solid fa-envelope"></i>
 					<span class="link-label">Contact</span>
 				</a>
+				<a routerLink="/practice" routerLinkActive="active" class="toolbar-link" title="Practice">
+					<i class="fa-solid fa-dumbbell"></i>
+					<span class="link-label">Practice</span>
+				</a>
 			</nav>
 		</div>
 
 		<!-- Center: user info -->
 		<div class="toolbar-center">
 			<ng-container *ngIf="auth.currentUser$ | async as user">
-				<span class="user-badge" [title]="user.email">
+				<a routerLink="/profile" class="user-badge" [title]="user.email">
 					<i class="fa-solid fa-circle-user"></i>
 					{{ user.email }}
-				</span>
+				</a>
 			</ng-container>
 		</div>
 

@@ -1,1 +1,75 @@
-<p>signup works!</p>
+<form class="signup-form" (ngSubmit)="onSubmit()" #signupForm="ngForm">
+	<h2>Create Account</h2>
+
+	<label for="name">Name</label>
+	<input
+		id="name"
+		type="text"
+		name="name"
+		[(ngModel)]="name"
+		required
+		minlength="2"
+		placeholder="Your name"
+		autocomplete="name"
+	/>
+
+	<label for="email">Email</label>
+	<input
+		id="email"
+		type="email"
+		name="email"
+		[(ngModel)]="email"
+		required
+		placeholder="you@example.com"
+		autocomplete="email"
+	/>
+
+	<label for="password">Password</label>
+	<div class="password-field">
+		<input
+			id="password"
+			[type]="showPassword ? 'text' : 'password'"
+			name="password"
+			[(ngModel)]="password"
+			required
+			minlength="6"
+			placeholder="At least 6 characters"
+			autocomplete="new-password"
+		/>
+		<button type="button" class="toggle-pw" (click)="togglePassword()" tabindex="-1">
+			<i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+		</button>
+	</div>
+	<div class="pw-strength" *ngIf="password">
+		<span [class.valid]="passwordLongEnough" [class.invalid]="!passwordLongEnough">
+			<i class="fa-solid" [ngClass]="passwordLongEnough ? 'fa-check' : 'fa-xmark'"></i>
+			At least 6 characters
+		</span>
+	</div>
+
+	<label for="confirmPassword">Confirm Password</label>
+	<input
+		id="confirmPassword"
+		[type]="showPassword ? 'text' : 'password'"
+		name="confirmPassword"
+		[(ngModel)]="confirmPassword"
+		required
+		placeholder="Re-enter your password"
+		autocomplete="new-password"
+	/>
+	<div class="pw-match" *ngIf="confirmPassword">
+		<span [class.valid]="passwordsMatch" [class.invalid]="!passwordsMatch">
+			<i class="fa-solid" [ngClass]="passwordsMatch ? 'fa-check' : 'fa-xmark'"></i>
+			{{ passwordsMatch ? 'Passwords match' : 'Passwords do not match' }}
+		</span>
+	</div>
+
+	<button type="submit" [disabled]="!signupForm.form.valid || loading || !passwordsMatch">
+		{{ loading ? 'Creating account...' : 'Sign Up' }}
+	</button>
+
+	<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+	<p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+
+	<p class="switch-link">Already have an account? <a routerLink="/login">Sign in</a></p>
+</form>

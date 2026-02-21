@@ -1,0 +1,206 @@
+<!-- ── Problem List View ── -->
+<div class="practice-container" *ngIf="!selectedProblem">
+	<header class="practice-header">
+		<h1><i class="fa-solid fa-code"></i> Coding Practice</h1>
+		<p class="tagline">Solve coding challenges, sharpen your skills. JavaScript only.</p>
+	</header>
+
+	<!-- Search & Filter Bar -->
+	<div class="filter-bar">
+		<div class="search-box">
+			<i class="fa-solid fa-magnifying-glass"></i>
+			<input type="text" placeholder="Search problems..." [(ngModel)]="searchQuery"
+				(ngModelChange)="onSearchChange()" />
+			<button *ngIf="searchQuery" class="clear-btn" (click)="searchQuery = ''; onSearchChange()">
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+		</div>
+		<div class="difficulty-btns">
+			<button *ngFor="let d of ['All','Easy','Medium','Hard']" class="filter-btn"
+				[class.active]="activeDifficulty === d" [ngClass]="d !== 'All' ? getDifficultyClass(d) : ''"
+				(click)="selectDifficulty(d)">{{ d }}</button>
+		</div>
+	</div>
+
+	<!-- Category Bar -->
+	<nav class="category-bar">
+		<button *ngFor="let cat of categories" class="cat-btn" [class.active]="activeCategory === cat"
+			(click)="selectCategory(cat)">{{ cat }}</button>
+	</nav>
+
+	<!-- Problem Grid -->
+	<div class="problem-grid">
+		<div *ngFor="let problem of filteredProblems" class="problem-card" (click)="selectProblem(problem)">
+			<div class="card-top">
+				<span class="difficulty-badge" [ngClass]="getDifficultyClass(problem.difficulty)">
+					{{ problem.difficulty }}
+				</span>
+				<span class="category-label">{{ problem.category }}</span>
+				<span *ngIf="isSolved(problem.id)" class="solved-badge">
+					<i class="fa-solid fa-check"></i> Solved
+				</span>
+			</div>
+			<h3>{{ problem.id }}. {{ problem.title }}</h3>
+			<p class="card-desc">{{ problem.description | slice:0:120 }}{{ problem.description.length > 120 ? '...' :
+				'' }}</p>
+			<div class="card-footer">
+				<span class="test-count"><i class="fa-solid fa-flask"></i> {{ problem.testCases.length }} tests</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Empty State -->
+	<div *ngIf="filteredProblems.length === 0" class="empty-state">
+		<i class="fa-solid fa-magnifying-glass empty-icon"></i>
+		<p>No problems match your filters. Try adjusting your search.</p>
+	</div>
+</div>
+
+<!-- ── Problem Workspace View (Split Pane) ── -->
+<div class="practice-workspace" *ngIf="selectedProblem" [class.resizing]="isResizing">
+
+	<!-- Left Panel: Problem Description -->
+	<div class="left-panel" [style.width.%]="leftPanelWidth">
+		<div class="panel-header">
+			<button class="back-btn secondary" (click)="goBackToList()">
+				<i class="fa-solid fa-arrow-left"></i> Problems
+			</button>
+			<span class="difficulty-badge" [ngClass]="getDifficultyClass(selectedProblem.difficulty)">
+				{{ selectedProblem.difficulty }}
+			</span>
+			<span class="category-label">{{ selectedProblem.category }}</span>
+		</div>
+
+		<!-- Tabs -->
+		<div class="panel-tabs">
+			<button class="tab-btn" [class.active]="activeTab === 'description'"
+				(click)="activeTab = 'description'">Description</button>
+			<button class="tab-btn" [class.active]="activeTab === 'results'" (click)="activeTab = 'results'">
+				Results
+				<span *ngIf="testResults.length" class="tab-badge"
+					[class.pass]="allPassed">{{ passedCount }}/{{ totalTests }}</span>
+			</button>
+		</div>
+
+		<!-- Description Tab -->
+		<div class="tab-content" *ngIf="activeTab === 'description'">
+			<h2>{{ selectedProblem.id }}. {{ selectedProblem.title }}</h2>
+			<div class="problem-description" [innerHTML]="formatDescription(selectedProblem.description)"></div>
+
+			<div class="examples-section">
+				<h3>Examples</h3>
+				<div *ngFor="let ex of selectedProblem.examples; let i = index" class="example-block">
+					<div class="example-label">Example {{ i + 1 }}:</div>
+					<div class="example-io">
+						<div><strong>Input:</strong> <code>{{ ex.input }}</code></div>
+						<div><strong>Output:</strong> <code>{{ ex.output }}</code></div>
+						<div *ngIf="ex.explanation"><strong>Explanation:</strong> {{ ex.explanation }}</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Hints -->
+			<div class="hints-section" *ngIf="selectedProblem.hints && selectedProblem.hints.length">
+				<button class="hint-toggle secondary" (click)="toggleHints()">
+					<i class="fa-solid" [ngClass]="showHints ? 'fa-eye-slash' : 'fa-lightbulb'"></i>
+					{{ showHints ? 'Hide Hints' : 'Show Hints' }}
+				</button>
+				<div *ngIf="showHints" class="hints-list">
+					<div *ngFor="let hint of selectedProblem.hints; let i = index" class="hint-item"
+						[class.revealed]="i < revealedHints">
+						<span *ngIf="i < revealedHints"><i class="fa-solid fa-lightbulb"></i> {{ hint }}</span>
+						<span *ngIf="i >= revealedHints" class="hint-locked">
+							<i class="fa-solid fa-lock"></i> Hint {{ i + 1 }} locked
+						</span>
+					</div>
+					<button *ngIf="revealedHints < selectedProblem.hints.length" class="secondary reveal-btn"
+						(click)="revealNextHint()">
+						Reveal Next Hint
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Results Tab -->
+		<div class="tab-content" *ngIf="activeTab === 'results'">
+			<div *ngIf="testResults.length === 0 && !isRunning" class="no-results">
+				<i class="fa-solid fa-flask"></i>
+				<p>Run your tests to see results here.</p>
+			</div>
+
+			<div *ngIf="isRunning" class="running-indicator">
+				<i class="fa-solid fa-spinner fa-spin"></i> Running tests...
+			</div>
+
+			<div *ngIf="testResults.length > 0" class="results-summary"
+				[class.all-pass]="allPassed" [class.has-fail]="!allPassed">
+				<i class="fa-solid" [ngClass]="allPassed ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
+				<span *ngIf="allPassed">All {{ totalTests }} tests passed!</span>
+				<span *ngIf="!allPassed">{{ passedCount }} of {{ totalTests }} tests passed</span>
+			</div>
+
+			<div *ngFor="let result of testResults; let i = index" class="test-result-card"
+				[class.pass]="result.passed" [class.fail]="!result.passed">
+				<div class="result-header">
+					<i class="fa-solid" [ngClass]="result.passed ? 'fa-check' : 'fa-xmark'"></i>
+					<span>Test {{ i + 1 }}</span>
+				</div>
+				<div class="result-details">
+					<div><strong>Input:</strong> <code>{{ result.input }}</code></div>
+					<div><strong>Expected:</strong> <code>{{ result.expected }}</code></div>
+					<div><strong>Got:</strong> <code>{{ result.actual }}</code></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Resize Handle -->
+	<div class="resize-handle" (mousedown)="onResizeStart($event)">
+		<div class="handle-grip"></div>
+	</div>
+
+	<!-- Right Panel: Editor -->
+	<div class="right-panel" [style.width.%]="100 - leftPanelWidth">
+		<div class="editor-toolbar">
+			<div class="toolbar-left">
+				<span class="lang-badge"><i class="fa-brands fa-js"></i> JavaScript</span>
+			</div>
+			<div class="toolbar-right">
+				<button class="secondary" (click)="resetCode()" title="Reset to starter code">
+					<i class="fa-solid fa-rotate-left"></i> Reset
+				</button>
+				<button class="secondary" (click)="runCode()" [disabled]="isRunning" title="Run code (F5)">
+					<i class="fa-solid fa-play"></i> Run
+				</button>
+				<button (click)="runTests()" [disabled]="isRunning" title="Submit (Ctrl+Enter)">
+					<i class="fa-solid fa-paper-plane"></i> Submit
+				</button>
+			</div>
+		</div>
+
+		<div class="editor-main">
+			<div class="editor-lines">
+				<span *ngFor="let line of lineNumbers; let i = index" (click)="highlightLine(i)"
+					class="editor-line-number">{{ line }}</span>
+			</div>
+			<div class="editor-textarea-wrapper">
+				<pre class="editor-pre">{{ code || ' ' }}</pre>
+				<textarea #editorTextarea [(ngModel)]="code" (input)="onInput()" spellcheck="false"
+					placeholder="Write your solution here..."></textarea>
+			</div>
+		</div>
+
+		<!-- Output Console -->
+		<div class="editor-output" *ngIf="output || error">
+			<div class="output-header">
+				<i class="fa-solid fa-terminal"></i> Console Output
+			</div>
+			<div *ngIf="output" class="output-logs">
+				<pre>{{ output }}</pre>
+			</div>
+			<div *ngIf="error" class="output-error">
+				<pre>{{ error }}</pre>
+			</div>
+		</div>
+	</div>
+</div>

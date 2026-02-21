@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 
 export interface AuthUser {
 	id: number;
+	name: string;
 	email: string;
 	role: string;
+	avatar_url?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -43,11 +45,66 @@ export class AuthService {
 			);
 	}
 
+	/** Register a new account and log in on success. */
+	signup(name: string, email: string, password: string): Observable<{ user?: AuthUser; error?: string }> {
+		return this.http
+			.post<AuthUser>('/.netlify/functions/signup', { name, email, password })
+			.pipe(
+				tap((user) => {
+					this.saveUser(user);
+					this.currentUserSubject.next(user);
+				}),
+				map((user) => ({ user })),
+				catchError((err) => {
+					const msg = err?.error?.error || 'Signup failed. Please try again.';
+					return of({ error: msg });
+				})
+			);
+	}
+
 	/** Clear local session and redirect to home. */
 	logout(): void {
 		localStorage.removeItem(this.STORAGE_KEY);
 		this.currentUserSubject.next(null);
 		this.router.navigate(['/home']);
+	}
+
+	/** Fetch the latest profile from the server and update local state. */
+	refreshProfile(): Observable<AuthUser | null> {
+		const user = this.currentUser;
+		if (!user) return of(null);
+		return this.http.get<AuthUser>(`/.netlify/functions/profile?id=${user.id}`).pipe(
+			tap((u) => {
+				this.saveUser(u);
+				this.currentUserSubject.next(u);
+			}),
+			catchError(() => of(null))
+		);
+	}
+
+	/** Update user profile fields. */
+	updateProfile(data: {
+		name?: string;
+		email?: string;
+		currentPassword?: string;
+		newPassword?: string;
+		avatar_url?: string;
+	}): Observable<{ user?: AuthUser; error?: string }> {
+		const user = this.currentUser;
+		if (!user) return of({ error: 'Not logged in.' });
+		return this.http
+			.put<AuthUser>('/.netlify/functions/profile', { id: user.id, ...data })
+			.pipe(
+				tap((u) => {
+					this.saveUser(u);
+					this.currentUserSubject.next(u);
+				}),
+				map((u) => ({ user: u })),
+				catchError((err) => {
+					const msg = err?.error?.error || 'Profile update failed.';
+					return of({ error: msg });
+				})
+			);
 	}
 
 	/** Snapshot of the current user (non-observable). */

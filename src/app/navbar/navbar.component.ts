@@ -23,6 +23,7 @@ export class NavbarComponent {
 		{ path: '/about', label: 'About', icon: 'fa-solid fa-user' },
 		{ path: '/apps', label: 'Apps', icon: 'fa-solid fa-grip' },
 		{ path: '/contact', label: 'Contact', icon: 'fa-solid fa-envelope' },
+		{ path: '/practice', label: 'Practice', icon: 'fa-solid fa-dumbbell' }
 	];
 
 	isLoggedIn$ = this.auth.isLoggedIn$;
@@ -40,6 +41,16 @@ export class NavbarComponent {
 	logout(): void {
 		this.auth.logout();
 		this.closeMenu();
+	}
+
+	getInitials(name?: string | null): string {
+		if (!name) return '?';
+		return name
+			.split(' ')
+			.map((w) => w[0])
+			.join('')
+			.toUpperCase()
+			.slice(0, 2);
 	}
 
 	@HostListener('document:keydown.escape')

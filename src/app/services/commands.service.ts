@@ -46,6 +46,15 @@ export class TerminalCommandsService {
 			lines.push({ type: 'output', text: 'Navigating to stats page.' });
 			this.router.navigate(['/stats']);
 		};
+		const goPractice = () => {
+			lines.push({ type: 'output', text: 'Navigating to practice page.' });
+			this.router.navigate(['/practice']);
+		};
+		const goProfile = () => {
+			lines.push({ type: 'output', text: 'Navigating to profile page.' });
+			this.router.navigate(['/profile']);
+		};
+
 		return {
 			about: goAbout,
 			'/about': goAbout,
@@ -63,10 +72,14 @@ export class TerminalCommandsService {
 			'/signup': goSignup,
 			stats: goStats,
 			'/stats': goStats,
+			practice: goPractice,
+			'/practice': goPractice,
+			profile: goProfile,
+			'/profile': goProfile,
 			help: () => {
 				lines.push({
 					type: 'output',
-					text: 'Available commands: /about, /contact, /apps, /home, /admin, back',
+					text: 'Available commands: /about, /contact, /apps, /home, /admin, /practice, /profile, back',
 				});
 			},
 			back: () => {
@@ -104,7 +117,7 @@ export class TerminalCommandsService {
 			ls: () => {
 				lines.push({
 					type: 'output',
-					text: 'Available directories: /home, /about, /contact, /apps',
+					text: 'Available directories: /home, /about, /contact, /apps, /practice',
 				});
 			},
 			kill: () => {

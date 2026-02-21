@@ -51,6 +51,25 @@
 				Logout
 			</button>
 
+			<!-- Profile avatar (desktop) -->
+			<a
+				*ngIf="isLoggedIn$ | async"
+				routerLink="/profile"
+				class="nav-avatar-link"
+				title="My Profile"
+			>
+				<img
+					*ngIf="(currentUser$ | async)?.avatar_url"
+					[src]="(currentUser$ | async)?.avatar_url"
+					alt="Profile"
+					class="nav-avatar-img"
+				/>
+				<span
+					*ngIf="!(currentUser$ | async)?.avatar_url"
+					class="nav-avatar-fallback"
+				>{{ getInitials((currentUser$ | async)?.name) }}</span>
+			</a>
+
 			<button
 				class="terminal-toggle"
 				(click)="toggleTerminal.emit()"
@@ -110,6 +129,16 @@
 		>
 			<i class="fa-solid fa-right-to-bracket"></i>
 			Login
+		</a>
+		<a
+			*ngIf="isLoggedIn$ | async"
+			routerLink="/profile"
+			routerLinkActive="active"
+			class="mobile-link"
+			(click)="closeMenu()"
+		>
+			<i class="fa-solid fa-user"></i>
+			Profile
 		</a>
 		<a
 			*ngIf="isLoggedIn$ | async"

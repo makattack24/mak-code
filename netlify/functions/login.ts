@@ -12,7 +12,7 @@ export const handler: Handler = async (event) => {
 
 	try {
 		const users =
-			await sql`SELECT id, email, role, password_hash FROM Users WHERE email = ${email}`;
+			await sql`SELECT id, name, email, role, password_hash, avatar_url FROM Users WHERE email = ${email}`;
 		if (!users[0]) {
 			return { statusCode: 401, body: 'Invalid credentials' };
 		}
@@ -25,8 +25,10 @@ export const handler: Handler = async (event) => {
 			statusCode: 200,
 			body: JSON.stringify({
 				id: user['id'],
+				name: user['name'],
 				email: user['email'],
 				role: user['role'],
+				avatar_url: user['avatar_url'] || null,
 			}),
 		};
 	} catch (err) {

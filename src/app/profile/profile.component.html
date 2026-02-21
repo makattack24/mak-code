@@ -1,0 +1,121 @@
+<div class="profile-page">
+	<div class="profile-card">
+		<h2><i class="fa-solid fa-user-gear"></i> My Profile</h2>
+
+		<!-- ── Avatar Section ── -->
+		<section class="avatar-section">
+			<div class="avatar-display">
+				<img *ngIf="avatarPreview" [src]="avatarPreview" alt="Avatar" class="avatar-img"
+					(error)="avatarPreview = null" />
+				<div *ngIf="!avatarPreview" class="avatar-fallback">{{ initials }}</div>
+			</div>
+
+			<div class="avatar-controls">
+				<label class="avatar-upload-label secondary">
+					<i class="fa-solid fa-upload"></i> Upload Image
+					<input type="file" accept="image/*" (change)="onAvatarFileSelected($event)" hidden />
+				</label>
+				<span class="or-text">or</span>
+				<input type="text" placeholder="Paste image URL..." [(ngModel)]="avatarUrl"
+					(ngModelChange)="onAvatarUrlChange()" class="avatar-url-input" />
+				<button *ngIf="avatarUrl" class="remove-btn secondary" (click)="removeAvatar()">
+					<i class="fa-solid fa-trash"></i>
+				</button>
+			</div>
+
+			<div class="avatar-actions">
+				<button (click)="saveAvatar()" [disabled]="savingAvatar" class="save-avatar-btn">
+					{{ savingAvatar ? 'Saving...' : 'Save Avatar' }}
+				</button>
+			</div>
+			<p *ngIf="avatarSuccess" class="success">{{ avatarSuccess }}</p>
+			<p *ngIf="avatarError" class="error">{{ avatarError }}</p>
+		</section>
+
+		<hr />
+
+		<!-- ── Profile Info Section ── -->
+		<section class="info-section">
+			<h3>Account Info</h3>
+
+			<label for="profileName">Name</label>
+			<input id="profileName" type="text" [(ngModel)]="name" placeholder="Your name" autocomplete="name" />
+
+			<label for="profileEmail">Email</label>
+			<input id="profileEmail" type="email" [(ngModel)]="email" placeholder="you@example.com"
+				autocomplete="email" />
+
+			<div class="role-display">
+				<span class="role-label">Role:</span>
+				<span class="role-badge" [class.admin]="user?.role === 'admin'">{{ user?.role }}</span>
+			</div>
+
+			<button (click)="saveProfile()" [disabled]="saving || !name || !email">
+				{{ saving ? 'Saving...' : 'Save Changes' }}
+			</button>
+
+			<p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+			<p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+		</section>
+
+		<hr />
+
+		<!-- ── Password Section ── -->
+		<section class="password-section">
+			<div class="password-header" (click)="showPasswordSection = !showPasswordSection">
+				<h3>
+					<i class="fa-solid fa-lock"></i> Change Password
+				</h3>
+				<i class="fa-solid" [ngClass]="showPasswordSection ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+			</div>
+
+			<div *ngIf="showPasswordSection" class="password-fields">
+				<label for="currentPw">Current Password</label>
+				<div class="pw-field">
+					<input id="currentPw" [type]="showCurrentPassword ? 'text' : 'password'"
+						[(ngModel)]="currentPassword" placeholder="Enter current password"
+						autocomplete="current-password" />
+					<button type="button" class="toggle-pw" (click)="showCurrentPassword = !showCurrentPassword"
+						tabindex="-1">
+						<i class="fa-solid"
+							[ngClass]="showCurrentPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+					</button>
+				</div>
+
+				<label for="newPw">New Password</label>
+				<div class="pw-field">
+					<input id="newPw" [type]="showNewPassword ? 'text' : 'password'" [(ngModel)]="newPassword"
+						placeholder="At least 6 characters" autocomplete="new-password" />
+					<button type="button" class="toggle-pw" (click)="showNewPassword = !showNewPassword"
+						tabindex="-1">
+						<i class="fa-solid" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+					</button>
+				</div>
+				<div class="pw-hint" *ngIf="newPassword">
+					<span [class.valid]="passwordLongEnough" [class.invalid]="!passwordLongEnough">
+						<i class="fa-solid" [ngClass]="passwordLongEnough ? 'fa-check' : 'fa-xmark'"></i>
+						At least 6 characters
+					</span>
+				</div>
+
+				<label for="confirmPw">Confirm New Password</label>
+				<input id="confirmPw" [type]="showNewPassword ? 'text' : 'password'" [(ngModel)]="confirmPassword"
+					placeholder="Re-enter new password" autocomplete="new-password" />
+				<div class="pw-hint" *ngIf="confirmPassword">
+					<span [class.valid]="passwordsMatch" [class.invalid]="!passwordsMatch">
+						<i class="fa-solid" [ngClass]="passwordsMatch ? 'fa-check' : 'fa-xmark'"></i>
+						{{ passwordsMatch ? 'Passwords match' : 'Passwords do not match' }}
+					</span>
+				</div>
+
+				<button (click)="changePassword()"
+					[disabled]="savingPassword || !currentPassword || !newPassword || !confirmPassword || !passwordsMatch">
+					{{ savingPassword ? 'Changing...' : 'Change Password' }}
+				</button>
+
+				<p *ngIf="passwordSuccess" class="success">{{ passwordSuccess }}</p>
+				<p *ngIf="passwordError" class="error">{{ passwordError }}</p>
+			</div>
+		</section>
+	</div>
+</div>

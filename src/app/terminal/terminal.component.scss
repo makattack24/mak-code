@@ -138,6 +138,14 @@
     border-radius: 999px;
     background: var(--secondary);
     border: 1px solid var(--border);
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+        color: var(--primary);
+        border-color: var(--primary);
+    }
 
     i {
         font-size: 0.8rem;

@@ -78,6 +78,7 @@ export class TerminalComponent
 		'home',
 		'navbar',
 		'nav',
+		'profile',
 	];
 	isInputFocused = false;
 

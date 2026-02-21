@@ -13,6 +13,9 @@ import { AdminComponent } from './admin/admin.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { adminGuard } from './guards/auth.guard';
+import { PracticeComponent } from './coding_practice/practice.component';
+import { ProfileComponent } from './profile/profile.component';
+
 
 export const routes: Routes = [
 	{ path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -21,6 +24,8 @@ export const routes: Routes = [
 	{ path: 'contact', component: ContactComponent },
 	{ path: 'login', component: LoginComponent },
 	{ path: 'signup', component: SignupComponent },
+	{ path: 'profile', component: ProfileComponent },
+	{ path: 'practice', component: PracticeComponent },
 	{
 		path: 'apps',
 		component: AppsComponent,
