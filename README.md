@@ -18,6 +18,7 @@ This is a **Single Page App (SPA)**. The entire site is one `index.html` file, a
 | `netlify.toml` | Tells Netlify how to build and where the output is |
 | `public/_redirects` | SPA redirect rule so Angular routing works on Netlify |
 | `netlify/functions/` | Serverless functions (login, users, logs) that run on Netlify |
+| `scripts/generate-env.js` | Generates Angular environment files from environment variables (Auth0 config) |
 | `dist/myweb/browser/` | The compiled output folder (only exists after a build) |
 
 ---
@@ -132,6 +133,32 @@ The functions use:
 ### Testing functions locally
 
 Functions **only** work with `netlify dev`, not with `ng serve`. If you use `ng serve`, any calls to `/.netlify/functions/...` will fail.
+
+---
+
+## Environment File Generation
+
+The file `scripts/generate-env.js` dynamically generates Angular environment files (`src/environments/environment.ts` and `src/environments/environment.prod.ts`) at build time by reading Auth0 configuration from environment variables. This keeps secrets like Auth0 credentials out of source control.
+
+### How it works
+
+1. The script reads three environment variables: `AUTH0_DOMAIN`, `AUTH0_CLIENT_ID`, and `AUTH0_AUDIENCE`
+2. It writes them into Angular-compatible TypeScript environment files
+3. Angular then imports these files to configure the Auth0 SDK
+
+The script runs automatically before both `npm start` and `npm run build` — you can see this in `package.json`:
+
+```json
+"start": "node scripts/generate-env.js && ng serve",
+"build": "node scripts/generate-env.js && ng build"
+```
+
+### Setting the environment variables
+
+- **Locally:** Set them in your shell before running `npm start` or `netlify dev`, or use a `.env` file with `netlify dev` (Netlify CLI loads `.env` automatically)
+- **On Netlify:** Set them in the Netlify dashboard under **Site Settings → Environment Variables**. They are injected automatically during the build.
+
+If the variables are not set, the generated files will have empty strings for those values.
 
 ---
 
