@@ -238,15 +238,7 @@
 		</div>
 
 		<div class="editor-main">
-			<div class="editor-lines">
-				<span *ngFor="let line of lineNumbers; let i = index" (click)="highlightLine(i)"
-					class="editor-line-number">{{ line }}</span>
-			</div>
-			<div class="editor-textarea-wrapper">
-				<pre class="editor-pre">{{ code || ' ' }}</pre>
-				<textarea #editorTextarea [(ngModel)]="code" (input)="onInput()" spellcheck="false"
-					placeholder="Write your solution here..."></textarea>
-			</div>
+			<div #monacoContainer class="monaco-editor-container"></div>
 		</div>
 
 		<!-- Output Console -->

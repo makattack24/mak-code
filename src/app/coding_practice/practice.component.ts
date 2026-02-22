@@ -4,7 +4,9 @@ import {
 	ElementRef,
 	AfterViewInit,
 	OnInit,
+	OnDestroy,
 	HostListener,
+	NgZone,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,6 +18,8 @@ import {
 	UserPracticeStats,
 	ProblemStats,
 } from '../services/practice-stats.service';
+
+declare const monaco: any;
 
 interface TestResult {
 	input: string;
@@ -31,7 +35,7 @@ interface TestResult {
 	templateUrl: './practice.component.html',
 	styleUrls: ['./practice.component.scss'],
 })
-export class PracticeComponent implements AfterViewInit, OnInit {
+export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 	// ── Problem list state ──
 	problems: Problem[] = PROBLEMS;
 	filteredProblems: Problem[] = PROBLEMS;
@@ -49,6 +53,11 @@ export class PracticeComponent implements AfterViewInit, OnInit {
 	error = '';
 	isRunning = false;
 
+	// ── Monaco editor ──
+	private monacoEditor: any;
+	private monacoLoaded = false;
+	@ViewChild('monacoContainer') monacoContainer!: ElementRef<HTMLDivElement>;
+
 	// ── Test state ──
 	testResults: TestResult[] = [];
 	allPassed = false;
@@ -65,13 +74,8 @@ export class PracticeComponent implements AfterViewInit, OnInit {
 	leftPanelWidth = 45; // percentage
 	isResizing = false;
 
-	@ViewChild('editorTextarea') textarea!: ElementRef<HTMLTextAreaElement>;
-
-	get lineNumbers(): number[] {
-		return Array(this.code.split('\n').length)
-			.fill(0)
-			.map((_, i) => i + 1);
-	}
+	// ── Theme observer ──
+	private themeObserver: MutationObserver | null = null;
 
 	get passedCount(): number {
 		return this.testResults.filter((r) => r.passed).length;
@@ -83,7 +87,8 @@ export class PracticeComponent implements AfterViewInit, OnInit {
 
 	constructor(
 		public authService: AuthService,
-		private practiceStats: PracticeStatsService
+		private practiceStats: PracticeStatsService,
+		private ngZone: NgZone
 	) {
 		const cats = new Set(this.problems.map((p) => p.category));
 		this.categories = ['All', ...Array.from(cats).sort()];
@@ -114,7 +119,115 @@ export class PracticeComponent implements AfterViewInit, OnInit {
 	}
 
 	ngAfterViewInit() {
-		this.autoResize();
+		this.loadMonaco();
+	}
+
+	ngOnDestroy() {
+		this.disposeEditor();
+		if (this.themeObserver) {
+			this.themeObserver.disconnect();
+			this.themeObserver = null;
+		}
+	}
+
+	/** Load Monaco editor scripts dynamically */
+	private loadMonaco() {
+		if (this.monacoLoaded) {
+			this.initEditor();
+			return;
+		}
+
+		const onGotAmdLoader = () => {
+			(window as any).require.config({
+				paths: { vs: 'assets/monaco-editor/min/vs' },
+			});
+			(window as any).require(['vs/editor/editor.main'], () => {
+				this.monacoLoaded = true;
+				this.ngZone.run(() => this.initEditor());
+			});
+		};
+
+		if ((window as any).require) {
+			onGotAmdLoader();
+			return;
+		}
+
+		const script = document.createElement('script');
+		script.src = 'assets/monaco-editor/min/vs/loader.js';
+		script.onload = onGotAmdLoader;
+		document.body.appendChild(script);
+	}
+
+	/** Initialize the Monaco editor instance */
+	private initEditor() {
+		if (!this.monacoContainer?.nativeElement) return;
+
+		const currentTheme = document.documentElement.getAttribute('data-theme');
+		const monacoTheme = currentTheme === 'light' ? 'vs' : 'vs-dark';
+
+		this.monacoEditor = monaco.editor.create(this.monacoContainer.nativeElement, {
+			value: this.code || '',
+			language: 'javascript',
+			theme: monacoTheme,
+			automaticLayout: true,
+			minimap: { enabled: false },
+			fontSize: 14,
+			fontFamily: '"JetBrains Mono", "Fira Mono", "Consolas", "Menlo", monospace',
+			lineNumbers: 'on',
+			scrollBeyondLastLine: false,
+			tabSize: 2,
+			wordWrap: 'on',
+			padding: { top: 8, bottom: 8 },
+			renderLineHighlight: 'line',
+			bracketPairColorization: { enabled: true },
+			suggest: { showKeywords: true, showSnippets: true },
+			parameterHints: { enabled: true },
+			folding: true,
+			matchBrackets: 'always',
+			formatOnPaste: true,
+			formatOnType: true,
+		});
+
+		// Sync editor content back to our code property
+		this.monacoEditor.onDidChangeModelContent(() => {
+			this.ngZone.run(() => {
+				this.code = this.monacoEditor.getValue();
+			});
+		});
+
+		// Add keyboard shortcuts
+		this.monacoEditor.addAction({
+			id: 'run-tests',
+			label: 'Submit Tests',
+			keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
+			run: () => this.ngZone.run(() => this.runTests()),
+		});
+
+		this.monacoEditor.addAction({
+			id: 'run-code',
+			label: 'Run Code',
+			keybindings: [monaco.KeyCode.F5],
+			run: () => this.ngZone.run(() => this.runCode()),
+		});
+
+		// Watch for theme changes
+		this.themeObserver = new MutationObserver((mutations) => {
+			for (const m of mutations) {
+				if (m.attributeName === 'data-theme') {
+					const theme = document.documentElement.getAttribute('data-theme');
+					monaco.editor.setTheme(theme === 'light' ? 'vs' : 'vs-dark');
+				}
+			}
+		});
+		this.themeObserver.observe(document.documentElement, { attributes: true });
+	}
+
+	/** Dispose the current Monaco editor instance */
+	private disposeEditor() {
+		if (this.monacoEditor) {
+			this.monacoEditor.dispose();
+			this.monacoEditor = null;
+		}
 	}
 
 	// ── Keyboard shortcuts ──
@@ -169,7 +282,15 @@ export class PracticeComponent implements AfterViewInit, OnInit {
 		this.activeTab = 'description';
 		this.showHints = false;
 		this.revealedHints = 0;
-		setTimeout(() => this.autoResize(), 0);
+
+		// Give Angular a tick to render the container, then init or update editor
+		setTimeout(() => {
+			if (this.monacoEditor) {
+				this.monacoEditor.setValue(this.code);
+			} else {
+				this.loadMonaco();
+			}
+		}, 0);
 	}
 
 	goBackToList() {
@@ -179,6 +300,7 @@ export class PracticeComponent implements AfterViewInit, OnInit {
 		this.error = '';
 		this.testResults = [];
 		this.allPassed = false;
+		this.disposeEditor();
 	}
 
 	resetCode() {
@@ -188,7 +310,9 @@ export class PracticeComponent implements AfterViewInit, OnInit {
 			this.error = '';
 			this.testResults = [];
 			this.allPassed = false;
-			setTimeout(() => this.autoResize(), 0);
+			if (this.monacoEditor) {
+				this.monacoEditor.setValue(this.code);
+			}
 		}
 	}
 
@@ -203,33 +327,6 @@ export class PracticeComponent implements AfterViewInit, OnInit {
 	revealNextHint() {
 		if (this.selectedProblem?.hints && this.revealedHints < this.selectedProblem.hints.length) {
 			this.revealedHints++;
-		}
-	}
-
-	// ── Editor helpers ──
-	autoResize() {
-		if (this.textarea) {
-			const ta = this.textarea.nativeElement;
-			ta.style.height = 'auto';
-			ta.style.height = ta.scrollHeight + 'px';
-		}
-	}
-
-	onInput() {
-		this.autoResize();
-	}
-
-	highlightLine(lineIndex: number) {
-		const lines = this.code.split('\n');
-		let start = 0;
-		for (let i = 0; i < lineIndex; i++) {
-			start += lines[i].length + 1;
-		}
-		const end = start + lines[lineIndex].length;
-		const textarea = this.textarea?.nativeElement;
-		if (textarea) {
-			textarea.focus();
-			textarea.setSelectionRange(start, end);
 		}
 	}
 

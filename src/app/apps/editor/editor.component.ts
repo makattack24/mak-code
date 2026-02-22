@@ -3,10 +3,13 @@ import {
 	ViewChild,
 	ElementRef,
 	AfterViewInit,
-	HostListener,
+	OnDestroy,
+	NgZone,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
+declare const monaco: any;
 
 @Component({
 	selector: 'app-editor',
@@ -15,73 +18,126 @@ import { CommonModule } from '@angular/common';
 	templateUrl: './editor.component.html',
 	styleUrl: './editor.component.scss',
 })
-export class EditorComponent implements AfterViewInit {
+export class EditorComponent implements AfterViewInit, OnDestroy {
 	code: string = `// Define your function\nfunction add(a, b) {\n  return a + b;\n}\n\n// Test cases\nconsole.log(add(2, 3)); // 5\nconsole.log(add(-1, 1)); // 0`;
 	output: string = '';
 	error: string = '';
 
-	@ViewChild('editorTextarea') textarea!: ElementRef<HTMLTextAreaElement>;
+	// ── Monaco editor ──
+	private monacoEditor: any;
+	private monacoLoaded = false;
+	private themeObserver: MutationObserver | null = null;
+	@ViewChild('monacoContainer') monacoContainer!: ElementRef<HTMLDivElement>;
 
-	get lineNumbers(): number[] {
-		return Array(this.code.split('\n').length)
-			.fill(0)
-			.map((_, i) => i + 1);
-	}
-
-	// Add keyboard shortcut listeners
-	@HostListener('document:keydown', ['$event'])
-	handleKeyboardShortcut(event: KeyboardEvent) {
-		// F5 to run code
-		if (event.key === 'F5') {
-			event.preventDefault();
-			this.runCode();
-		}
-		// Ctrl+Enter to run code
-		else if (event.ctrlKey && event.key === 'Enter') {
-			event.preventDefault();
-			this.runCode();
-		}
-		// Ctrl+Shift+R to run code
-		else if (event.ctrlKey && event.shiftKey && event.key === 'R') {
-			event.preventDefault();
-			this.runCode();
-		}
-	}
+	constructor(private ngZone: NgZone) {}
 
 	ngAfterViewInit() {
-		this.autoResize();
+		this.loadMonaco();
 	}
 
-	autoResize() {
-		if (this.textarea) {
-			const ta = this.textarea.nativeElement;
-			ta.style.height = 'auto';
-			ta.style.height = ta.scrollHeight + 'px';
+	ngOnDestroy() {
+		if (this.monacoEditor) {
+			this.monacoEditor.dispose();
+			this.monacoEditor = null;
+		}
+		if (this.themeObserver) {
+			this.themeObserver.disconnect();
+			this.themeObserver = null;
 		}
 	}
 
-	onInput() {
-		this.autoResize();
+	/** Load Monaco editor scripts dynamically */
+	private loadMonaco() {
+		if (this.monacoLoaded) {
+			this.initEditor();
+			return;
+		}
+
+		const onGotAmdLoader = () => {
+			(window as any).require.config({
+				paths: { vs: 'assets/monaco-editor/min/vs' },
+			});
+			(window as any).require(['vs/editor/editor.main'], () => {
+				this.monacoLoaded = true;
+				this.ngZone.run(() => this.initEditor());
+			});
+		};
+
+		if ((window as any).require) {
+			onGotAmdLoader();
+			return;
+		}
+
+		const script = document.createElement('script');
+		script.src = 'assets/monaco-editor/min/vs/loader.js';
+		script.onload = onGotAmdLoader;
+		document.body.appendChild(script);
+	}
+
+	/** Initialize the Monaco editor instance */
+	private initEditor() {
+		if (!this.monacoContainer?.nativeElement) return;
+
+		const currentTheme = document.documentElement.getAttribute('data-theme');
+		const monacoTheme = currentTheme === 'light' ? 'vs' : 'vs-dark';
+
+		this.monacoEditor = monaco.editor.create(this.monacoContainer.nativeElement, {
+			value: this.code,
+			language: 'javascript',
+			theme: monacoTheme,
+			automaticLayout: true,
+			minimap: { enabled: false },
+			fontSize: 14,
+			fontFamily: '"JetBrains Mono", "Fira Mono", "Consolas", "Menlo", monospace',
+			lineNumbers: 'on',
+			scrollBeyondLastLine: false,
+			tabSize: 2,
+			wordWrap: 'on',
+			padding: { top: 8, bottom: 8 },
+			renderLineHighlight: 'line',
+			bracketPairColorization: { enabled: true },
+			suggest: { showKeywords: true, showSnippets: true },
+			parameterHints: { enabled: true },
+			folding: true,
+			matchBrackets: 'always',
+			formatOnPaste: true,
+			formatOnType: true,
+		});
+
+		// Sync editor content back to our code property
+		this.monacoEditor.onDidChangeModelContent(() => {
+			this.ngZone.run(() => {
+				this.code = this.monacoEditor.getValue();
+			});
+		});
+
+		// Add keyboard shortcuts
+		this.monacoEditor.addAction({
+			id: 'run-code',
+			label: 'Run Code',
+			keybindings: [
+				monaco.KeyCode.F5,
+				monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+			],
+			run: () => this.ngZone.run(() => this.runCode()),
+		});
+
+		// Watch for theme changes
+		this.themeObserver = new MutationObserver((mutations) => {
+			for (const m of mutations) {
+				if (m.attributeName === 'data-theme') {
+					const theme = document.documentElement.getAttribute('data-theme');
+					monaco.editor.setTheme(theme === 'light' ? 'vs' : 'vs-dark');
+				}
+			}
+		});
+		this.themeObserver.observe(document.documentElement, { attributes: true });
 	}
 
 	runCode() {
 		this.output = '';
 		this.error = '';
 		this.runInSandbox(this.code);
-	}
-
-	highlightLine(lineIndex: number) {
-		const lines = this.code.split('\n');
-		let start = 0;
-		for (let i = 0; i < lineIndex; i++) {
-			start += lines[i].length + 1; // +1 for the newline
-		}
-		const end = start + lines[lineIndex].length;
-		const textarea = this.textarea?.nativeElement;
-		if (textarea) {
-			textarea.focus();
-			textarea.setSelectionRange(start, end);
-		}
 	}
 
 	private runInSandbox(code: string) {

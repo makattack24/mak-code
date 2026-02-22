@@ -467,87 +467,14 @@
 	display: flex;
 	flex: 1 1 auto;
 	min-height: 0;
-	overflow: auto;
+	overflow: hidden;
 	background: var(--surface);
 }
 
-.editor-lines {
-	background: var(--secondary);
-	color: var(--muted);
-	text-align: right;
-	user-select: none;
-	font-family: var(--font-family);
-	font-size: 0.9em;
-	line-height: 1.5em;
-	padding: 8px 8px 8px 0;
-	border: none;
-	flex-shrink: 0;
-
-	span {
-		display: block;
-		height: 1.5em;
-		line-height: 1.5em;
-		padding-left: 5px;
-		padding-right: 5px;
-	}
-}
-
-.editor-line-number {
-	cursor: pointer;
-	transition: background 0.1s;
-
-	&:hover {
-		background: var(--border);
-	}
-}
-
-.editor-textarea-wrapper {
-	position: relative;
-	flex: 1;
-	min-width: 0;
-}
-
-.editor-pre,
-textarea {
-	font-family: var(--font-family);
-	font-size: 0.9em;
-	line-height: 1.5em;
-	padding: 8px;
-	margin: 0;
-	border: none;
-	background: transparent;
-	color: var(--foreground);
+.monaco-editor-container {
 	width: 100%;
-	min-height: 100%;
-	box-sizing: border-box;
-	resize: none;
-	white-space: pre-wrap;
-	word-break: break-all;
-	tab-size: 2;
-}
-
-.editor-pre {
-	pointer-events: none;
-	color: transparent;
-	background: transparent;
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 1;
-}
-
-textarea {
-	position: relative;
-	z-index: 2;
-	background: transparent;
-	color: var(--foreground);
-	outline: none;
-	overflow: hidden;
-
-	&::placeholder {
-		color: var(--muted);
-		opacity: 0.5;
-	}
+	height: 100%;
+	min-height: 300px;
 }
 
 /* Console Output */
