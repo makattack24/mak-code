@@ -1,42 +1,102 @@
-<div class="sound-card">
-	<canvas #waveCanvas width="600" height="120"></canvas>
+<div class="music-player">
+	<!-- ── Now Playing ── -->
+	<div class="now-playing">
+		<!-- Visualizer -->
+		<div class="visualizer-wrap">
+			<canvas #waveCanvas></canvas>
+			<div class="now-playing-overlay">
+				<span class="material-icons disc-icon" [class.spinning]="isPlaying">album</span>
+			</div>
+		</div>
 
-	<div class="audio-player">
-		<button class="audio-btn" (click)="togglePlay()">
-			<span *ngIf="!isPlaying">&#9654;</span>
-			<span *ngIf="isPlaying">&#10073;&#10073;</span>
-		</button>
-		<span class="audio-time">
-			{{ currentTime * 1000 | date : "mm:ss" }} /
-			{{ duration * 1000 | date : "mm:ss" }}
-		</span>
-		<input
-			type="range"
-			min="0"
-			[max]="duration > 0 ? duration : 1"
-			step="0.01"
-			[value]="currentTime"
-			(input)="seekAudio($event)"
-			class="audio-slider"
-			*ngIf="duration > 0"
-			[style.--progress]="duration ? currentTime / duration : 0"
-		/>
-		<button class="audio-btn" (click)="toggleMute()">
-			<span class="material-icons">{{
-				isMuted ? "volume_off" : "volume_up"
-			}}</span>
-		</button>
-		<input
-			type="range"
-			min="0"
-			max="1"
-			step="0.01"
-			[(ngModel)]="volume"
-			(input)="changeVolume($event)"
-			class="audio-volume"
-			[style.--val]="volume"
-		/>
+		<!-- Song info -->
+		<div class="song-info">
+			<span class="song-title">{{ currentSong.title }}</span>
+			<span class="song-artist">{{ currentSong.artist }}</span>
+		</div>
+
+		<!-- Progress bar -->
+		<div class="progress-section">
+			<span class="time-label">{{ currentTime * 1000 | date : "mm:ss" }}</span>
+			<input
+				type="range"
+				min="0"
+				[max]="duration > 0 ? duration : 1"
+				step="0.01"
+				[value]="currentTime"
+				(input)="seekAudio($event)"
+				class="progress-slider"
+				*ngIf="duration > 0"
+				[style.--progress]="duration ? currentTime / duration : 0"
+			/>
+			<div class="progress-slider placeholder" *ngIf="duration <= 0"></div>
+			<span class="time-label">{{ duration * 1000 | date : "mm:ss" }}</span>
+		</div>
+
+		<!-- Controls -->
+		<div class="controls">
+			<button class="ctrl-btn small" (click)="toggleShuffle()" [class.active]="shuffle" title="Shuffle">
+				<span class="material-icons">shuffle</span>
+			</button>
+			<button class="ctrl-btn" (click)="prevTrack()" title="Previous">
+				<span class="material-icons">skip_previous</span>
+			</button>
+			<button class="ctrl-btn play-btn" (click)="togglePlay()">
+				<span class="material-icons">{{ isPlaying ? 'pause' : 'play_arrow' }}</span>
+			</button>
+			<button class="ctrl-btn" (click)="nextTrack()" title="Next">
+				<span class="material-icons">skip_next</span>
+			</button>
+			<button class="ctrl-btn small" (click)="cycleRepeat()" [class.active]="repeat !== 'none'" title="Repeat">
+				<span class="material-icons">{{ repeatIcon }}</span>
+			</button>
+		</div>
+
+		<!-- Volume -->
+		<div class="volume-row">
+			<button class="ctrl-btn small" (click)="toggleMute()">
+				<span class="material-icons">{{ volumeIcon }}</span>
+			</button>
+			<input
+				type="range"
+				min="0"
+				max="1"
+				step="0.01"
+				[(ngModel)]="volume"
+				(input)="changeVolume($event)"
+				class="volume-slider"
+				[style.--val]="volume"
+			/>
+		</div>
 	</div>
-	<!-- Hidden native audio element -->
-	<audio #audioRef src="/assets/test.mp3" preload="auto"></audio>
+
+	<!-- ── Playlist ── -->
+	<div class="playlist">
+		<h3 class="playlist-header">
+			<span class="material-icons">queue_music</span>
+			Playlist
+			<span class="track-count">{{ songs.length }} track{{ songs.length !== 1 ? 's' : '' }}</span>
+		</h3>
+		<ul class="playlist-list">
+			<li
+				*ngFor="let song of songs; let i = index"
+				class="playlist-item"
+				[class.active]="i === currentIndex"
+				(click)="playSong(i)"
+			>
+				<span class="playlist-num">
+					<span *ngIf="i === currentIndex && isPlaying" class="material-icons eq-icon">equalizer</span>
+					<span *ngIf="!(i === currentIndex && isPlaying)">{{ i + 1 }}</span>
+				</span>
+				<div class="playlist-song-info">
+					<span class="playlist-song-title">{{ song.title }}</span>
+					<span class="playlist-song-artist">{{ song.artist }}</span>
+				</div>
+			</li>
+		</ul>
+		<p class="playlist-empty" *ngIf="songs.length === 0">No songs added yet.</p>
+	</div>
+
+	<!-- Hidden audio element -->
+	<audio #audioRef [src]="currentSong.src" preload="auto"></audio>
 </div>
