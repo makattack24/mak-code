@@ -1,0 +1,106 @@
+<div class="data-display">
+	<!-- ── HEADER ──────────────────────────────────────── -->
+	<header class="dd-header">
+		<h1>Data<span class="accent">Display</span></h1>
+		<p class="tagline">Browse datasets across different subjects. Pick one to explore.</p>
+	</header>
+
+	<!-- ── SUBJECT DETAIL VIEW ─────────────────────────── -->
+	<section *ngIf="selectedSubject" class="subject-detail">
+		<button class="back-btn" (click)="closeSubject()">
+			<i class="fa-solid fa-arrow-left"></i> Back to subjects
+		</button>
+
+		<div class="subject-detail-header" [style.border-left-color]="selectedSubject.color">
+			<i [class]="selectedSubject.icon" class="subject-detail-icon" [style.color]="selectedSubject.color"></i>
+			<div>
+				<h2>{{ selectedSubject.name }}</h2>
+				<p class="subject-detail-desc">{{ selectedSubject.description }}</p>
+			</div>
+		</div>
+
+		<!-- Dataset Tabs -->
+		<nav class="dataset-tabs">
+			<button
+				*ngFor="let ds of selectedSubject.datasets"
+				class="tab-btn"
+				[class.active]="activeDatasetId === ds.id"
+				(click)="selectDataset(ds)">
+				<i [ngClass]="{
+					'fa-solid fa-table': ds.type === 'table',
+					'fa-solid fa-chart-simple': ds.type === 'bar-chart',
+					'fa-solid fa-chart-pie': ds.type === 'pie-chart',
+					'fa-solid fa-cubes': ds.type === 'stat-cards'
+				}"></i>
+				{{ ds.title }}
+			</button>
+		</nav>
+
+		<!-- Active Dataset Panel -->
+		<div *ngIf="activeDataset" class="dataset-panel">
+			<h3>{{ activeDataset.title }}</h3>
+			<p *ngIf="activeDataset.description" class="dataset-desc">{{ activeDataset.description }}</p>
+
+			<!-- Stat Cards -->
+			<app-stat-cards
+				*ngIf="activeDataset.type === 'stat-cards' && activeDataset.stats"
+				[stats]="activeDataset.stats">
+			</app-stat-cards>
+
+			<!-- Table -->
+			<app-data-table
+				*ngIf="activeDataset.type === 'table' && activeDataset.columns && activeDataset.rows"
+				[columns]="activeDataset.columns"
+				[rows]="activeDataset.rows">
+			</app-data-table>
+
+			<!-- Bar Chart -->
+			<app-data-chart
+				*ngIf="activeDataset.type === 'bar-chart' && activeDataset.chartData"
+				type="bar"
+				[data]="activeDataset.chartData"
+				[unit]="activeDataset.unit || ''">
+			</app-data-chart>
+
+			<!-- Pie Chart -->
+			<app-data-chart
+				*ngIf="activeDataset.type === 'pie-chart' && activeDataset.chartData"
+				type="pie"
+				[data]="activeDataset.chartData">
+			</app-data-chart>
+		</div>
+	</section>
+
+	<!-- ── SUBJECT GRID ───────────────────────────────── -->
+	<ng-container *ngIf="!selectedSubject">
+		<!-- Search -->
+		<div class="search-bar">
+			<div class="search-box">
+				<i class="fa-solid fa-magnifying-glass"></i>
+				<input type="text" placeholder="Search subjects..."
+					[(ngModel)]="searchQuery" />
+				<button *ngIf="searchQuery" class="clear-btn" (click)="searchQuery = ''">
+					<i class="fa-solid fa-xmark"></i>
+				</button>
+			</div>
+		</div>
+
+		<div class="subject-grid">
+			<div
+				*ngFor="let s of filteredSubjects"
+				class="subject-card"
+				[style.border-top-color]="s.color"
+				(click)="openSubject(s)">
+				<i [class]="s.icon" class="subject-icon" [style.color]="s.color"></i>
+				<h3>{{ s.name }}</h3>
+				<p>{{ s.description }}</p>
+				<span class="dataset-count">{{ s.datasets.length }} datasets</span>
+			</div>
+		</div>
+
+		<div *ngIf="filteredSubjects.length === 0" class="empty-state">
+			<i class="fa-solid fa-magnifying-glass empty-icon"></i>
+			<p>No subjects matching "{{ searchQuery }}".</p>
+		</div>
+	</ng-container>
+</div>

@@ -1,0 +1,110 @@
+/* ── BAR CHART ───────────────────────────────────────── */
+.bar-chart {
+	display: flex;
+	align-items: flex-end;
+	gap: 0.5rem;
+	height: 260px;
+	padding: 0.5rem 0;
+	overflow-x: auto;
+}
+
+.bar-container {
+	flex: 1 1 0;
+	min-width: 48px;
+	max-width: 100px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+}
+
+.bar-visual {
+	flex: 1;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+.bar {
+	width: 70%;
+	border-radius: 6px 6px 0 0;
+	min-height: 4px;
+	transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	position: relative;
+}
+
+.bar-value {
+	font-size: 0.72rem;
+	font-weight: 600;
+	color: var(--foreground);
+	margin-bottom: 4px;
+	white-space: nowrap;
+}
+.bar-unit { font-weight: 400; color: var(--muted); font-size: 0.65rem; }
+
+.bar-label {
+	font-size: 0.72rem;
+	color: var(--muted);
+	text-align: center;
+	margin-top: 6px;
+	line-height: 1.15;
+	word-break: break-word;
+}
+
+/* ── PIE CHART ──────────────────────────────────────── */
+.pie-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.pie-chart {
+	width: 200px;
+	height: 200px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+	transition: transform 0.3s;
+	&:hover { transform: scale(1.04); }
+}
+
+.pie-legend {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.55rem;
+}
+
+.pie-legend li {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.85rem;
+}
+
+.legend-swatch {
+	width: 14px;
+	height: 14px;
+	border-radius: 3px;
+	flex-shrink: 0;
+}
+
+.legend-label { color: var(--foreground); flex: 1; }
+.legend-value { color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 600px) {
+	.bar-chart { height: 200px; gap: 0.35rem; }
+	.bar-container { min-width: 36px; }
+	.bar-value { font-size: 0.65rem; }
+	.bar-label { font-size: 0.65rem; }
+
+	.pie-wrapper { flex-direction: column; gap: 1rem; }
+	.pie-chart { width: 160px; height: 160px; }
+}

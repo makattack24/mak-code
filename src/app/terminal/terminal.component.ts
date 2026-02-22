@@ -79,6 +79,7 @@ export class TerminalComponent
 		'navbar',
 		'nav',
 		'profile',
+		'data-display',
 	];
 	isInputFocused = false;
 
@@ -158,7 +159,7 @@ export class TerminalComponent
 	showHelp() {
 		this.lines.push({
 			type: 'output',
-			text: 'Available commands: <strong>help, apps, contact, about, visit [site], navbar</strong>',
+			text: 'Available commands: <strong>help, apps, contact, about, visit [site], navbar, data-display</strong>',
 		});
 		this.scrollToBottom();
 	}

@@ -23,7 +23,8 @@ export class NavbarComponent {
 		{ path: '/about', label: 'About', icon: 'fa-solid fa-user' },
 		{ path: '/apps', label: 'Apps', icon: 'fa-solid fa-grip' },
 		{ path: '/contact', label: 'Contact', icon: 'fa-solid fa-envelope' },
-		{ path: '/practice', label: 'Practice', icon: 'fa-solid fa-dumbbell' }
+		{ path: '/practice', label: 'Practice', icon: 'fa-solid fa-dumbbell' },
+		{ path: '/data-display', label: 'Data Display', icon: 'fa-solid fa-table' }
 	];
 
 	isLoggedIn$ = this.auth.isLoggedIn$;

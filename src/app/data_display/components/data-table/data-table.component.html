@@ -1,0 +1,28 @@
+<div class="table-wrap">
+	<table>
+		<thead>
+			<tr>
+				<th *ngFor="let col of columns"
+					[class.sortable]="sortable"
+					[class.sorted]="sortKey === col.key"
+					[style.text-align]="col.align || 'left'"
+					(click)="toggleSort(col.key)">
+					{{ col.label }}
+					<span *ngIf="sortable" class="sort-icon">
+						<span *ngIf="sortKey === col.key">
+							{{ sortDirection === 'asc' ? '▲' : '▼' }}
+						</span>
+						<span *ngIf="sortKey !== col.key" class="sort-hint">⇅</span>
+					</span>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let row of sortedRows; let odd = odd" [class.odd]="odd">
+				<td *ngFor="let col of columns" [style.text-align]="col.align || 'left'">
+					{{ formatCell(col, row) }}
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

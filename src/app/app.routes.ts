@@ -15,7 +15,7 @@ import { SignupComponent } from './signup/signup.component';
 import { adminGuard } from './guards/auth.guard';
 import { PracticeComponent } from './coding_practice/practice.component';
 import { ProfileComponent } from './profile/profile.component';
-
+import { DataDisplayComponent } from './data_display/data_display.component';
 
 export const routes: Routes = [
 	{ path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -26,6 +26,7 @@ export const routes: Routes = [
 	{ path: 'signup', component: SignupComponent },
 	{ path: 'profile', component: ProfileComponent },
 	{ path: 'practice', component: PracticeComponent },
+	{ path: 'data-display', component: DataDisplayComponent },
 	{
 		path: 'apps',
 		component: AppsComponent,

@@ -1,0 +1,25 @@
+<!-- ── BAR CHART ──────────────────────────────────────── -->
+<div *ngIf="type === 'bar'" class="bar-chart">
+	<div class="bar-container" *ngFor="let d of data">
+		<div class="bar-visual">
+			<span class="bar-value">{{ formatValue(d.value) }}<span *ngIf="unit" class="bar-unit"> {{ unit }}</span></span>
+			<div class="bar"
+				[style.height.%]="barHeight(d.value)"
+				[style.background]="d.color || 'var(--primary)'">
+			</div>
+		</div>
+		<span class="bar-label">{{ d.label }}</span>
+	</div>
+</div>
+
+<!-- ── PIE CHART ─────────────────────────────────────── -->
+<div *ngIf="type === 'pie'" class="pie-wrapper">
+	<div class="pie-chart" [style.background]="conicGradient"></div>
+	<ul class="pie-legend">
+		<li *ngFor="let s of pieSlices">
+			<span class="legend-swatch" [style.background]="s.color"></span>
+			<span class="legend-label">{{ s.label }}</span>
+			<span class="legend-value">{{ s.pct }}%</span>
+		</li>
+	</ul>
+</div>
