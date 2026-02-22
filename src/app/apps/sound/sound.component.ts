@@ -183,11 +183,22 @@ export class SoundComponent implements AfterViewInit, OnDestroy {
 		if (index < 0 || index >= this.songs.length) return;
 		this.currentIndex = index;
 		const audio = this.audioRef.nativeElement;
+
+		// Pause any in-flight playback before changing source
+		audio.pause();
 		audio.src = this.currentSong.src;
 		audio.load();
 		this.ensureAudioContext();
-		audio.play().catch((err) => console.error('Play failed:', err));
-		this.isPlaying = true;
+
+		// Wait until the browser has enough data, then play
+		audio.addEventListener(
+			'canplay',
+			() => {
+				audio.play().catch((err) => console.error('Play failed:', err));
+				this.isPlaying = true;
+			},
+			{ once: true }
+		);
 	}
 
 	prevTrack() {
