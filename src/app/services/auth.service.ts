@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, of, map } from 'rxjs';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 export interface AuthUser {
 	id: number;
@@ -27,7 +28,7 @@ export class AuthService {
 		map((u) => u?.role === 'admin')
 	);
 
-	constructor(private http: HttpClient, private router: Router) {}
+	constructor(private http: HttpClient, private router: Router, private toastr: ToastrService) {}
 
 	/** Authenticate against the backend and persist the session. */
 	login(email: string, password: string): Observable<AuthUser | null> {
@@ -37,9 +38,11 @@ export class AuthService {
 				tap((user) => {
 					this.saveUser(user);
 					this.currentUserSubject.next(user);
+					this.toastr.success(`Welcome back, ${user.name}!`, 'Logged In');
 				}),
 				catchError((err) => {
 					console.error('Login failed:', err);
+					this.toastr.error('Invalid email or password.', 'Login Failed');
 					return of(null);
 				})
 			);
@@ -66,6 +69,7 @@ export class AuthService {
 	logout(): void {
 		localStorage.removeItem(this.STORAGE_KEY);
 		this.currentUserSubject.next(null);
+		this.toastr.info('You have been logged out.', 'Logged Out');
 		this.router.navigate(['/home']);
 	}
 
