@@ -39,11 +39,13 @@
 			<!-- Recent Activity -->
 			<div class="recent-activity" *ngIf="stats.recent.length > 0">
 				<h3>Recent Activity</h3>
-				<div class="activity-list">
-					<div *ngFor="let r of stats.recent" class="activity-item" [class.passed]="r.passed" [class.failed]="!r.passed">
+			<div class="activity-list">
+					<div *ngFor="let r of stats.recent" class="activity-item" [class.passed]="r.passed" [class.failed]="!r.passed"
+						[class.has-code]="r.code" (click)="viewAttemptCode(r)" [title]="r.code ? 'Click to view submitted code' : ''">
 						<i class="fa-solid" [ngClass]="r.passed ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
 						<span class="activity-problem">Problem {{ r.problem_id }}</span>
 						<span class="activity-result">{{ r.passed ? 'Passed' : 'Failed' }}</span>
+						<span class="activity-code-icon" *ngIf="r.code"><i class="fa-solid fa-code"></i></span>
 						<span class="activity-time">{{ r.attempted_at | date:'short' }}</span>
 					</div>
 				</div>
@@ -104,6 +106,13 @@
 		<p>No problems match your filters. Try adjusting your search.</p>
 	</div>
 </div>
+
+<!-- Code Viewer Modal -->
+<app-modal [show]="showCodeViewer" [title]="codeViewerTitle" (close)="closeCodeViewer()">
+	<div class="code-viewer-body">
+		<pre class="code-viewer-pre"><code>{{ codeViewerCode }}</code></pre>
+	</div>
+</app-modal>
 
 <!-- ── Problem Workspace View (Split Pane) ── -->
 <div class="practice-workspace" *ngIf="selectedProblem" [class.resizing]="isResizing">

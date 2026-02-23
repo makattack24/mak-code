@@ -21,6 +21,7 @@ export interface RecentAttempt {
 	problem_id: number;
 	passed: boolean;
 	attempted_at: string;
+	code?: string;
 }
 
 export interface UserPracticeStats {
@@ -50,9 +51,9 @@ export class PracticeStatsService {
 	}
 
 	/** Record an attempt and refresh stats. */
-	recordAttempt(userId: number, problemId: number, passed: boolean): Observable<any> {
+	recordAttempt(userId: number, problemId: number, passed: boolean, code?: string): Observable<any> {
 		return this.http
-			.post(this.API, { user_id: userId, problem_id: problemId, passed })
+			.post(this.API, { user_id: userId, problem_id: problemId, passed, code: code || '' })
 			.pipe(
 				tap(() => {
 					// Refresh stats in the background after recording

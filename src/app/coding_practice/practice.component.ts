@@ -17,7 +17,9 @@ import {
 	PracticeStatsService,
 	UserPracticeStats,
 	ProblemStats,
+	RecentAttempt,
 } from '../services/practice-stats.service';
+import { ModalComponent } from '../shared/modal/modal.component';
 
 declare const monaco: any;
 
@@ -31,7 +33,7 @@ interface TestResult {
 @Component({
 	selector: 'app-practice',
 	standalone: true,
-	imports: [CommonModule, FormsModule],
+	imports: [CommonModule, FormsModule, ModalComponent],
 	templateUrl: './practice.component.html',
 	styleUrls: ['./practice.component.scss'],
 })
@@ -69,6 +71,11 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 	// ── Stats ──
 	stats: UserPracticeStats | null = null;
 	showStats = false;
+
+	// ── Code viewer modal ──
+	showCodeViewer = false;
+	codeViewerTitle = '';
+	codeViewerCode = '';
 
 	// ── Panel resizing ──
 	leftPanelWidth = 45; // percentage
@@ -394,7 +401,7 @@ console.log(JSON.stringify(__result));
 					const user = this.authService.currentUser;
 					if (user && this.selectedProblem) {
 						this.practiceStats
-							.recordAttempt(user.id, this.selectedProblem.id, this.allPassed)
+							.recordAttempt(user.id, this.selectedProblem.id, this.allPassed, this.code)
 							.subscribe((stats) => {
 								if (this.practiceStats.currentStats) {
 									this.stats = this.practiceStats.currentStats;
@@ -516,6 +523,24 @@ console.log(JSON.stringify(__result));
 
 	isSolved(id: number): boolean {
 		return this.solvedIds.has(id) || this.practiceStats.isProblemSolved(id);
+	}
+
+	// ── Code viewer ──
+	viewAttemptCode(attempt: RecentAttempt) {
+		if (!attempt.code) return;
+		const problem = this.problems.find(p => p.id === attempt.problem_id);
+		const title = problem
+			? `Problem ${attempt.problem_id}: ${problem.title}`
+			: `Problem ${attempt.problem_id}`;
+		this.codeViewerTitle = title;
+		this.codeViewerCode = attempt.code;
+		this.showCodeViewer = true;
+	}
+
+	closeCodeViewer() {
+		this.showCodeViewer = false;
+		this.codeViewerTitle = '';
+		this.codeViewerCode = '';
 	}
 
 	formatDescription(text: string): string {

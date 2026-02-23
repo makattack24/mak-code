@@ -15,9 +15,13 @@ const sql = neon();
  *     user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
  *     problem_id   INTEGER NOT NULL,
  *     passed       BOOLEAN NOT NULL DEFAULT false,
+ *     code         TEXT DEFAULT '',
  *     attempted_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
  *   );
  *   CREATE INDEX idx_attempts_user ON practice_attempts(user_id);
+ *
+ *   -- Migration (if table already exists):
+ *   ALTER TABLE practice_attempts ADD COLUMN IF NOT EXISTS code TEXT DEFAULT '';
  */
 export const handler: Handler = async (event) => {
 	const { httpMethod, body, queryStringParameters } = event;
@@ -37,7 +41,7 @@ export const handler: Handler = async (event) => {
 	try {
 		// ── POST: Record an attempt ──────────────────────────
 		if (httpMethod === 'POST') {
-			const { user_id, problem_id, passed } = JSON.parse(body || '{}');
+			const { user_id, problem_id, passed, code } = JSON.parse(body || '{}');
 
 			if (!user_id || !problem_id) {
 				return {
@@ -48,8 +52,8 @@ export const handler: Handler = async (event) => {
 			}
 
 			const row = await sql`
-				INSERT INTO practice_attempts (user_id, problem_id, passed)
-				VALUES (${user_id}, ${problem_id}, ${!!passed})
+				INSERT INTO practice_attempts (user_id, problem_id, passed, code)
+				VALUES (${user_id}, ${problem_id}, ${!!passed}, ${code || ''})
 				RETURNING *
 			`;
 
@@ -98,7 +102,7 @@ export const handler: Handler = async (event) => {
 
 			// Recent activity (last 20)
 			const recent = await sql`
-				SELECT problem_id, passed, attempted_at
+				SELECT problem_id, passed, attempted_at, code
 				FROM practice_attempts
 				WHERE user_id = ${userId}
 				ORDER BY attempted_at DESC
