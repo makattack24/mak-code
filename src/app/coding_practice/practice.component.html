@@ -10,10 +10,16 @@
 		<button class="stats-toggle" (click)="toggleStats()">
 			<i class="fa-solid" [ngClass]="showStats ? 'fa-chevron-up' : 'fa-chart-bar'"></i>
 			{{ showStats ? 'Hide Stats' : 'My Stats' }}
+			<span class="stats-coins"><i class="fa-solid fa-coins"></i> {{ totalCoins }}</span>
 			<span class="stats-quick">{{ stats.overall.problems_solved }}/{{ problems.length }} solved</span>
+			<span class="stats-quick">{{ stats.overall.total_attempts }} attempts</span>
 		</button>
 		<div class="stats-panel" *ngIf="showStats">
 			<div class="stats-grid">
+				<div class="stat-card coins-card">
+					<div class="stat-value"><i class="fa-solid fa-coins coins-icon"></i> {{ totalCoins }}</div>
+					<div class="stat-label">Coins Earned</div>
+				</div>
 				<div class="stat-card">
 					<div class="stat-value">{{ stats.overall.total_attempts }}</div>
 					<div class="stat-label">Total Attempts</div>
@@ -93,6 +99,9 @@
 				'' }}</p>
 			<div class="card-footer">
 				<span class="test-count"><i class="fa-solid fa-flask"></i> {{ problem.testCases.length }} tests</span>
+				<span class="coin-reward-label">
+					<i class="fa-solid fa-coins"></i> {{ getCoinsForDifficulty(problem.difficulty) }}
+				</span>
 				<span class="attempt-count" *ngIf="getProblemAttempts(problem.id) > 0">
 					<i class="fa-solid fa-rotate"></i> {{ getProblemAttempts(problem.id) }} attempts
 				</span>
@@ -205,6 +214,12 @@
 				<i class="fa-solid" [ngClass]="allPassed ? 'fa-circle-check' : 'fa-circle-xmark'"></i>
 				<span *ngIf="allPassed">All {{ totalTests }} tests passed!</span>
 				<span *ngIf="!allPassed">{{ passedCount }} of {{ totalTests }} tests passed</span>
+			</div>
+
+			<!-- Coin Reward Notification -->
+			<div class="coin-reward-popup" *ngIf="coinReward.show">
+				<i class="fa-solid fa-coins"></i>
+				<span>+{{ coinReward.amount }} coins earned!</span>
 			</div>
 
 			<div *ngFor="let result of testResults; let i = index" class="test-result-card"

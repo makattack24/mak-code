@@ -30,6 +30,12 @@ interface TestResult {
 	passed: boolean;
 }
 
+const COIN_REWARDS: Record<string, number> = {
+	Easy: 10,
+	Medium: 25,
+	Hard: 50,
+};
+
 @Component({
 	selector: 'app-practice',
 	standalone: true,
@@ -77,6 +83,10 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 	codeViewerTitle = '';
 	codeViewerCode = '';
 
+	// ── Coin reward ──
+	coinReward: { amount: number; show: boolean } = { amount: 0, show: false };
+	private coinRewardTimeout: any = null;
+
 	// ── Panel resizing ──
 	leftPanelWidth = 45; // percentage
 	isResizing = false;
@@ -90,6 +100,35 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	get totalTests(): number {
 		return this.testResults.length;
+	}
+
+	/** Total coins earned from all solved problems. */
+	get totalCoins(): number {
+		if (!this.stats) return 0;
+		return this.stats.perProblem
+			.filter((p) => p.solved)
+			.reduce((sum, p) => {
+				const problem = this.problems.find((pr) => pr.id === p.problem_id);
+				if (!problem) return sum;
+				return sum + (COIN_REWARDS[problem.difficulty] ?? 0);
+			}, 0);
+	}
+
+	/** Coins for a given difficulty level. */
+	getCoinsForDifficulty(difficulty: string): number {
+		return COIN_REWARDS[difficulty] ?? 0;
+	}
+
+	/** Show a coin reward popup, auto-dismiss after 3s. */
+	private showCoinReward(amount: number) {
+		if (this.coinRewardTimeout) {
+			clearTimeout(this.coinRewardTimeout);
+		}
+		this.coinReward = { amount, show: true };
+		this.coinRewardTimeout = setTimeout(() => {
+			this.coinReward = { amount: 0, show: false };
+			this.coinRewardTimeout = null;
+		}, 3500);
 	}
 
 	constructor(
@@ -387,7 +426,8 @@ console.log(JSON.stringify(__result));
 					this.allPassed = results.every((r) => r.passed);
 					this.isRunning = false;
 
-					if (this.allPassed && this.selectedProblem) {
+						if (this.allPassed && this.selectedProblem) {
+						const wasAlreadySolved = this.isSolved(this.selectedProblem.id);
 						this.solvedIds.add(this.selectedProblem.id);
 						try {
 							sessionStorage.setItem(
@@ -395,6 +435,12 @@ console.log(JSON.stringify(__result));
 								JSON.stringify(Array.from(this.solvedIds))
 							);
 						} catch {}
+
+						// Award coins on first solve
+						if (!wasAlreadySolved) {
+							const reward = this.getCoinsForDifficulty(this.selectedProblem.difficulty);
+							this.showCoinReward(reward);
+						}
 					}
 
 					// Record attempt in DB if logged in
