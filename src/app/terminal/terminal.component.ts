@@ -80,6 +80,7 @@ export class TerminalComponent
 		'nav',
 		'profile',
 		'data-display',
+		'leetcode'
 	];
 	isInputFocused = false;
 

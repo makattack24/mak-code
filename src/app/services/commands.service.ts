@@ -48,7 +48,7 @@ export class TerminalCommandsService {
 		};
 		const goPractice = () => {
 			lines.push({ type: 'output', text: 'Navigating to practice page.' });
-			this.router.navigate(['/practice']);
+			this.router.navigate(['/leetcode']);
 		};
 		const goProfile = () => {
 			lines.push({ type: 'output', text: 'Navigating to profile page.' });
@@ -77,7 +77,7 @@ export class TerminalCommandsService {
 			stats: goStats,
 			'/stats': goStats,
 			practice: goPractice,
-			'/practice': goPractice,
+			'/leetcode': goPractice,
 			profile: goProfile,
 			'/profile': goProfile,
 			dataDisplay: goDataDisplay,
@@ -86,7 +86,7 @@ export class TerminalCommandsService {
 			help: () => {
 				lines.push({
 					type: 'output',
-					text: 'Available commands: /about, /contact, /apps, /home, /admin, /practice, /profile, /data-display, back',
+					text: 'Available commands: /about, /contact, /apps, /home, /admin, /leetcode, /profile, /data-display, back',
 				});
 			},
 			back: () => {
@@ -124,7 +124,7 @@ export class TerminalCommandsService {
 			ls: () => {
 				lines.push({
 					type: 'output',
-					text: 'Available directories: /home, /about, /contact, /apps, /practice, /data-display',
+					text: 'Available directories: /home, /about, /contact, /apps, /leetcode, /data-display',
 				});
 			},
 			kill: () => {
