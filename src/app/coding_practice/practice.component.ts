@@ -243,8 +243,15 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		// Add keyboard shortcuts
 		this.monacoEditor.addAction({
-			id: 'run-tests',
-			label: 'Submit Tests',
+			id: 'run-tests-only',
+			label: 'Run Tests',
+			keybindings: [monaco.KeyMod.Shift | monaco.KeyCode.Enter],
+			run: () => this.ngZone.run(() => this.runTestsOnly()),
+		});
+
+		this.monacoEditor.addAction({
+			id: 'submit-tests',
+			label: 'Submit',
 			keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
 			run: () => this.ngZone.run(() => this.runTests()),
 		});
@@ -283,6 +290,10 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 		if (event.ctrlKey && event.key === 'Enter') {
 			event.preventDefault();
 			this.runTests();
+		}
+		if (event.shiftKey && event.key === 'Enter') {
+			event.preventDefault();
+			this.runTestsOnly();
 		}
 		if (event.key === 'F5') {
 			event.preventDefault();
@@ -388,8 +399,18 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 		});
 	}
 
-	// ── Run all test cases ──
+	// ── Run tests without submitting (no stats/coins recorded) ──
+	runTestsOnly() {
+		this.executeTests(false);
+	}
+
+	// ── Run all test cases and submit ──
 	runTests() {
+		this.executeTests(true);
+	}
+
+	/** Core test runner. When submit=true, records stats and awards coins. */
+	private executeTests(submit: boolean) {
 		if (!this.selectedProblem) return;
 		this.isRunning = true;
 		this.testResults = [];
@@ -426,7 +447,7 @@ console.log(JSON.stringify(__result));
 					this.allPassed = results.every((r) => r.passed);
 					this.isRunning = false;
 
-						if (this.allPassed && this.selectedProblem) {
+					if (submit && this.allPassed && this.selectedProblem) {
 						const wasAlreadySolved = this.isSolved(this.selectedProblem.id);
 						this.solvedIds.add(this.selectedProblem.id);
 						try {
@@ -443,16 +464,18 @@ console.log(JSON.stringify(__result));
 						}
 					}
 
-					// Record attempt in DB if logged in
-					const user = this.authService.currentUser;
-					if (user && this.selectedProblem) {
-						this.practiceStats
-							.recordAttempt(user.id, this.selectedProblem.id, this.allPassed, this.code)
-							.subscribe((stats) => {
-								if (this.practiceStats.currentStats) {
-									this.stats = this.practiceStats.currentStats;
-								}
-							});
+					// Record attempt in DB if logged in (submit only)
+					if (submit) {
+						const user = this.authService.currentUser;
+						if (user && this.selectedProblem) {
+							this.practiceStats
+								.recordAttempt(user.id, this.selectedProblem.id, this.allPassed, this.code)
+								.subscribe((stats) => {
+									if (this.practiceStats.currentStats) {
+										this.stats = this.practiceStats.currentStats;
+									}
+								});
+						}
 					}
 				}
 			});

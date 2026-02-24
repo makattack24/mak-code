@@ -1,44 +1,28 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { AboutComponent } from './about/about.component';
-import { ContactComponent } from './contact/contact.component';
-import { AppsComponent } from './apps/apps.component';
-import { CalculatorComponent } from './apps/calculator/calculator.component';
-import { ClockComponent } from './apps/clock/clock.component';
-import { GameComponent } from './apps/game/game.component';
-import { GraphicsgameComponent } from './apps/graphicsgame/graphicsgame.component';
-import { SoundComponent } from './apps/sound/sound.component';
-import { EditorComponent } from './apps/editor/editor.component';
-import { AdminComponent } from './admin/admin.component';
-import { LoginComponent } from './login/login.component';
-import { SignupComponent } from './signup/signup.component';
 import { adminGuard } from './guards/auth.guard';
-import { PracticeComponent } from './coding_practice/practice.component';
-import { ProfileComponent } from './profile/profile.component';
-import { DataDisplayComponent } from './data_display/data_display.component';
 
 export const routes: Routes = [
 	{ path: '', redirectTo: 'home', pathMatch: 'full' },
-	{ path: 'home', component: HomeComponent },
-	{ path: 'about', component: AboutComponent },
-	{ path: 'contact', component: ContactComponent },
-	{ path: 'login', component: LoginComponent },
-	{ path: 'signup', component: SignupComponent },
-	{ path: 'profile', component: ProfileComponent },
-	{ path: 'practice', component: PracticeComponent },
-	{ path: 'data-display', component: DataDisplayComponent },
+	{ path: 'home', loadComponent: () => import('./home/home.component').then(m => m.HomeComponent) },
+	{ path: 'about', loadComponent: () => import('./about/about.component').then(m => m.AboutComponent) },
+	{ path: 'contact', loadComponent: () => import('./contact/contact.component').then(m => m.ContactComponent) },
+	{ path: 'login', loadComponent: () => import('./login/login.component').then(m => m.LoginComponent) },
+	{ path: 'signup', loadComponent: () => import('./signup/signup.component').then(m => m.SignupComponent) },
+	{ path: 'profile', loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent) },
+	{ path: 'practice', loadComponent: () => import('./coding_practice/practice.component').then(m => m.PracticeComponent) },
+	{ path: 'data-display', loadComponent: () => import('./data_display/data_display.component').then(m => m.DataDisplayComponent) },
 	{
 		path: 'apps',
-		component: AppsComponent,
+		loadComponent: () => import('./apps/apps.component').then(m => m.AppsComponent),
 		children: [
-			{ path: 'calculator', component: CalculatorComponent },
-			{ path: 'clock', component: ClockComponent },
-			{ path: 'game', component: GameComponent },
-			{ path: 'sim', component: GraphicsgameComponent },
-			{ path: 'sound', component: SoundComponent },
-			{ path: 'editor', component: EditorComponent },
+			{ path: 'calculator', loadComponent: () => import('./apps/calculator/calculator.component').then(m => m.CalculatorComponent) },
+			{ path: 'clock', loadComponent: () => import('./apps/clock/clock.component').then(m => m.ClockComponent) },
+			{ path: 'game', loadComponent: () => import('./apps/game/game.component').then(m => m.GameComponent) },
+			{ path: 'sim', loadComponent: () => import('./apps/graphicsgame/graphicsgame.component').then(m => m.GraphicsgameComponent) },
+			{ path: 'sound', loadComponent: () => import('./apps/sound/sound.component').then(m => m.SoundComponent) },
+			{ path: 'editor', loadComponent: () => import('./apps/editor/editor.component').then(m => m.EditorComponent) },
 		],
 	},
-	{ path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
+	{ path: 'admin', loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent), canActivate: [adminGuard] },
 	{ path: '**', redirectTo: '' },
 ];

@@ -1,9 +1,11 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideToastr } from 'ngx-toastr';
 import { provideMarkdown } from 'ngx-markdown';
+import { provideAuth0 } from '@auth0/auth0-angular';
+import { environment } from '../environments/environment';
 
 import { routes } from './app.routes';
 
@@ -12,7 +14,7 @@ export const appConfig: ApplicationConfig = {
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(routes),
 		provideHttpClient(),
-		provideAnimations(),
+		provideAnimationsAsync(),
 		provideToastr({
 			timeOut: 3000,
 			positionClass: 'toast-top-right',
@@ -20,5 +22,13 @@ export const appConfig: ApplicationConfig = {
 			progressBar: true,
 		}),
 		provideMarkdown(),
+		provideAuth0({
+			domain: environment.auth0.domain,
+			clientId: environment.auth0.clientId,
+			authorizationParams: {
+				redirect_uri: typeof window !== 'undefined' ? window.location.origin : '',
+				audience: environment.auth0.audience || undefined,
+			},
+		}),
 	],
 };

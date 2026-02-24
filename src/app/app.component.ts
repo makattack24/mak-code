@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TerminalComponent } from './terminal/terminal.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { GraphicsgameComponent } from './apps/graphicsgame/graphicsgame.component';
 import { ResizeService } from './services/resize.service';
 import { HttpClient } from '@angular/common/http';
 
@@ -17,8 +16,6 @@ type PinPosition = 'center' | 'bottom' | 'left' | 'right';
 	styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-	@ViewChild(GraphicsgameComponent) graphicsGame?: GraphicsgameComponent;
-
 	title = 'myweb';
 
 	terminalHeight = 240;

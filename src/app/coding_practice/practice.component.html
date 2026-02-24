@@ -255,6 +255,9 @@
 				<button class="secondary" (click)="runCode()" [disabled]="isRunning" title="Run code (F5)">
 					<i class="fa-solid fa-play"></i> Run
 				</button>
+				<button class="secondary" (click)="runTestsOnly()" [disabled]="isRunning" title="Run tests without submitting (Shift+Enter)">
+					<i class="fa-solid fa-flask"></i> Test
+				</button>
 				<button (click)="runTests()" [disabled]="isRunning" title="Submit (Ctrl+Enter)">
 					<i class="fa-solid fa-paper-plane"></i> Submit
 				</button>
