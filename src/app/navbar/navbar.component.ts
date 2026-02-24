@@ -23,7 +23,7 @@ export class NavbarComponent {
 		{ path: '/about', label: 'About', icon: 'fa-solid fa-user' },
 		{ path: '/apps', label: 'Apps', icon: 'fa-solid fa-grip' },
 		{ path: '/contact', label: 'Contact', icon: 'fa-solid fa-envelope' },
-		{ path: '/LeetCode', label: 'LeetCode', icon: 'fa-solid fa-dumbbell' },
+		{ path: '/leetcode', label: 'LeetCode', icon: 'fa-solid fa-dumbbell' },
 		{ path: '/data-display', label: 'Data Display', icon: 'fa-solid fa-table' }
 	];
 

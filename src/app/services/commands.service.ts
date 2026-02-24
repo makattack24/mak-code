@@ -47,7 +47,7 @@ export class TerminalCommandsService {
 			this.router.navigate(['/stats']);
 		};
 		const goPractice = () => {
-			lines.push({ type: 'output', text: 'Navigating to practice page.' });
+			lines.push({ type: 'output', text: 'Navigating to leetcode page.' });
 			this.router.navigate(['/leetcode']);
 		};
 		const goProfile = () => {
