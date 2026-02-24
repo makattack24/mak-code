@@ -45,6 +45,7 @@ function twoSum(nums, target) {
 			'Can you use a hash map to reduce the time complexity?',
 			'For each number, check if target - number exists in the map.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(n)' },
 	},
 	{
 		id: 2,
@@ -81,6 +82,7 @@ function reverseString(s) {
 			'Use two pointers, one at the start and one at the end.',
 			'Swap the characters at the two pointers and move them toward the center.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(1)' },
 	},
 	{
 		id: 3,
@@ -118,6 +120,7 @@ function isValid(s) {
 			'Use a stack to keep track of opening brackets.',
 			'When you encounter a closing bracket, check if the top of the stack matches.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(n)' },
 	},
 	{
 		id: 4,
@@ -158,6 +161,7 @@ function maxProfit(prices) {
 			'Track the minimum price seen so far as you iterate.',
 			'At each step, compute profit = current price - min price, and keep the max.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(1)' },
 	},
 	{
 		id: 5,
@@ -201,6 +205,7 @@ function isPalindrome(x) {
 			'Negative numbers are never palindromes.',
 			'Try reversing the number and comparing, or convert to string.',
 		],
+		optimalComplexity: { time: 'O(log n)', space: 'O(1)' },
 	},
 	{
 		id: 6,
@@ -244,6 +249,7 @@ function mergeTwoLists(list1, list2) {
 			'Use two pointers, one for each list.',
 			'Compare elements at both pointers and push the smaller one.',
 		],
+		optimalComplexity: { time: 'O(n + m)', space: 'O(n + m)' },
 	},
 	{
 		id: 7,
@@ -288,6 +294,7 @@ function fizzBuzz(n) {
 		hints: [
 			'Check divisibility by 15 first (FizzBuzz), then 3 (Fizz), then 5 (Buzz).',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(n)' },
 	},
 	{
 		id: 8,
@@ -317,6 +324,7 @@ function containsDuplicate(nums) {
 			'A Set only stores unique values — compare its size to the array length.',
 			'Alternatively, sort the array and check adjacent elements.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(n)' },
 	},
 	{
 		id: 9,
@@ -349,6 +357,7 @@ function isAnagram(s, t) {
 			'Sort both strings and compare.',
 			'Or use a frequency counter (hash map) for each character.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(1)' },
 	},
 	{
 		id: 10,
@@ -388,6 +397,7 @@ function climbStairs(n) {
 			'This is basically the Fibonacci sequence.',
 			'f(n) = f(n-1) + f(n-2), with f(1)=1 and f(2)=2.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(1)' },
 	},
 	{
 		id: 11,
@@ -423,6 +433,7 @@ function maxSubArray(nums) {
 			"This is Kadane's algorithm.",
 			'Track current sum — reset to current element if sum drops below it.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(1)' },
 	},
 	{
 		id: 12,
@@ -460,6 +471,7 @@ function groupAnagrams(strs) {
 			'Use a sorted version of each string as a hash map key.',
 			'Group strings with the same sorted key together.',
 		],
+		optimalComplexity: { time: 'O(n * k log k)', space: 'O(n * k)' },
 	},
 	{
 		id: 13,
@@ -495,6 +507,7 @@ function productExceptSelf(nums) {
 			'Build prefix products (left to right) and suffix products (right to left).',
 			'The answer for index i is prefix[i] * suffix[i].',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(1)' },
 	},
 	{
 		id: 14,
@@ -537,6 +550,7 @@ function lengthOfLongestSubstring(s) {
 			'Use the sliding window technique with a Set.',
 			'Expand the window to the right; when a duplicate is found, shrink from the left.',
 		],
+		optimalComplexity: { time: 'O(n)', space: 'O(min(n, m))' },
 	},
 	{
 		id: 15,
@@ -571,5 +585,6 @@ function threeSum(nums) {
 			'Fix one element and use two pointers for the remaining two.',
 			'Skip duplicates to avoid duplicate triplets.',
 		],
+		optimalComplexity: { time: 'O(n²)', space: 'O(log n)' },
 	},
 ];

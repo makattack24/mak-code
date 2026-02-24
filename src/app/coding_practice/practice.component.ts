@@ -30,6 +30,11 @@ interface TestResult {
 	passed: boolean;
 }
 
+interface ComplexityAnalysis {
+	time: string;
+	space: string;
+}
+
 const COIN_REWARDS: Record<string, number> = {
 	Easy: 10,
 	Medium: 25,
@@ -70,6 +75,7 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 	testResults: TestResult[] = [];
 	allPassed = false;
 	activeTab: 'description' | 'results' = 'description';
+	userComplexity: ComplexityAnalysis | null = null;
 
 	// ── Solved tracking (sessionStorage + DB) ──
 	solvedIds = new Set<number>();
@@ -336,6 +342,7 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.error = '';
 		this.testResults = [];
 		this.allPassed = false;
+		this.userComplexity = null;
 		this.activeTab = 'description';
 		this.showHints = false;
 		this.revealedHints = 0;
@@ -357,6 +364,7 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.error = '';
 		this.testResults = [];
 		this.allPassed = false;
+		this.userComplexity = null;
 		this.disposeEditor();
 	}
 
@@ -367,6 +375,7 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.error = '';
 			this.testResults = [];
 			this.allPassed = false;
+			this.userComplexity = null;
 			if (this.monacoEditor) {
 				this.monacoEditor.setValue(this.code);
 			}
@@ -415,6 +424,7 @@ export class PracticeComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.isRunning = true;
 		this.testResults = [];
 		this.allPassed = false;
+		this.userComplexity = null;
 		this.error = '';
 		this.output = '';
 		this.activeTab = 'results';
@@ -446,6 +456,7 @@ console.log(JSON.stringify(__result));
 					this.testResults = results;
 					this.allPassed = results.every((r) => r.passed);
 					this.isRunning = false;
+					this.userComplexity = this.analyzeComplexity(this.code);
 
 					if (submit && this.allPassed && this.selectedProblem) {
 						const wasAlreadySolved = this.isSolved(this.selectedProblem.id);
@@ -618,5 +629,133 @@ console.log(JSON.stringify(__result));
 			.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 			.replace(/`(.*?)`/g, '<code>$1</code>')
 			.replace(/\n/g, '<br>');
+	}
+
+	// ── Static complexity analysis via code pattern heuristics ──
+	analyzeComplexity(code: string): ComplexityAnalysis {
+		// Strip comments and strings to avoid false positives
+		const stripped = code
+			.replace(/\/\/.*$/gm, '')
+			.replace(/\/\*[\s\S]*?\*\//g, '')
+			.replace(/'[^']*'/g, '""')
+			.replace(/"[^"]*"/g, '""')
+			.replace(/`[^`]*`/g, '""');
+
+		const time = this.estimateTimeComplexity(stripped);
+		const space = this.estimateSpaceComplexity(stripped);
+		return { time, space };
+	}
+
+	private estimateTimeComplexity(code: string): string {
+		// Count nesting depth of loops
+		const lines = code.split('\n');
+		let maxNesting = 0;
+		let currentNesting = 0;
+
+		const loopPattern = /\b(for|while)\s*\(/;
+		const recursionPattern = /\bfunction\s+(\w+)/g;
+		const functionNames: string[] = [];
+		let match;
+		while ((match = recursionPattern.exec(code)) !== null) {
+			functionNames.push(match[1]);
+		}
+
+		// Check for recursive calls
+		let hasRecursion = false;
+		for (const name of functionNames) {
+			// Look for the function calling itself (not in the declaration line)
+			const callPattern = new RegExp(`\\b${name}\\s*\\(`, 'g');
+			const calls = code.match(callPattern);
+			if (calls && calls.length > 1) {
+				hasRecursion = true;
+			}
+		}
+
+		// Check for .sort()
+		const hasSort = /\.sort\s*\(/.test(code);
+
+		// Count loop nesting
+		for (const line of lines) {
+			if (loopPattern.test(line)) {
+				currentNesting++;
+				maxNesting = Math.max(maxNesting, currentNesting);
+			}
+			// Track closing braces (approximate nesting via brace counting)
+			const opens = (line.match(/{/g) || []).length;
+			const closes = (line.match(/}/g) || []).length;
+			currentNesting -= closes;
+			if (currentNesting < 0) currentNesting = 0;
+		}
+
+		// Re-count with brace-tracking for better accuracy
+		maxNesting = 0;
+		let loopDepth = 0;
+		const braceStack: boolean[] = []; // true = loop brace, false = non-loop
+
+		for (const line of lines) {
+			const trimmed = line.trim();
+			const isLoopLine = loopPattern.test(trimmed);
+
+			if (isLoopLine) {
+				loopDepth++;
+				maxNesting = Math.max(maxNesting, loopDepth);
+			}
+
+			const opens = (trimmed.match(/{/g) || []).length;
+			const closes = (trimmed.match(/}/g) || []).length;
+
+			for (let i = 0; i < opens; i++) {
+				braceStack.push(isLoopLine);
+			}
+			for (let i = 0; i < closes; i++) {
+				const wasLoop = braceStack.pop();
+				if (wasLoop) loopDepth--;
+			}
+		}
+
+		// Determine complexity based on patterns
+		if (hasRecursion && maxNesting === 0) {
+			// Check if there's memoization
+			const hasMemo = /memo|cache|dp|Map\(\)|{}/.test(code);
+			if (hasMemo) return 'O(n)';
+			return 'O(2^n)';
+		}
+
+		if (hasSort && maxNesting <= 1) return 'O(n log n)';
+		if (hasSort && maxNesting >= 2) return 'O(n² log n)';
+
+		switch (maxNesting) {
+			case 0: return 'O(1)';
+			case 1: return 'O(n)';
+			case 2: return 'O(n²)';
+			case 3: return 'O(n³)';
+			default: return `O(n^${maxNesting})`;
+		}
+	}
+
+	private estimateSpaceComplexity(code: string): string {
+		// Check for data structure allocations
+		const hasNewArray = /new\s+Array|\[\s*\]|\.map\s*\(|\.filter\s*\(|\.slice\s*\(|\.concat\s*\(|Array\.from/.test(code);
+		const hasMap = /new\s+Map\(\)|new\s+Object|{}/.test(code);
+		const hasSet = /new\s+Set/.test(code);
+		const hasStack = /\[\]\s*;[\s\S]*\.push\s*\(/.test(code);
+
+		// Check for recursion (stack space)
+		const funcPattern = /\bfunction\s+(\w+)/g;
+		const funcNames: string[] = [];
+		let m;
+		while ((m = funcPattern.exec(code)) !== null) {
+			funcNames.push(m[1]);
+		}
+		let hasRecursion = false;
+		for (const name of funcNames) {
+			const callPattern = new RegExp(`\\b${name}\\s*\\(`, 'g');
+			const calls = code.match(callPattern);
+			if (calls && calls.length > 1) hasRecursion = true;
+		}
+
+		if (hasRecursion) return 'O(n)';
+		if (hasNewArray || hasMap || hasSet || hasStack) return 'O(n)';
+		return 'O(1)';
 	}
 }

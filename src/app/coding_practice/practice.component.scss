@@ -857,3 +857,104 @@
 		font-family: inherit;
 	}
 }
+
+/* Complexity */
+
+.complexity-section {
+	margin-top: 1.2rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--border);
+
+	h3 {
+		font-size: 1rem;
+		margin: 0 0 0.6rem;
+		i { color: var(--primary); margin-right: 0.4rem; }
+	}
+}
+
+.complexity-badges {
+	display: flex;
+	gap: 0.6rem;
+	flex-wrap: wrap;
+}
+
+.complexity-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.3rem 0.7rem;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+
+	&.time {
+		background: rgba(99, 102, 241, 0.12);
+		color: #6366f1;
+		border: 1px solid rgba(99, 102, 241, 0.25);
+	}
+
+	&.space {
+		background: rgba(16, 185, 129, 0.12);
+		color: #10b981;
+		border: 1px solid rgba(16, 185, 129, 0.25);
+	}
+
+	&.match {
+		background: rgba(22, 163, 74, 0.12);
+		color: var(--success);
+		border: 1px solid rgba(22, 163, 74, 0.3);
+	}
+
+	&.no-match {
+		background: rgba(245, 158, 11, 0.12);
+		color: #f59e0b;
+		border: 1px solid rgba(245, 158, 11, 0.3);
+	}
+
+	&.optimal-badge {
+		background: var(--secondary);
+		color: var(--muted);
+		border: 1px solid var(--border);
+	}
+
+	i { font-size: 0.8rem; }
+}
+
+.complexity-comparison {
+	margin-top: 1rem;
+	padding: 0.8rem 1rem;
+	background: var(--secondary);
+	border: 1px solid var(--border);
+	border-radius: 8px;
+
+	h3 {
+		font-size: 0.95rem;
+		margin: 0 0 0.6rem;
+		i { color: var(--primary); margin-right: 0.35rem; }
+	}
+}
+
+.complexity-table {
+	display: grid;
+	grid-template-columns: auto 1fr 1fr;
+	gap: 0.4rem 0.8rem;
+	align-items: center;
+
+	.complexity-row {
+		display: contents;
+
+		&.header span {
+			font-size: 0.78rem;
+			font-weight: 700;
+			text-transform: uppercase;
+			color: var(--muted);
+			letter-spacing: 0.03em;
+		}
+	}
+
+	.row-label {
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+}

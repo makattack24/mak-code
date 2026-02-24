@@ -14,4 +14,5 @@ export interface Problem {
 	starterCode: string;
 	testCases: TestCase[];
 	hints?: string[];
+	optimalComplexity: { time: string; space: string };
 }

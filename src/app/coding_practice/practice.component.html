@@ -176,6 +176,19 @@
 				</div>
 			</div>
 
+			<!-- Optimal Complexity -->
+			<div class="complexity-section">
+				<h3><i class="fa-solid fa-gauge-high"></i> Optimal Complexity</h3>
+				<div class="complexity-badges">
+					<span class="complexity-badge time">
+						<i class="fa-solid fa-clock"></i> Time: {{ selectedProblem.optimalComplexity.time }}
+					</span>
+					<span class="complexity-badge space">
+						<i class="fa-solid fa-memory"></i> Space: {{ selectedProblem.optimalComplexity.space }}
+					</span>
+				</div>
+			</div>
+
 			<!-- Hints -->
 			<div class="hints-section" *ngIf="selectedProblem.hints && selectedProblem.hints.length">
 				<button class="hint-toggle secondary" (click)="toggleHints()">
@@ -220,6 +233,32 @@
 			<div class="coin-reward-popup" *ngIf="coinReward.show">
 				<i class="fa-solid fa-coins"></i>
 				<span>+{{ coinReward.amount }} coins earned!</span>
+			</div>
+
+			<!-- Complexity Comparison -->
+			<div *ngIf="userComplexity && testResults.length > 0" class="complexity-comparison">
+				<h3><i class="fa-solid fa-gauge-high"></i> Complexity Analysis</h3>
+				<div class="complexity-table">
+					<div class="complexity-row header">
+						<span></span>
+						<span>Time</span>
+						<span>Space</span>
+					</div>
+					<div class="complexity-row yours">
+						<span class="row-label">Your Solution</span>
+						<span class="complexity-badge" [ngClass]="userComplexity.time === selectedProblem!.optimalComplexity.time ? 'match' : 'no-match'">
+							{{ userComplexity.time }}
+						</span>
+						<span class="complexity-badge" [ngClass]="userComplexity.space === selectedProblem!.optimalComplexity.space ? 'match' : 'no-match'">
+							{{ userComplexity.space }}
+						</span>
+					</div>
+					<div class="complexity-row optimal">
+						<span class="row-label">Optimal</span>
+						<span class="complexity-badge optimal-badge">{{ selectedProblem!.optimalComplexity.time }}</span>
+						<span class="complexity-badge optimal-badge">{{ selectedProblem!.optimalComplexity.space }}</span>
+					</div>
+				</div>
 			</div>
 
 			<div *ngFor="let result of testResults; let i = index" class="test-result-card"
