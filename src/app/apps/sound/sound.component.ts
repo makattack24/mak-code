@@ -31,7 +31,8 @@ export class SoundComponent implements AfterViewInit, OnDestroy {
 	// ── Playlist ──
 	songs: Song[] = [
 		{ title: 'Test Track', artist: 'Unknown Artist', src: '/assets/test.mp3' },
-		{ title: 'Wanted', artist: 'Trezyn', src: '/assets/wanted.mp3' }
+		{ title: 'Wanted', artist: 'Trezyn', src: '/assets/wanted.mp3' },
+		{ title: 'Survive', artist: 'Trezyn', src: '/assets/survive.mp3'}
 	];
 	currentIndex = 0;
 
